@@ -248,8 +248,8 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 ### A7. App icon and launch
 
-- [ ] A7.1 App icon: coral background, Seeri face. Icon Composer file for iOS 26+ (glass layers, light / dark / tinted / clear) **and** the classic 1024 pt icon with light / dark / tinted for iOS 18–25. Checked on both simulators.
-- [ ] A7.2 Launch screen (static, in `Info.plist`): same background colour as the first frame of screen 01, so there is no flash into the animation.
+- [x] A7.1 App icon (classic: light coral, dark black, tinted white-on-transparent, 1024 px from the brand board by `Design/tools/make_app_icon.swift`; light and dark without alpha for the App Store; checked on the home screen). *Open: the Icon Composer layered version for iOS 26+ needs Apple's Icon Composer app; until then iOS 26+ shows the classic icon with its own glass edge.* Was: coral background, Seeri face. Icon Composer file for iOS 26+ (glass layers, light / dark / tinted / clear) **and** the classic 1024 pt icon with light / dark / tinted for iOS 18–25. Checked on both simulators.
+- [x] A7.2 Launch screen (static, in `Info.plist`): same background colour as the first frame of screen 01, so there is no flash into the animation.
 
 ### A8. Theme screen
 

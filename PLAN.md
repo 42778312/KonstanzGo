@@ -141,7 +141,7 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 - [x] C1. **Models:** `Station`, `Platform` (with `code`), `Line`, `Trip`, `StopTime`, `Departure`, `Journey`, `Leg` (walk / bus), `Place`, `SearchResult`, `Favorite`, `RecentItem`, `Alarm`. All `Sendable`, `Hashable`.
 - [x] C2. **Service-day time** (read as wall-clock times, like the stop signs and the Android app): GTFS times past midnight (e.g. 25:10), the Europe/Berlin time zone, daylight-saving days. Tests on 25.10.2026 (clocks back) and 29.03.2026 (forward).
-- [ ] C3. **TimetableStore** (GRDB, read-only, opened from the app bundle):
+- [x] C3. **TimetableStore** (GRDB, read-only, opened from the app bundle). Departure query < 20 ms. Real data note: the design's "9A" is line **9** in the timetable; destinations are shortened ("Konstanz Universität" → "Universität"); a trip's arrival at its last stop is not listed as a departure:
   - departures at a station from a given time (all platforms, sorted, with platform code)
   - next 3 times per line and direction at a station (screen 09 "Linien")
   - trip with all stops and times (screen 17)

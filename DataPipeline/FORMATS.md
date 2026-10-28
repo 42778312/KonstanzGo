@@ -28,7 +28,8 @@ Schema version 4 (`PRAGMA user_version`), from `gtfs-import/schema/4.json`.
 | `street_point` | id, place_id, lat, lon | Points along streets (for "nearest street" and street search). |
 | `meta` | key, value | feed_version, feed_start, feed_end (yyyymmdd), built_at, attribution, license, license_url, source_url, bbox, places_source. |
 
-Times are local time in Europe/Berlin. On the days the clocks change, a service day is still counted from midnight.
+Times are wall-clock times in Europe/Berlin, as printed at the stop: 1510 on 27 Oct is 01:10 on 28 Oct. The app
+reads them that way on the days the clocks change too (see `KGCore/Time/ServiceTime.swift`).
 
 ## search/places.tsvz
 

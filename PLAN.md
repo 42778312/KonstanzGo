@@ -140,7 +140,7 @@ Every snapshot test runs on **both** an iOS 18 and an iOS 27 simulator (T1).
 Each item: Swift code + Swift Testing tests. Golden tests compare results with the Kotlin app on the same data (T5).
 
 - [x] C1. **Models:** `Station`, `Platform` (with `code`), `Line`, `Trip`, `StopTime`, `Departure`, `Journey`, `Leg` (walk / bus), `Place`, `SearchResult`, `Favorite`, `RecentItem`, `Alarm`. All `Sendable`, `Hashable`.
-- [ ] C2. **Service-day time:** GTFS times past midnight (e.g. 25:10), the Europe/Berlin time zone, daylight-saving days. Tests on 25.10.2026 (clocks back) and 29.03.2026 (forward).
+- [x] C2. **Service-day time** (read as wall-clock times, like the stop signs and the Android app): GTFS times past midnight (e.g. 25:10), the Europe/Berlin time zone, daylight-saving days. Tests on 25.10.2026 (clocks back) and 29.03.2026 (forward).
 - [ ] C3. **TimetableStore** (GRDB, read-only, opened from the app bundle):
   - departures at a station from a given time (all platforms, sorted, with platform code)
   - next 3 times per line and direction at a station (screen 09 "Linien")

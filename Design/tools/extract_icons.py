@@ -1,0 +1,100 @@
+"""
+Copies the design's icons (inline SVGs on a 24 × 24 grid in Design/Source/*.dc.html) into Swift:
+Packages/KonstanzKit/Sources/KGDesign/Icons/KGIconData.swift. Re-run after the design changes:
+
+    python3 -I Design/tools/extract_icons.py
+
+Icons are found by their drawing (colours ignored), named by NAMES below. A new drawing without a name
+stops the script, so nothing is dropped silently.
+"""
+import glob, hashlib, re, sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+OUT = ROOT / "Packages/KonstanzKit/Sources/KGDesign/Icons/KGIconData.swift"
+
+# drawing key -> (name, what the design uses it for)
+NAMES = {
+    "fdf7d7a4": ("bus", "bus markers, live activity"), "43a7df0c": ("search", "search bar"),
+    "13a57dd7": ("map", "tab Karte"), "7a0df2da": ("star", "tab Favoriten, favourite"),
+    "932a292a": ("more", "tab Mehr"), "8a685614": ("back", "back buttons"), "fdd58d76": ("check", "Offline bereit, done"),
+    "83fb252c": ("lockScreen", "Auf den Sperrbildschirm"), "b3825578": ("layers", "map layers"),
+    "9fa8843b": ("locate", "my location (filled arrow)"), "d5115b60": ("walk", "walking time"),
+    "bc852078": ("refresh", "update offline data"), "7a48984a": ("bellFilled", "Mitteilungen, alarm set"),
+    "09e7f23e": ("timer", "Abfahrtsalarm"), "bae5e9b7": ("accessibility", "Barrierefreie Wege"),
+    "139523bb": ("globe", "Sprache"), "274554d0": ("appearance", "Darstellung"), "674ca982": ("shield", "Datenschutz"),
+    "251a18bc": ("feedback", "Hilfe & Feedback"), "bde0285e": ("clock", "time, recent"),
+    "858833d4": ("home", "Zuhause"), "6121b835": ("share", "Teilen"), "01f2b4ab": ("noTracking", "kein Tracking"),
+    "4518fef0": ("history", "Zuletzt, Verlauf"), "67231064": ("trash", "Löschen"), "888d076d": ("turnRight", "walk: turn right"),
+    "cfae754c": ("swap", "swap start and target"), "6aa04565": ("accessibleRoute", "Barrierefrei filter chip"),
+    "ab42e7a9": ("uni", "Uni"), "12fdf061": ("work", "Arbeit"), "c7fbd5bc": ("pinFilled", "places, dropped pin"),
+    "41449755": ("uniCap", "Siri shortcut Uni"), "911ba820": ("straight", "walk: straight on"),
+    "0fe8938b": ("crossing", "walk: cross the road"), "fcf21526": ("arrive", "walk: arrive"),
+    "b7cde4fd": ("fastest", "Schnellste"), "cba8a530": ("bell", "notifications (outline)"), "08bed4ea": ("noSignal", "Kein Netz (wifi with a slash)"),
+    "b2e424a6": ("pin", "Offline-Karte (outline pin)"), "479641a6": ("live", "Live-Abfahrten"),
+}
+# Drawn here in the design's style (2.4 pt round strokes): needed by the screens, not on any artboard.
+EXTRA = {
+    "close": ('<path d="M6 6l12 12M18 6 6 18"></path>', "2.4", False, "close buttons (drawn in the design's style)"),
+    "chevronRight": ('<path d="M9 5l7 7-7 7"></path>', "2.4", False, "row chevrons (mirror of back)"),
+    "plus": ('<path d="M12 5v14M5 12h14"></path>', "2.4", False, "add (drawn in the design's style)"),
+}
+
+def elements(inner):
+    out = []
+    for tag, attrs in re.findall(r"<(path|circle|rect|ellipse)\b([^>]*)>", inner):
+        a = dict(re.findall(r'([\w-]+)="([^"]*)"', attrs))
+        fill = a.get("fill")
+        stroke = a.get("stroke")
+        sw = a.get("stroke-width")
+        mode = "inherit"
+        if stroke and fill in (None, "none"): mode = "stroke"  # a stroke stays a stroke, even in a filled icon
+        elif fill and fill != "none": mode = "fill"
+        if tag == "path": geo = f'.path("{a["d"]}")'
+        elif tag == "circle": geo = f'.circle(cx: {a["cx"]}, cy: {a["cy"]}, radius: {a["r"]})'
+        elif tag == "ellipse": geo = f'.ellipse(cx: {a["cx"]}, cy: {a["cy"]}, rx: {a["rx"]}, ry: {a["ry"]})'
+        else: geo = f'.rect(x: {a["x"]}, y: {a["y"]}, width: {a["width"]}, height: {a["height"]}, radius: {a.get("rx","0")})'
+        out.append(f"KGIconElement(shape: {geo}, paint: .{mode}" + (f", lineWidth: {sw}" if sw else "") + ")")
+    return out
+
+found = {}
+for f in sorted(glob.glob(str(ROOT / "Design/Source/*.dc.html"))):
+    if Path(f).name in ("Main.dc.html", "Onboarding.dc.html"): continue
+    s = open(f).read()
+    for m in re.finditer(r'<svg width="(\d+)" height="(\d+)" viewBox="0 0 24 24"([^>]*)>(.*?)</svg>', s, re.S):
+        attrs, inner = m.group(3), re.sub(r"\s+", " ", m.group(4).strip())
+        key = hashlib.md5(re.sub(r'(stroke|fill)="#[0-9A-Fa-f]{6}"', "", inner).encode()).hexdigest()[:8]
+        if key in found: continue
+        sw = re.search(r'stroke-width="([\d.]+)"', attrs)
+        found[key] = (inner, sw.group(1) if sw else None, 'fill="none"' not in attrs)
+
+missing = [k for k in found if k not in NAMES]
+if missing:
+    sys.exit(f"unnamed icons in the design: {missing} (add them to NAMES)")
+
+rows = []
+for key, (inner, sw, filled) in found.items():
+    name, use = NAMES[key]
+    rows.append((name, use, inner, sw, filled))
+for name, (inner, sw, filled, use) in EXTRA.items():
+    rows.append((name, use, inner, sw, filled))
+rows.sort()
+
+lines = ["// Generated by Design/tools/extract_icons.py from the design's SVGs. Do not edit by hand.",
+         "// swiftlint:disable line_length file_length", "", "extension KGIcon {",
+         "    /// The drawing of each icon on the design's 24 × 24 grid.", "    var drawing: KGIconDrawing {",
+         "        switch self {"]
+for name, use, inner, sw, filled in rows:
+    els = ",\n                ".join(elements(inner))
+    lines.append(f"        case .{name}:  // {use}")
+    lines.append(f"            KGIconDrawing(filled: {'true' if filled else 'false'}, lineWidth: {sw or 2}, elements: [")
+    lines.append(f"                {els},")
+    lines.append("            ])")
+lines += ["        }", "    }", "}", "", "public enum KGIcon: String, CaseIterable, Sendable {"]
+for name, use, *_ in rows:
+    lines.append(f"    /// {use[0].upper() + use[1:]}.")
+    lines.append(f"    case {name}")
+lines += ["}", "// swiftlint:enable line_length file_length", ""]
+OUT.parent.mkdir(parents=True, exist_ok=True)
+OUT.write_text("\n".join(lines))
+print(f"{len(rows)} icons -> {OUT.relative_to(ROOT)}")

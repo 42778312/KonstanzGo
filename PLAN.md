@@ -231,10 +231,10 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 ### A5. Icons
 
-- [ ] A5.1 List every icon in the design (about 45: search, back, close, chevron, star, map, more, layers, locate arrow, walk, bus, swap, bell, accessibility, globe, moon, shield, help, refresh, check, trash, share, home, briefcase, graduation cap, pin, clock, calendar, ferry, train, download, wifi-off, info …).
-- [ ] A5.2 Export each from the design's inline SVG into the asset catalog as an SVG symbol image ("Preserve Vector Data", template rendering), so they tint like SF Symbols and stay exactly the design's drawing (stroke 2–2.8, round caps).
-- [ ] A5.3 Where the design draws a standard iOS glyph (share, chevron), check if the SF Symbol matches; use the design's version when it doesn't.
-- [ ] A5.4 Icon gallery in the design-system screen.
+- [x] A5.1 List every icon in the design (about 45: search, back, close, chevron, star, map, more, layers, locate arrow, walk, bus, swap, bell, accessibility, globe, moon, shield, help, refresh, check, trash, share, home, briefcase, graduation cap, pin, clock, calendar, ferry, train, download, wifi-off, info …).
+- [x] A5.2 Copied from the design's inline SVGs by `Design/tools/extract_icons.py` into Swift (40 drawings + close, chevronRight, plus in the same style), drawn by an SVG path reader. Tint like SF Symbols, stay exactly the design's drawing (stroke 2–2.8, round caps); no asset catalog, so they also work in `swift test`.
+- [x] A5.3 Where the design draws a standard iOS glyph (share, chevron), check if the SF Symbol matches; use the design's version when it doesn't.
+- [x] A5.4 Icon gallery in the design-system screen.
 
 ### A6. Seeri, the mascot
 

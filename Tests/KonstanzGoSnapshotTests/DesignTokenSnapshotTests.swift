@@ -23,4 +23,10 @@ final class DesignTokenSnapshotTests: XCTestCase {
         let view = TypeSpecimen().frame(width: 390)
         assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: UITraitCollection(userInterfaceStyle: .dark)))
     }
+
+    @MainActor
+    func testIcons() {
+        let view = IconGallery().frame(width: 390)
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+    }
 }

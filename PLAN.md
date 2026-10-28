@@ -153,8 +153,8 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
   - returns several journeys, ranked as "Schnellste", "Wenig laufen", "Wenig umsteigen"
   - performance: under 150 ms for any Konstanz trip on an iPhone 12 (measured in a test)
 - [x] C5. **Walking router:** reads `konstanz-walk.bin`, A* search, turn-by-turn steps with street names ("Rechts in die Bahnhofstraße · 120 m"). Steps carry turn type, street, way kind and distance; the wording is made in the UI (S13). **Better than the Android app:** each end also tries ways within 8 m of the nearest one, so sidewalks mapped beside a street no longer cause loops (a 370 m loop became the 18 m walk). The planner uses it for real walking paths and steps; walking routes may therefore differ from Android in T5.
-- [ ] C6. **Search:** reads `places.tsvz` + stations; matches as you type; handles umlauts (ä = ae), "str." = "straße", typos of one letter; ranks stations, places, streets. Returns which part matched (for the bold highlight in screen 08).
-- [ ] C7. **Reverse lookup:** nearest street name and nearest station to a point (screen 16).
+- [x] C6. **Search** (Android scoring; stations indexed by short name so "Sternenplatz" finds the stop before the street; 2–9 ms per keystroke in release on a Mac, work spread over the CPU cores): reads `places.tsvz` + stations; matches as you type; handles umlauts (ä = ae), "str." = "straße", typos of one letter; ranks stations, places, streets. Returns which part matched (for the bold highlight in screen 08).
+- [x] C7. **Reverse lookup:** nearest street name and nearest station to a point (screen 16).
 - [ ] C8. **Vehicle positions:** for each running trip, the estimated position along its shape at time t, plus heading. Smooth between stops; waits at stops.
 - [ ] C9. **Trip progress:** current stop, stops left, minutes to arrival, progress 0…1 (screen 11, Live Activity).
 - [ ] C10. **UserStore** (GRDB, writable, in the App Group container so widgets can read it): favourites (Zuhause, Arbeit, Uni + stops, with order), recent searches, finished trips (for "5 Fahrten diese Woche"), alarms. Nothing leaves the phone.

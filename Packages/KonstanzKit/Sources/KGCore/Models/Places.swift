@@ -14,23 +14,27 @@ public enum PlaceKind: String, Sendable, Hashable, Codable, CaseIterable {
 
 /// Somewhere you can go that is not a bus stop: "Konzil", "Universitätsstraße", "Seestraße 21".
 public struct Place: Sendable, Hashable, Identifiable, Codable {
-    public var id: Int
+    /// The slug used in the data files ("universitaet-konstanz"); stable across data updates.
+    public var id: String
     public var name: String
     public var kind: PlaceKind
-    /// What it is in words ("Veranstaltungsort", "Restaurant"); empty when the kind says enough.
+    /// What it is in words, in English ("Restaurant", "Swimming area"); empty when the kind says enough.
     public var category: String
+    /// The same in German ("Restaurant", "Badestelle").
+    public var categoryGerman: String
     /// District and town, "Altstadt, Konstanz".
     public var area: String
     /// Street address when known, "Hafenstraße 2".
     public var address: String?
     public var coordinate: Coordinate
 
-    public init(id: Int, name: String, kind: PlaceKind, category: String, area: String,
-                address: String? = nil, coordinate: Coordinate) {
+    public init(id: String, name: String, kind: PlaceKind, category: String, categoryGerman: String? = nil,
+                area: String, address: String? = nil, coordinate: Coordinate) {
         self.id = id
         self.name = name
         self.kind = kind
         self.category = category
+        self.categoryGerman = categoryGerman ?? category
         self.area = area
         self.address = address
         self.coordinate = coordinate
@@ -56,9 +60,10 @@ public struct SearchResult: Sendable, Hashable, Identifiable {
         self.score = score
     }
 
+    /// The name as shown in the list (stations by their short name, "Sternenplatz").
     public var name: String {
         switch target {
-        case let .station(station, _): station.name
+        case let .station(station, _): station.shortName
         case let .place(place): place.name
         }
     }

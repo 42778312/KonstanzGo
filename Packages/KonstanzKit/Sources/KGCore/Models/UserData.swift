@@ -4,7 +4,7 @@ import Foundation
 /// correctly if a new timetable renames or drops it.
 public enum SavedTarget: Sendable, Hashable, Codable {
     case station(id: Int, name: String, coordinate: Coordinate)
-    case place(id: Int, name: String, kind: PlaceKind, coordinate: Coordinate)
+    case place(id: String, name: String, kind: PlaceKind, coordinate: Coordinate)
     /// A dropped pin or an address without an id.
     case point(name: String, coordinate: Coordinate)
 

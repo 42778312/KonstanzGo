@@ -1,0 +1,3 @@
+# Only import_places.py needs these; the other tools use the standard library.
+pmtiles
+mapbox-vector-tile

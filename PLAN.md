@@ -111,7 +111,7 @@ Every snapshot test runs on **both** an iOS 18 and an iOS 27 simulator (T1).
 - [x] P8. Capabilities: App Groups (app + widgets), Background Modes (location, only for the trip), Live Activities, Push Notifications **off** (not needed: Live Activity is updated locally). No Siri entitlement: App Intents and App Shortcuts (X4) work without it.
 - [x] P9. SwiftLint config + a build phase that runs it. Custom rules reject raw colours and fonts outside `KGDesign` as errors (checked with a probe file).
 - [ ] P10. *(written, not run yet: the repo has no GitHub remote)* GitHub Actions job `.github/workflows/ci.yml`: core tests on macOS, then build + all app tests on the iPhone 17e simulator. Check the runner image has Xcode 27 when the repo is pushed; snapshot images may need re-recording on the CI machine if rendering differs.
-- [ ] P11. Empty app runs on the iPhone 17e simulator and shows "KonstanzGo". Commit.
+- [x] P11. Empty app runs on the iPhone 17e simulator and shows "KonstanzGo". Commit.
 
 ---
 

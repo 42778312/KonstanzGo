@@ -1,0 +1,44 @@
+# Build + all tests on every push and pull request (plan P10).
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use the newest Xcode on the runner
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: Tools
+        run: brew install xcodegen swiftlint
+
+      - name: Core tests (macOS)
+        run: swift test --package-path Packages/KonstanzKit
+
+      - name: Generate project
+        run: xcodegen
+
+      - name: App tests (iPhone 17e simulator, 390x844 like the design)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project KonstanzGo.xcodeproj -scheme KonstanzGo \
+            -destination 'platform=iOS Simulator,name=iPhone 17e' \
+            -resultBundlePath build/tests.xcresult \
+            | tail -50
+
+      - name: Keep the test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests.xcresult
+          path: build/tests.xcresult

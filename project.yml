@@ -1,0 +1,189 @@
+# Xcode project definition. Generate KonstanzGo.xcodeproj with:  xcodegen
+# The .xcodeproj is not in git; this file is the source of truth.
+name: KonstanzGo
+
+options:
+  bundleIdPrefix: de.konstanzgo
+  deploymentTarget:
+    iOS: "18.0"
+  developmentLanguage: de
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    # Set your Apple Developer team here (Xcode › Settings › Accounts shows the id).
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+
+packages:
+  KonstanzKit:
+    path: Packages/KonstanzKit
+  MapLibre:
+    url: https://github.com/maplibre/maplibre-gl-native-distribution
+    exactVersion: 6.31.0
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    exactVersion: 1.19.7
+
+targets:
+  KonstanzGo:
+    type: application
+    platform: iOS
+    sources:
+      - path: App/Sources
+      - path: App/Resources/Assets.xcassets
+      - path: App/Resources/Localizable.xcstrings
+      - path: App/Resources/InfoPlist.xcstrings
+      - path: App/Resources/Data
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: KonstanzKit
+        product: KGCore
+      - package: KonstanzKit
+        product: KGDesign
+      - package: KonstanzKit
+        product: KGFeatures
+      - package: MapLibre
+      - target: KonstanzGoWidgets
+    entitlements:
+      path: App/KonstanzGo.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.de.konstanzgo.app
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: KonstanzGo
+        CFBundleDevelopmentRegion: de
+        CFBundleLocalizations: [de, en]
+        LSApplicationCategoryType: public.app-category.navigation
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        ITSAppUsesNonExemptEncryption: false
+        NSSupportsLiveActivities: true
+        UIBackgroundModes: [location]
+        NSLocationWhenInUseUsageDescription: "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Während einer Fahrt hält KonstanzGo die Anzeige auf dem Sperrbildschirm aktuell. Dein Standort bleibt auf diesem iPhone."
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.konstanzgo.app
+        PRODUCT_NAME: KonstanzGo
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    preBuildScripts:
+      - name: SwiftLint
+        basedOnDependencyAnalysis: false
+        script: |
+          export PATH="/opt/homebrew/bin:$PATH"
+          if which swiftlint >/dev/null; then
+            swiftlint lint --quiet --config "$SRCROOT/.swiftlint.yml" "$SRCROOT/App" "$SRCROOT/Widgets" "$SRCROOT/Packages/KonstanzKit/Sources"
+          else
+            echo "warning: SwiftLint is not installed (brew install swiftlint)"
+          fi
+
+  KonstanzGoWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Widgets/Sources
+    dependencies:
+      - package: KonstanzKit
+        product: KGCore
+      - package: KonstanzKit
+        product: KGDesign
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    entitlements:
+      path: Widgets/KonstanzGoWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.de.konstanzgo.app
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: KonstanzGo
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.konstanzgo.app.widgets
+        PRODUCT_NAME: KonstanzGoWidgets
+        SKIP_INSTALL: YES
+
+  KonstanzGoTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests/KonstanzGoTests]
+    dependencies:
+      - target: KonstanzGo
+      - package: KonstanzKit
+        product: KGCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        BUNDLE_LOADER: $(TEST_HOST)
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/KonstanzGo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KonstanzGo
+
+  KonstanzGoSnapshotTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      # Reference images are read from disk by the snapshot library, not bundled.
+      - path: Tests/KonstanzGoSnapshotTests
+        excludes: ["__Snapshots__/**"]
+    dependencies:
+      - target: KonstanzGo
+      - package: KonstanzKit
+        product: KGCore
+      - package: KonstanzKit
+        product: KGFeatures
+      - package: KonstanzKit
+        product: KGDesign
+      - package: SnapshotTesting
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        BUNDLE_LOADER: $(TEST_HOST)
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/KonstanzGo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KonstanzGo
+
+  KonstanzGoUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [Tests/KonstanzGoUITests]
+    dependencies:
+      - target: KonstanzGo
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: KonstanzGo
+
+schemes:
+  KonstanzGo:
+    build:
+      targets:
+        KonstanzGo: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - KonstanzGoTests
+        - KonstanzGoSnapshotTests
+        - KonstanzGoUITests
+        - package: KonstanzKit/KGCoreTests
+        - package: KonstanzKit/KGDesignTests

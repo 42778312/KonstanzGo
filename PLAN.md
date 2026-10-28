@@ -92,23 +92,23 @@ Every snapshot test runs on **both** an iOS 18 and an iOS 27 simulator (T1).
 ## Part P — Project skeleton
 
 - [x] P1. `git init` in `~/XcodeProjects/KonstanzGo`, `.gitignore` for Xcode, `README.md`.
-- [ ] P2. `project.yml` (XcodeGen) with these targets:
+- [x] P2. `project.yml` (XcodeGen) with these targets:
   - `KonstanzGo` (the app, SwiftUI life cycle)
   - `KonstanzGoWidgets` (widget extension: home-screen widgets, lock-screen widgets, Live Activity)
   - `KonstanzGoTests` (Swift Testing), `KonstanzGoSnapshotTests`, `KonstanzGoUITests` (XCUITest)
-- [ ] P3. Local Swift packages, so the logic is testable without the app:
+- [x] P3. Local Swift packages, so the logic is testable without the app (built as **one** package, `Packages/KonstanzKit`, with three modules; `swift test` runs the core tests on macOS in seconds):
   - `KGCore`: models, timetable database, routing, walking router, search, vehicle positions, time and service-day maths. No UI.
   - `KGDesign`: tokens, fonts, icons, Seeri, all components. No data.
   - `KGFeatures`: screens and their view models. Depends on the two above.
-- [ ] P4. Dependencies (Swift Package Manager), as few as possible:
+- [x] P4. Dependencies (Swift Package Manager), as few as possible. Pinned to exact versions: MapLibre 6.31.0 (latest 6.x; 7.0 is a new major, try later), GRDB 7.11.1, swift-snapshot-testing 1.19.7.
   - **MapLibre Native for iOS** (offline vector map from the existing `konstanz.pmtiles`; Apple's MapKit cannot show our own offline tiles and style).
   - **GRDB.swift** (read-only SQLite access to `timetable.db`, plus a small writable database for favourites, history, alarms).
   - **swift-snapshot-testing** (test target only).
-- [ ] P5. Swift 6 language mode with strict concurrency on all targets from day one.
-- [ ] P6. Build settings: deployment target **iOS 18.0** on every target, iPhone only, portrait only for v1 (the design is portrait), bundle ID `de.konstanzgo.app`, App Group `group.de.konstanzgo.app`, signing team.
-- [ ] P6a. `KGDesign/Compat.swift`: small helpers for the iOS 26 extras (`.kgGlass(in:)` uses `glassEffect` on 26+, the material fallback on 18–25), so no screen has its own `#available` checks.
-- [ ] P7. `Info.plist` texts (German + English): location when in use, location always (only during an active trip, see L5), notifications.
-- [ ] P8. Capabilities: App Groups, Background Modes (location, only for the trip), Siri, Push Notifications **off** (not needed: Live Activity is updated locally).
+- [x] P5. Swift 6 language mode with strict concurrency on all targets from day one.
+- [x] P6. Build settings: deployment target **iOS 18.0** on every target, iPhone only, portrait only for v1 (the design is portrait), bundle ID `de.konstanzgo.app`, App Group `group.de.konstanzgo.app`, signing team.
+- [x] P6a. `KGDesign/Compat.swift`: small helpers for the iOS 26 extras (`.kgGlass(in:)` uses `glassEffect` on 26+, the material fallback on 18–25), so no screen has its own `#available` checks.
+- [x] P7. `Info.plist` texts (German + English): location when in use, location always (only during an active trip, see L5), notifications.
+- [x] P8. Capabilities: App Groups (app + widgets), Background Modes (location, only for the trip), Live Activities, Push Notifications **off** (not needed: Live Activity is updated locally). No Siri entitlement: App Intents and App Shortcuts (X4) work without it.
 - [ ] P9. SwiftLint config + a build phase that runs it.
 - [ ] P10. GitHub Actions (or Xcode Cloud) job: build + unit tests + snapshot tests on each push.
 - [ ] P11. Empty app runs on the iPhone 17e simulator and shows "KonstanzGo". Commit.

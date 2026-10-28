@@ -1,0 +1,39 @@
+# Plan rule 4: screens use design tokens only. Colours, fonts and raw sizes live in KGDesign.
+included:
+  - App
+  - Widgets
+  - Packages/KonstanzKit/Sources
+excluded:
+  - Packages/KonstanzKit/.build
+
+disabled_rules:
+  - todo
+  - trailing_comma
+
+opt_in_rules:
+  - force_unwrapping
+  - empty_count
+  - first_where
+  - sorted_imports
+
+line_length:
+  warning: 120
+  error: 160
+  ignores_comments: true
+
+identifier_name:
+  excluded: [id, x, y, n, db, ok]
+
+custom_rules:
+  no_raw_colours_outside_design:
+    name: "Colour outside KGDesign"
+    regex: '(Color\((red|hue|white):|UIColor\((red|hue|white):|#colorLiteral|Color\(hex)'
+    excluded: 'Packages/KonstanzKit/Sources/KGDesign/'
+    message: "Use a KGColor token (plan rule 4)."
+    severity: error
+  no_raw_fonts_outside_design:
+    name: "Font outside KGDesign"
+    regex: '(Font\.custom\(|\.font\(\.system\(size:|UIFont\(name:)'
+    excluded: 'Packages/KonstanzKit/Sources/KGDesign/'
+    message: "Use a KGFont style (plan rule 4)."
+    severity: error

@@ -180,8 +180,8 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 ### A2. Type
 
-- [ ] A2.1 Bundle **Figtree** (variable font, OFL licence, add licence to the Über screen) and register it in `Info.plist`.
-- [ ] A2.2 `KGFont` styles, measured from the design, each tied to a Dynamic Type text style so it grows with the user's setting (`Font.custom(_:size:relativeTo:)`):
+- [x] A2.1 Bundle **Figtree** (variable font 300–900, OFL licence text shipped beside it; also list it on the Über screen). Registered at runtime from the package, so app, widgets, previews and tests get it the same way.
+- [x] A2.2 `KGFont` styles, measured from the design, each tied to a Dynamic Type text style so it grows with the user's setting (`Font.custom(_:size:relativeTo:)`):
   - `hero` 40 Bold (start, "Alles bereit!") → `.largeTitle`
   - `display` 32–34 ExtraBold (onboarding titles) → `.largeTitle`
   - `titleL` 28 Bold ("Favoriten", "Mehr") → `.title`
@@ -196,7 +196,7 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
   - `tab` 11 Bold → `.caption2`
   - `minutes` 17 ExtraBold, **monospaced digits** (times don't jump when they change)
   - `bigMinutes` 26–44 ExtraBold, monospaced digits
-- [ ] A2.3 Preview of every style at default size and at AX3.
+- [x] A2.3 Preview of every style at default size and at AX3 (`TypeSpecimen`, snapshot-tested on iOS: AX3 is 1.76× taller; long titles wrap instead of being cut).
 
 ### A3. Shape, spacing, shadows
 

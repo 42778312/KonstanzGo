@@ -22,7 +22,7 @@ let package = Package(
             name: "KGCore",
             dependencies: [.product(name: "GRDB", package: "GRDB.swift")]
         ),
-        .target(name: "KGDesign"),
+        .target(name: "KGDesign", resources: [.process("Resources")]),
         .target(name: "KGFeatures", dependencies: ["KGCore", "KGDesign"], resources: [.process("Resources")]),
         .testTarget(name: "KGCoreTests", dependencies: ["KGCore"]),
         .testTarget(name: "KGDesignTests", dependencies: ["KGDesign"]),

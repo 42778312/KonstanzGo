@@ -27,8 +27,8 @@ struct GeoTests {
 
     @Test func walkingMinutesRoundUpAndAreAtLeastOne() {
         #expect(Walking.minutes(forMetres: 0) == 1)
-        #expect(Walking.minutes(forMetres: 75) == 1)
-        #expect(Walking.minutes(forMetres: 76) == 2)
+        #expect(Walking.minutes(forMetres: 80) == 1)
+        #expect(Walking.minutes(forMetres: 81) == 2)
         #expect(Walking.minutes(forMetres: 220) == 3)  // design 22: "3 Min. · 220 m"
     }
 }

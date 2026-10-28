@@ -147,7 +147,7 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
   - trip with all stops and times (screen 17)
   - first departure on the next service day to a target (screen 23)
   - lines serving a station (badges in 09)
-- [ ] C4. **Router:** Connection Scan Algorithm, the same approach as the Android app.
+- [x] C4. **Router:** Connection Scan Algorithm, the same approach and rules as the Android app (walk 80 m/min × 1.25 detour, stations within 15 min, transfers on foot up to 400 m, 1 min to change). Measured: a few ms per plan on the Mac; check on an iPhone 12 in T9. Real data: line 4's "Nachtschwärmer" runs go to Mainau at night (01:44), so screen 23's example time differs for real stops.
   - depart-at and arrive-by searches
   - walking to the first stop and from the last stop; transfers with walking between nearby platforms
   - returns several journeys, ranked as "Schnellste", "Wenig laufen", "Wenig umsteigen"

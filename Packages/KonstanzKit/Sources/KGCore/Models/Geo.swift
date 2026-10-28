@@ -31,9 +31,18 @@ public struct Coordinate: Sendable, Hashable, Codable {
     }
 }
 
-/// Walking speed used everywhere a walking time is shown or routed (4.5 km/h, a calm pace).
+/// Walking speed and detour used everywhere a walking time is estimated or routed.
+/// Same values as the Android app, so both give the same journeys.
 public enum Walking {
-    public static let metresPerMinute = 75.0
+    /// 4.8 km/h.
+    public static let metresPerMinute = 80.0
+    /// Streets are not straight: a walk is about 1.25 × the straight-line distance.
+    public static let detour = 1.25
+
+    /// Estimated walking metres between two points when no street path is known.
+    public static func estimatedMetres(from: Coordinate, to: Coordinate) -> Double {
+        from.distance(to: to) * detour
+    }
 
     /// Whole minutes to walk `metres`, at least 1.
     public static func minutes(forMetres metres: Double) -> Int {

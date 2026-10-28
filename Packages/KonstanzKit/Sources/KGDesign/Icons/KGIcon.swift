@@ -58,10 +58,14 @@ extension KGIcon {
 public struct KGIconView: View {
     let icon: KGIcon
     let size: CGFloat
+    let insideFill: Color?
 
-    public init(_ icon: KGIcon, size: CGFloat = 24) {
+    /// `fill` paints the inside of stroked shapes first, as the design's selected tab icons do
+    /// (`fill="#FFCDD0" stroke="#F05A62"`).
+    public init(_ icon: KGIcon, size: CGFloat = 24, fill: Color? = nil) {
         self.icon = icon
         self.size = size
+        insideFill = fill
     }
 
     public var body: some View {
@@ -74,6 +78,7 @@ public struct KGIconView: View {
                 if fill {
                     context.fill(element.path, with: .foreground)
                 } else {
+                    if let insideFill { context.fill(element.path, with: .color(insideFill)) }
                     context.stroke(element.path, with: .foreground,
                                    style: StrokeStyle(lineWidth: element.lineWidth ?? drawing.lineWidth,
                                                       lineCap: .round, lineJoin: .round))

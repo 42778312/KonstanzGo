@@ -78,6 +78,15 @@ public enum KGPalette {
     /// Text on `lineFill` (8.5:1).
     public static let onLine = KGColorValue(0x3A2A00)
     public static let lineTint = KGColorValue(0xFFF4D1, dark: 0x3A3220)
+    /// Text on `lineTint` tags ("Schnellste", "Erster Bus 05:42").
+    public static let lineText = KGColorValue(0x8A6200, dark: 0xFFC043)
+
+    // Settings icon tiles (screen 13), iOS system colours.
+    public static let tileRed = KGColorValue(0xFF3B30, dark: 0xFF453A)
+    public static let tileIndigo = KGColorValue(0x5856D6, dark: 0x5E5CE6)
+    public static let tileBlack = KGColorValue(0x000000, dark: 0x3A3A3C)
+    /// The search field's clear button.
+    public static let clearButton = KGColorValue(0xAEAEB2, dark: 0x636366)
 
     // MARK: Seeri
     public static let seeriBody = KGColorValue(0xF05A62)
@@ -140,6 +149,11 @@ public enum KGColor {
     public static let lineFill = Color(KGPalette.lineFill)
     public static let onLine = Color(KGPalette.onLine)
     public static let lineTint = Color(KGPalette.lineTint)
+    public static let lineText = Color(KGPalette.lineText)
+    public static let tileRed = Color(KGPalette.tileRed)
+    public static let tileIndigo = Color(KGPalette.tileIndigo)
+    public static let tileBlack = Color(KGPalette.tileBlack)
+    public static let clearButton = Color(KGPalette.clearButton)
     public static let seeriBody = Color(KGPalette.seeriBody)
     public static let seeriFace = Color(KGPalette.seeriFace)
     public static let seeriDark = Color(KGPalette.seeriDark)

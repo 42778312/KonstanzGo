@@ -8,12 +8,13 @@ extension KGPalette {
         ("surface", surface), ("card", card), ("pressed", pressed), ("line", line), ("switchOff", switchOff),
         ("handle", handle), ("live", live), ("liveText", liveText), ("liveTint", liveTint),
         ("location", location), ("locationTint", locationTint), ("warn", warn),
-        ("lineFill", lineFill), ("onLine", onLine), ("lineTint", lineTint),
+        ("lineFill", lineFill), ("onLine", onLine), ("lineTint", lineTint), ("lineText", lineText),
+        ("tileRed", tileRed), ("tileIndigo", tileIndigo), ("tileBlack", tileBlack), ("clearButton", clearButton),
     ]
 }
 
 /// The brand board as a live screen: logo, Seeri, colours, type and icons, all drawn from the tokens
-/// (plan A8). Debug builds only; the components join it as they are built (Part B).
+/// (plan A8), then every component in its states (Part B). Debug builds only.
 public struct DesignSystemScreen: View {
     public init() {}
 
@@ -30,6 +31,12 @@ public struct DesignSystemScreen: View {
                 section("Farben") { ColorSwatches() }
                 section("Schrift") { TypeSpecimen() }
                 section("Icons") { IconGallery() }
+                section("Knöpfe") { ComponentGallery(.buttons) }
+                section("Abfahrten") { ComponentGallery(.transit) }
+                section("Bedienelemente") { ComponentGallery(.controls) }
+                section("Unterwegs") { ComponentGallery(.journey) }
+                section("Rückmeldung") { ComponentGallery(.feedback) }
+                section("Karte") { ComponentGallery(.map) }
             }
             .padding(.vertical, KGSpace.large)
         }

@@ -29,4 +29,10 @@ final class DesignTokenSnapshotTests: XCTestCase {
         let view = IconGallery().frame(width: 390)
         assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
     }
+
+    @MainActor
+    func testSeeri() {
+        let view = SeeriGallery().frame(width: 390)
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+    }
 }

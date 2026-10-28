@@ -238,13 +238,13 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 ### A6. Seeri, the mascot
 
-- [ ] A6.1 Rebuild Seeri in SwiftUI `Canvas`/`Shape`s from the design's SVG (viewBox 160×170): body, roof, mirrors, face screen, eyes with highlights, mouth, cheeks, headlights, bumper, wheels. Exact coordinates from `Design/Source/`.
-- [ ] A6.2 Separate animatable parts: eyes (blink), mouth (smile / open / sleepy / teeth), cheeks, headlights (glow), whole body (bounce, tilt).
-- [ ] A6.3 Expressions: `happy`, `excited`, `thinking` (search), `sleepy` (with "z z Z", screen 23), `cheering` (screen 11).
-- [ ] A6.4 Hats as overlays: Halloween witch hat (screen 29); later Christmas, Fasnacht, New Year.
-- [ ] A6.5 `SeeriView(size:expression:hat:animated:)` + previews of every combination.
-- [ ] A6.6 Small logo tile: coral rounded square with the white face and wave line (search bar, widget, app icon).
-- [ ] A6.7 Snapshot test of Seeri against the design's SVG rendered at the same size (difference < 1 %).
+- [x] A6.1 Rebuild Seeri in SwiftUI `Canvas`/`Shape`s from the design's SVG (viewBox 160×170): body, roof, mirrors, face screen, eyes with highlights, mouth, cheeks, headlights, bumper, wheels. Exact coordinates from `Design/Source/`.
+- [x] A6.2 Separate animatable parts: eyes (blink), mouth (smile / open / sleepy / teeth), cheeks, headlights (glow), whole body (bounce, tilt).
+- [x] A6.3 Expressions, all eight the design draws: `happy`, `excited` (02), `joyful` (06, widgets), `curious` (05), `focused` (20), `looking` (04), `sleepy` (23), `spooky` (29). Detail levels `full`, `peek` (07) and `compact` (lists).
+- [x] A6.4 Hats as overlays: Halloween witch hat (screen 29); later Christmas, Fasnacht, New Year.
+- [x] A6.5 `SeeriView(size:expression:hat:animated:)` + previews of every combination.
+- [x] A6.6 Small logo tile: coral rounded square with the white face and wave line (search bar, widget, app icon).
+- [ ] A6.7 *(waits for the reference PNGs, 0.5.1)* Snapshot test of Seeri against the design's SVG rendered at the same size (difference < 1 %). Meanwhile `SeeriGallery` is snapshot-tested and drawn from the design's exact coordinates.
 
 ### A7. App icon and launch
 

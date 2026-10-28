@@ -85,6 +85,13 @@ public enum KGPalette {
     public static let seeriDark = KGColorValue(0x33283A)
     public static let seeriCheek = KGColorValue(0xFFB3A7)
     public static let seeriHeadlight = KGColorValue(0xFFE7A8)
+    /// Headlight rim and grille.
+    public static let seeriTrim = KGColorValue(0xC93D45)
+    /// Sleepy Seeri (screen 23): dimmed face screen and headlights off.
+    public static let seeriFaceDim = KGColorValue(0xDCE6F2)
+    public static let seeriHeadlightOff = KGColorValue(0xB8A9A8)
+    /// Witch hat (screen 29).
+    public static let witchHat = KGColorValue(0x3B1F5C)
 
     // MARK: Map (light and dark styles)
     public static let mapLand = KGColorValue(0xF2F1ED, dark: 0x1E1E1E)
@@ -138,6 +145,10 @@ public enum KGColor {
     public static let seeriDark = Color(KGPalette.seeriDark)
     public static let seeriCheek = Color(KGPalette.seeriCheek)
     public static let seeriHeadlight = Color(KGPalette.seeriHeadlight)
+    public static let seeriTrim = Color(KGPalette.seeriTrim)
+    public static let seeriFaceDim = Color(KGPalette.seeriFaceDim)
+    public static let seeriHeadlightOff = Color(KGPalette.seeriHeadlightOff)
+    public static let witchHat = Color(KGPalette.witchHat)
     public static let halloweenNight = Color(KGPalette.halloweenNight)
     public static let halloweenGround = Color(KGPalette.halloweenGround)
     public static let halloweenTown = Color(KGPalette.halloweenTown)

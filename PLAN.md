@@ -91,7 +91,7 @@ Every snapshot test runs on **both** an iOS 18 and an iOS 27 simulator (T1).
 
 ## Part P — Project skeleton
 
-- [ ] P1. `git init` in `~/XcodeProjects/KonstanzGo`, `.gitignore` for Xcode, `README.md`.
+- [x] P1. `git init` in `~/XcodeProjects/KonstanzGo`, `.gitignore` for Xcode, `README.md`.
 - [ ] P2. `project.yml` (XcodeGen) with these targets:
   - `KonstanzGo` (the app, SwiftUI life cycle)
   - `KonstanzGoWidgets` (widget extension: home-screen widgets, lock-screen widgets, Live Activity)

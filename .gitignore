@@ -1,0 +1,21 @@
+# Xcode (the project is generated from project.yml by XcodeGen)
+*.xcodeproj/
+*.xcworkspace/
+!Packages/**/*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+*.xcresult
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved.bak
+
+# Data pipeline: inputs are large and re-downloadable (see DataPipeline/README.md)
+DataPipeline/.venv/
+DataPipeline/*/data/
+__pycache__/
+
+# macOS
+.DS_Store

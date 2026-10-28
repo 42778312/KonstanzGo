@@ -1,4 +1,5 @@
 import KGCore
+import KGDesign
 import KGFeatures
 import SwiftUI
 
@@ -12,7 +13,15 @@ struct KonstanzGoApp: App {
 
     var body: some Scene {
         WindowGroup {
+            #if DEBUG
+            if UserDefaults.standard.bool(forKey: "KGDesignSystem") {
+                DesignSystemScreen()
+            } else {
+                RootView(info: timetable)
+            }
+            #else
             RootView(info: timetable)
+            #endif
         }
     }
 }

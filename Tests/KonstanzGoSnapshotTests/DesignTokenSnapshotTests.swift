@@ -35,4 +35,21 @@ final class DesignTokenSnapshotTests: XCTestCase {
         let view = SeeriGallery().frame(width: 390)
         assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
     }
+
+    @MainActor
+    func testWordmark() {
+        let view = VStack(spacing: 24) {
+            Wordmark()
+            Wordmark(size: 44, on: .coral).padding(24).background(KGColor.coral)
+        }
+        .padding(24)
+        .background(KGColor.surface)
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+    }
+
+    @MainActor
+    func testColorSwatches() {
+        let view = ColorSwatchesPreview().frame(width: 390)
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+    }
 }

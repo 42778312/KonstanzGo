@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Willkommen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-fade{from{opacity:0}to{opacity:1}}
+@keyframes k-prog{from{width:0%}to{width:25%}}
+@keyframes k-sky{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-drive{0%{transform:translateX(320px) rotate(6deg)}70%{transform:translateX(-10px) rotate(-3deg)}85%{transform:translateX(4px) rotate(1deg)}100%{transform:translateX(0) rotate(0)}}
+@keyframes k-bounce{0%,100%{transform:translateY(0) scale(1,1)}40%{transform:translateY(-8px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.04,.96)}}
+@keyframes k-blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes k-bubble{0%{opacity:0;transform:translateY(12px) scale(.7)}70%{opacity:1;transform:translateY(-2px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes k-wave{to{transform:translateX(-80px)}}
+@keyframes k-gull{0%{transform:translate(0,0)}50%{transform:translate(14px,-8px)}100%{transform:translate(0,0)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; color: #000000">
+
+<div style="position: absolute; left: 12px; right: 20px; top: 58px; height: 44px; display: flex; align-items: center; gap: 10px">
+<a href="SeerotLaunch.dc.html" aria-label="Zurück" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex: none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#AEAEB2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1; height: 16px; border-radius: 8px; background: #E2E2E2; overflow: hidden" aria-label="Schritt 1 von 4">
+<div style="position: relative; width: 25%; height: 100%; border-radius: 8px; background: #F05A62; animation: k-prog .8s cubic-bezier(.3,1.4,.5,1) .2s both"><span style="position: absolute; left: 7px; right: 7px; top: 3px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.35)"></span></div>
+</div>
+</div>
+
+<svg width="390" height="300" viewBox="0 0 390 300" style="position: absolute; left: 0; top: 267px; height: 359px" aria-hidden="true">
+<g fill="#E6EEF6" style="animation: k-sky .8s cubic-bezier(.2,.8,.2,1) .2s both">
+<polygon points="40,200 52,200 50,128 42,128"></polygon>
+<rect x="39" y="114" width="14" height="14" rx="3"></rect>
+<polygon points="38,114 46,104 54,114"></polygon>
+<polygon points="66,164 170,164 154,134 82,134"></polygon>
+<rect x="72" y="164" width="92" height="36"></rect>
+<rect x="250" y="96" width="30" height="104"></rect>
+<polygon points="250,96 265,36 280,96"></polygon>
+<rect x="280" y="150" width="42" height="50"></rect>
+<polygon points="280,150 301,136 322,150"></polygon>
+<polygon points="330,200 330,160 346,146 362,160 362,200"></polygon>
+</g>
+<g style="animation: k-gull 4s ease-in-out infinite">
+<path d="M 300 40 q 6 -6 12 0 q 6 -6 12 0" fill="none" stroke="#9FB7C4" stroke-width="2.5" stroke-linecap="round"></path>
+</g>
+<g style="animation: k-gull 5s ease-in-out 1s infinite">
+<path d="M 110 70 q 5 -5 10 0 q 5 -5 10 0" fill="none" stroke="#9FB7C4" stroke-width="2.5" stroke-linecap="round"></path>
+</g>
+<rect x="0" y="200" width="390" height="100" fill="#B9D8E8"></rect>
+<g transform="translate(0,236)"><path d="M -80 0 q 20 -6 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" style="animation: k-wave 4s linear infinite"></path></g>
+<g transform="translate(0,268)"><path d="M -80 0 q 20 -6 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".7" style="animation: k-wave 6s linear infinite"></path></g>
+</svg>
+
+<div style="position: absolute; left: 95px; top: 300px; width: 200px; height: 212px; animation: k-drive 1s cubic-bezier(.2,.9,.3,1) .4s both">
+<svg width="200" height="212" viewBox="0 0 160 170" style="overflow: visible" aria-hidden="true">
+<ellipse cx="80" cy="164" rx="48" ry="6" fill="#000000" opacity=".12"></ellipse>
+<g style="transform-box: fill-box; transform-origin: 50% 100%; animation: k-bounce 1.6s ease-in-out 1.4s infinite">
+<rect x="8" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="142" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="20" y="16" width="120" height="136" rx="30" fill="#F05A62"></rect>
+<rect x="50" y="6" width="60" height="18" rx="6" fill="#33283A"></rect>
+<text x="80" y="19" text-anchor="middle" font-family="Figtree, Arial, sans-serif" font-weight="800" font-size="10" fill="#FFC043">GO!</text>
+<rect x="32" y="32" width="96" height="60" rx="18" fill="#EAF6FF"></rect>
+<g style="transform-box: fill-box; transform-origin: center; animation: k-blink 4s ease-in-out 1.6s infinite">
+<ellipse cx="62" cy="60" rx="9" ry="11" fill="#000000"></ellipse>
+<ellipse cx="98" cy="60" rx="9" ry="11" fill="#000000"></ellipse>
+<circle cx="65" cy="56" r="3" fill="#FFFFFF"></circle>
+<circle cx="101" cy="56" r="3" fill="#FFFFFF"></circle>
+</g>
+<circle cx="46" cy="80" r="6" fill="#FFB3A7" opacity=".8"></circle>
+<circle cx="114" cy="80" r="6" fill="#FFB3A7" opacity=".8"></circle>
+<path d="M 68 77 Q 80 92 92 77" fill="#000000" stroke="#000000" stroke-width="3" stroke-linejoin="round"></path>
+<path d="M 20 104 q 10 -5 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"></path>
+<circle cx="42" cy="120" r="9" fill="#FFE7A8" stroke="#C93D45" stroke-width="3"></circle>
+<circle cx="118" cy="120" r="9" fill="#FFE7A8" stroke="#C93D45" stroke-width="3"></circle>
+<rect x="62" y="114" width="36" height="12" rx="6" fill="#C93D45"></rect>
+<rect x="20" y="134" width="120" height="18" rx="9" fill="#33283A"></rect>
+<rect x="32" y="148" width="22" height="14" rx="5" fill="#000000"></rect>
+<rect x="106" y="148" width="22" height="14" rx="5" fill="#000000"></rect>
+</g>
+</svg>
+</div>
+
+<div style="position: absolute; left: 40px; right: 40px; top: 150px; display: flex; justify-content: center; transform-origin: 50% 100%; animation: k-bubble .5s cubic-bezier(.2,.9,.3,1) 1.35s both">
+<div style="position: relative; padding: 16px 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E2E2E2; font-size: 19px; font-weight: 600; line-height: 1.35; text-align: center">Hallo Ich bin Seeri und bring dich durch ganz Konstanz.
+<span style="position: absolute; left: 50%; bottom: -9px; width: 16px; height: 16px; margin-left: -8px; background: rgb(255, 255, 255); border-right: 2px solid rgb(242, 227, 226); border-bottom: 2px solid rgb(242, 227, 226); transform: rotate(45deg)"></span></div>
+</div>
+
+<div style="position: absolute; left: 24px; right: 24px; top: 636px; text-align: center; font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -0.01em; animation: k-up .5s cubic-bezier(.2,.8,.2,1) 1.6s both">Willkommen bei KonstanzGo</div>
+
+<a href="SeerotOffline.dc.html" style="position: absolute; left: 20px; right: 20px; bottom: 44px; height: 52px; border-radius: 8px; background: #F05A62; box-shadow: none; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0; display: flex; align-items: center; justify-content: center; animation: k-up .5s cubic-bezier(.2,.8,.2,1) 1.8s both">Los geht's</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

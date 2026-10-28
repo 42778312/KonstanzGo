@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Abfahrtsdetails</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-pop{0%{opacity:0;transform:scale(.4)}65%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+@keyframes k-live{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.6);opacity:0}}
+@keyframes k-move{0%,25%{transform:translateY(0)}75%,100%{transform:translateY(44px)}}
+@keyframes k-fill{0%,25%{height:0}75%,100%{height:44px}}
+@keyframes k-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F6F6F6; font-family: Figtree, Arial, sans-serif; color: #000000">
+
+<div style="position: absolute; left: 8px; right: 8px; top: 54px; height: 50px; display: flex; align-items: center; justify-content: space-between">
+<a href="AppStop.dc.html" style="height: 44px; padding: 0 8px; display: flex; align-items: center; gap: 2px; font-size: 17px; font-weight: 600; color: #276EF1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#276EF1" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>Sternenplatz</a>
+<button type="button" aria-label="Abfahrt teilen" style="width: 44px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"></path><path d="M7 11H5v9h14v-9h-2"></path></svg></button>
+</div>
+
+<div style="position: absolute; left: 16px; right: 16px; top: 108px; border-radius: 22px; background: #FFFFFF; padding: 16px 18px; animation: k-up .45s ease both">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="min-width: 52px; height: 38px; padding: 0 8px; border-radius: 12px; background: #FFC043; color: #3A2A00; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 21px; display: flex; align-items: center; justify-content: center; animation: k-pop .45s cubic-bezier(.2,.9,.3,1) .15s both">9A</span>
+<div><div style="font-size: 19px; font-weight: 800">Bus 9A</div><div style="font-size: 14px; color: #545454">Richtung Universität</div></div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px">
+<div><div style="font-size: 13px; font-weight: 700; color: #545454">Abfahrt Sternenplatz</div><div style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 44px; line-height: 1.05; font-variant-numeric: tabular-nums">14:35</div></div>
+<div style="text-align: right"><div style="font-size: 13px; font-weight: 700; color: #545454">Steig</div><div style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 34px; line-height: 1.1">D</div></div>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 10px">
+<span style="height: 26px; padding: 0 10px 0 8px; border-radius: 13px; background: #E6F4EC; color: #05944F; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800"><span style="position: relative; width: 8px; height: 8px"><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F; animation: k-live 1.3s ease-out infinite"></span><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F"></span></span>Pünktlich</span>
+<span style="font-size: 13px; font-weight: 600; color: #545454">in 4 Min. · 17 Min. Fahrt</span>
+</div>
+</div>
+
+<div style="position: absolute; left: 20px; top: 310px; font-size: 13px; font-weight: 800; letter-spacing: .06em; color: #545454">HALTESTELLEN</div>
+<div style="position: absolute; left: 16px; right: 16px; top: 334px; border-radius: 22px; background: #FFFFFF; padding: 6px 16px; animation: k-up .45s ease .15s both">
+<div style="position: relative">
+<span style="position: absolute; left: 12px; top: 22px; height: 264px; width: 6px; border-radius: 3px; background: #FFCDD0"></span>
+<span style="position: absolute; left: 12px; top: 22px; width: 6px; border-radius: 3px; background: #F05A62; animation: k-fill 4s ease-in-out infinite"></span>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 16px; height: 16px; border-radius: 8px; background: #000000; border: 3px solid #FFFFFF; box-shadow: 0 0 0 2px #F05A62"></span></span><span style="flex: 1; font-size: 16px; font-weight: 800">Sternenplatz</span><span style="font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums">14:35</span></div>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 13px; height: 13px; border-radius: 7px; background: #FFFFFF; border: 3.5px solid #F05A62"></span></span><span style="flex: 1; font-size: 16px; font-weight: 700">Petershausen Bahnhof</span><span style="font-size: 15px; color: #545454; font-variant-numeric: tabular-nums">14:38</span></div>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 13px; height: 13px; border-radius: 7px; background: #FFFFFF; border: 3.5px solid #F05A62"></span></span><span style="flex: 1; font-size: 16px; font-weight: 700">Jahnstraße</span><span style="font-size: 15px; color: #545454; font-variant-numeric: tabular-nums">14:41</span></div>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 13px; height: 13px; border-radius: 7px; background: #FFFFFF; border: 3.5px solid #F05A62"></span></span><span style="flex: 1; font-size: 16px; font-weight: 700">Mainaustraße</span><span style="font-size: 15px; color: #545454; font-variant-numeric: tabular-nums">14:44</span></div>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 13px; height: 13px; border-radius: 7px; background: #FFFFFF; border: 3.5px solid #F05A62"></span></span><span style="flex: 1; font-size: 16px; font-weight: 700">Egg</span><span style="font-size: 15px; color: #545454; font-variant-numeric: tabular-nums">14:48</span></div>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 13px; height: 13px; border-radius: 7px; background: #FFFFFF; border: 3.5px solid #F05A62"></span></span><span style="flex: 1; font-size: 16px; font-weight: 700">Riedstraße</span><span style="font-size: 15px; color: #545454; font-variant-numeric: tabular-nums">14:50</span></div>
+<div style="height: 44px; display: flex; align-items: center; gap: 14px; position: relative"><span style="width: 30px; display: flex; justify-content: center"><span style="width: 16px; height: 16px; border-radius: 3px; background: #000000; transform: rotate(45deg)"></span></span><span style="flex: 1; font-size: 16px; font-weight: 800">Universität</span><span style="font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums">14:52</span></div>
+<div style="position: absolute; left: -1px; top: 6px; width: 32px; height: 32px; animation: k-move 4s ease-in-out infinite" role="img" aria-label="Bus 9A live">
+<span style="position: absolute; inset: 0; border-radius: 16px; background: #F05A62; animation: k-live 1.6s ease-out infinite"></span>
+<span style="position: absolute; inset: 0; border-radius: 16px; background: #D1343E; border: 2.5px solid #FFFFFF; box-shadow: 0 3px 8px rgba(120,20,30,.3); display: flex; align-items: center; justify-content: center; animation: k-bob .5s ease-in-out infinite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg></span>
+</div>
+</div>
+</div>
+
+<a href="AppRouteMap.dc.html" style="position: absolute; left: 20px; right: 20px; bottom: 44px; height: 52px; border-radius: 8px; background: #F05A62; box-shadow: none; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0; display: flex; align-items: center; justify-content: center; gap: 8px; animation: k-up .45s ease .3s both"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"></path><path d="M9 4v14M15 6v14"></path></svg>Auf der Karte</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

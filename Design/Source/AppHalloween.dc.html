@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Halloween-Start</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-fade{from{opacity:0}to{opacity:1}}
+@keyframes k-moon{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-drive{0%{transform:translateX(-260px) rotate(-6deg)}70%{transform:translateX(8px) rotate(3deg)}85%{transform:translateX(-3px)}100%{transform:translateX(0) rotate(0)}}
+@keyframes k-bounce{0%,100%{transform:translateY(0) scale(1,1)}40%{transform:translateY(-8px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.04,.96)}}
+@keyframes k-bat1{0%{transform:translate(-60px,40px)}100%{transform:translate(460px,-60px)}}
+@keyframes k-bat2{0%{transform:translate(440px,10px)}100%{transform:translate(-80px,90px)}}
+@keyframes k-flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.3)}}
+@keyframes k-glow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes k-wave{to{transform:translateX(-80px)}}
+@keyframes k-hat{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<a href="AppMap.dc.html" class="sr" aria-label="Weiter zur Karte" style="display: block; width: 390px; height: 844px; position: relative; overflow: hidden; background: #2A1638; font-family: Figtree, Arial, sans-serif; color: #FFFFFF">
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+<g fill="#FFE9C7"><circle cx="40" cy="90" r="1.6" style="animation: k-glow 2s infinite"></circle><circle cx="120" cy="150" r="1.4" style="animation: k-glow 2.6s .5s infinite"></circle><circle cx="340" cy="70" r="1.8" style="animation: k-glow 3s 1s infinite"></circle><circle cx="250" cy="200" r="1.4" style="animation: k-glow 2.2s .3s infinite"></circle><circle cx="70" cy="260" r="1.6" style="animation: k-glow 2.8s .8s infinite"></circle></g>
+<circle cx="290" cy="170" r="64" fill="#FFB067" style="animation: k-moon 1s cubic-bezier(.2,.8,.2,1) both"></circle>
+<circle cx="270" cy="150" r="10" fill="#F39C52" opacity=".6"></circle><circle cx="310" cy="190" r="7" fill="#F39C52" opacity=".6"></circle>
+<g fill="#1A0C24">
+<polygon points="20,640 32,640 30,560 22,560"></polygon><rect x="19" y="546" width="14" height="14" rx="2"></rect><polygon points="18,546 26,536 34,546"></polygon>
+<polygon points="50,600 160,600 144,566 66,566"></polygon><rect x="56" y="600" width="98" height="40"></rect>
+<rect x="190" y="520" width="32" height="120"></rect><polygon points="190,520 206,456 222,520"></polygon>
+<rect x="222" y="580" width="46" height="60"></rect><polygon points="222,580 245,564 268,580"></polygon>
+<rect x="290" y="560" width="28" height="80"></rect><polygon points="286,560 304,524 322,560"></polygon>
+<rect x="322" y="596" width="68" height="44"></rect>
+</g>
+<g fill="#FFB067"><rect x="66" y="612" width="8" height="10" rx="2" style="animation: k-glow 1.6s infinite"></rect><rect x="132" y="612" width="8" height="10" rx="2" style="animation: k-glow 2.1s .4s infinite"></rect><rect x="202" y="540" width="8" height="12" rx="4" style="animation: k-glow 1.8s .2s infinite"></rect><rect x="336" y="608" width="8" height="10" rx="2" style="animation: k-glow 2.4s .7s infinite"></rect></g>
+<rect x="0" y="640" width="390" height="204" fill="#1F0F2C"></rect>
+<g transform="translate(0,690)"><path d="M -80 0 q 20 -6 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0" fill="none" stroke="#5B3478" stroke-width="2.5" stroke-linecap="round" style="animation: k-wave 5s linear infinite"></path></g>
+<rect x="282" y="660" width="20" height="3" rx="1.5" fill="#FFB067" opacity=".5"></rect>
+<g style="animation: k-bat1 7s linear infinite"><g style="transform-box: fill-box; transform-origin: center; animation: k-flap .3s ease-in-out infinite"><path d="M0 8 Q 8 -4 16 6 Q 20 2 24 6 Q 32 -4 40 8 Q 32 6 28 12 Q 20 8 12 12 Q 8 6 0 8Z" fill="#120818"></path></g></g>
+<g style="animation: k-bat2 9s linear 2s infinite"><g style="transform-box: fill-box; transform-origin: center; animation: k-flap .35s ease-in-out infinite"><path d="M0 8 Q 8 -4 16 6 Q 20 2 24 6 Q 32 -4 40 8 Q 32 6 28 12 Q 20 8 12 12 Q 8 6 0 8Z" fill="#120818"></path></g></g>
+</svg>
+
+<div style="position: absolute; left: 115px; top: 268px; width: 160px; height: 210px; animation: k-drive 1s cubic-bezier(.2,.9,.3,1) .4s both">
+<svg width="160" height="210" viewBox="0 -40 160 210" aria-hidden="true">
+<g style="transform-box: fill-box; transform-origin: 50% 100%; animation: k-bounce 1.6s ease-in-out 1.4s infinite">
+<rect x="8" y="44" width="10" height="26" rx="5" fill="#33283A"></rect><rect x="142" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="20" y="16" width="120" height="136" rx="30" fill="#F05A62"></rect>
+<g style="transform-box: fill-box; transform-origin: 50% 100%; animation: k-hat 2s ease-in-out infinite">
+<ellipse cx="80" cy="14" rx="58" ry="9" fill="#3B1F5C"></ellipse>
+<path d="M 48 12 L 84 -38 L 100 -30 L 112 12 Z" fill="#3B1F5C"></path>
+<rect x="50" y="2" width="60" height="9" fill="#FFB067"></rect>
+</g>
+<rect x="32" y="32" width="96" height="60" rx="18" fill="#EAF6FF"></rect>
+<ellipse cx="62" cy="60" rx="9" ry="11" fill="#000000"></ellipse><ellipse cx="98" cy="60" rx="9" ry="11" fill="#000000"></ellipse>
+<circle cx="65" cy="56" r="3" fill="#FFFFFF"></circle><circle cx="101" cy="56" r="3" fill="#FFFFFF"></circle>
+<circle cx="46" cy="80" r="6" fill="#FFB3A7"></circle><circle cx="114" cy="80" r="6" fill="#FFB3A7"></circle>
+<path d="M 66 76 Q 80 92 94 76 Z" fill="#000000"></path>
+<path d="M 72 77 L 75 82 L 78 77 M 82 77 L 85 82 L 88 77" fill="#FFFFFF"></path>
+<circle cx="42" cy="120" r="9" fill="#FFB067" stroke="#C93D45" stroke-width="3" style="animation: k-glow 1.2s infinite"></circle><circle cx="118" cy="120" r="9" fill="#FFB067" stroke="#C93D45" stroke-width="3" style="animation: k-glow 1.2s .6s infinite"></circle>
+<rect x="62" y="114" width="36" height="12" rx="6" fill="#C93D45"></rect>
+<rect x="20" y="134" width="120" height="18" rx="9" fill="#33283A"></rect>
+<rect x="32" y="148" width="22" height="14" rx="5" fill="#1A0C24"></rect><rect x="106" y="148" width="22" height="14" rx="5" fill="#1A0C24"></rect>
+</g>
+</svg>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 500px; text-align: center; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 40px; letter-spacing: -0.01em; animation: k-up .5s cubic-bezier(.2,.8,.2,1) 1.2s both">Konstanz<span style="display: inline-block; margin-left: 4px; padding: 2px 10px 6px; border-radius: 14px; background: #FFB067; color: #2A1638">Go</span></div>
+<div style="position: absolute; left: 0; right: 0; top: 560px; text-align: center; font-size: 20px; font-weight: 800; color: #FFD9B0; animation: k-fade .5s ease 1.5s both">Schaurig schöne Fahrt!</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font-size: 15px; font-weight: 700; color: #D9C4E8; animation: k-fade .5s ease 1.8s both">Halloween · 31. Oktober</div>
+</a>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

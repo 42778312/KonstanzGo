@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Route auf Karte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-draw{from{stroke-dashoffset:520}to{stroke-dashoffset:0}}
+@keyframes k-fade{from{opacity:0}to{opacity:1}}
+@keyframes k-pulse{0%{transform:scale(1);opacity:.35}100%{transform:scale(3);opacity:0}}
+@keyframes k-live2{0%{transform:scale(.9);opacity:.5}100%{transform:scale(2.2);opacity:0}}
+@keyframes k-busbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+@keyframes k-ride{0%{offset-distance:0%}20%,32%{offset-distance:0%}100%{offset-distance:100%}}
+@keyframes k-sheet{from{transform:translateY(120px)}to{transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F2F1ED; font-family: Figtree, Arial, sans-serif; color: #000000">
+
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+<path d="M250 0H390V330C350 300 320 260 300 240C276 214 258 120 250 0Z" fill="#B9D8E8"></path>
+<path d="M300 240C230 270 160 290 0 300V340C170 334 250 320 330 280Z" fill="#B9D8E8"></path>
+<rect x="30" y="120" width="100" height="70" rx="16" fill="#D8E8D2"></rect>
+<rect x="240" y="600" width="110" height="80" rx="18" fill="#D8E8D2"></rect>
+<g fill="none" stroke-linecap="round"><g stroke="#D5D3CF" stroke-width="14"><path d="M0 460 C120 450 260 470 390 440"></path><path d="M150 0 C160 160 190 300 210 844"></path></g><g stroke="#FFFFFF" stroke-width="10"><path d="M0 460 C120 450 260 470 390 440"></path><path d="M150 0 C160 160 190 300 210 844"></path></g></g>
+<path d="M 70 520 L 122 520" fill="none" stroke="#276EF1" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 10" style="animation: k-fade .4s ease .2s both"></path>
+<path d="M130 520 C150 440 170 380 210 330 S 270 240 290 190" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"></path>
+<path d="M130 520 C150 440 170 380 210 330 S 270 240 290 190" fill="none" stroke="#F05A62" stroke-width="8" stroke-linecap="round" stroke-dasharray="520" style="animation: k-draw 1.1s cubic-bezier(.6,0,.2,1) .3s both"></path>
+<path d="M 290 190 L 330 150" fill="none" stroke="#276EF1" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 10" style="animation: k-fade .4s ease 1.3s both"></path>
+<g fill="#FFFFFF" stroke="#F05A62" stroke-width="3.5"><circle cx="130" cy="520" r="7"></circle><circle cx="190" cy="360" r="5.5"></circle><circle cx="250" cy="262" r="5.5"></circle><circle cx="290" cy="190" r="7"></circle></g>
+<rect x="320" y="140" width="20" height="20" rx="4" fill="#000000" stroke="#FFFFFF" stroke-width="3" transform="rotate(45 330 150)"></rect>
+<text x="140" y="514" font-family="Figtree, Arial, sans-serif" font-weight="800" font-size="12" fill="#000000">Sternenplatz</text>
+<text x="226" y="132" font-family="Figtree, Arial, sans-serif" font-weight="800" font-size="12" fill="#000000">Universität</text>
+</svg>
+<span style="position: absolute; left: 54px; top: 504px; width: 32px; height: 32px; border-radius: 16px; background: #276EF1; animation: k-pulse 2.2s ease-out infinite" aria-hidden="true"></span>
+<span style="position: absolute; left: 60px; top: 510px; width: 20px; height: 20px; border-radius: 10px; background: #276EF1; border: 3.5px solid #FFFFFF" aria-hidden="true"></span>
+
+<div style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M130 520 C150 440 170 380 210 330 S 270 240 290 190'); offset-rotate: auto; offset-distance: 30%; animation: k-ride 9s ease-in-out 1.4s infinite" aria-hidden="true">
+<svg width="60" height="30" viewBox="0 0 60 30" style="position: absolute; left: 0; top: 0"><path d="M 47 9 L 58 15 L 47 21 Z" fill="#D1343E" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"></path></svg>
+</div>
+<div role="img" aria-label="Bus 9A, live" style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M130 520 C150 440 170 380 210 330 S 270 240 290 190'); offset-rotate: 0deg; offset-distance: 30%; animation: k-ride 9s ease-in-out 1.4s infinite; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 15px; background: #F05A62; animation: k-live2 1.8s ease-out infinite"></span>
+<span style="position: relative; height: 28px; padding: 0 9px 0 3px; border-radius: 14px; background: #D1343E; border: 2.5px solid #FFFFFF; box-shadow: 0 4px 10px rgba(120,20,30,.3); display: flex; align-items: center; gap: 4px; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; animation: k-busbob .5s ease-in-out infinite">
+<span style="width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D1343E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg></span>9A
+</span>
+</div>
+
+<div style="position: absolute; left: 16px; right: 16px; top: 58px; height: 64px; border-radius: 18px; background: #FFFFFF; display: flex; align-items: center; gap: 6px; padding: 0 14px 0 4px; box-shadow: 0 6px 20px rgba(0,0,0,.1)">
+<a href="AppRoutes.dc.html" aria-label="Zurück" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1"><div style="font-size: 16px; font-weight: 800">Mein Standort → Universität</div><div style="font-size: 13px; color: #545454">Heute · ab 14:21</div></div>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 560px; bottom: 0; background: #FFFFFF; border-radius: 20px 20px 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.12); padding: 8px 20px 0; animation: k-sheet .5s cubic-bezier(.2,.9,.3,1) .4s both">
+<div style="width: 36px; height: 5px; border-radius: 3px; background: #CFCFCF; margin: 0 auto 12px"></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 28px">14 Min.</span>
+<span style="font-size: 15px; font-weight: 700; color: #545454; font-variant-numeric: tabular-nums">14:21 – 14:35</span>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; margin-top: 10px">
+<span style="height: 30px; padding: 0 10px; border-radius: 15px; background: #E9F0FE; color: #1F4E86; display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F4E86" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"></circle><path d="M11 8 8.5 13l3 2.5-1 5M11 8l3.5 4M8.5 13 6 20"></path></svg>2 Min.</span>
+<svg width="8" height="12" viewBox="0 0 8 12" aria-hidden="true"><path d="M2 2l4 4-4 4" fill="none" stroke="#CFCFCF" stroke-width="2" stroke-linecap="round"></path></svg>
+<span style="height: 30px; padding: 0 10px 0 6px; border-radius: 15px; background: #EEEEEE; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: #000000"><span style="height: 20px; padding: 0 7px; border-radius: 10px; background: #FFC043; color: #3A2A00; font-size: 12px; display: flex; align-items: center">9A</span>10 Min.</span>
+<svg width="8" height="12" viewBox="0 0 8 12" aria-hidden="true"><path d="M2 2l4 4-4 4" fill="none" stroke="#CFCFCF" stroke-width="2" stroke-linecap="round"></path></svg>
+<span style="height: 30px; padding: 0 10px; border-radius: 15px; background: #E9F0FE; color: #1F4E86; display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1F4E86" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"></circle><path d="M11 8 8.5 13l3 2.5-1 5M11 8l3.5 4M8.5 13 6 20"></path></svg>2 Min.</span>
+</div>
+<a href="AppWalk.dc.html" style="margin-top: 12px; height: 48px; border-radius: 14px; background: #F6F6F6; display: flex; align-items: center; gap: 10px; padding: 0 14px; font-size: 15px; font-weight: 700">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#276EF1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20v-7a4 4 0 0 1 4-4h9M15 5l4 4-4 4"></path></svg>
+<span style="flex: 1">Fußweg zum Sternenplatz</span>
+<svg width="8" height="14" viewBox="0 0 8 14" aria-hidden="true"><path d="M1.5 1.5 6.5 7l-5 5.5" fill="none" stroke="#CFCFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+</div>
+
+<a href="AppJourney.dc.html" style="position: absolute; left: 20px; right: 20px; bottom: 40px; height: 52px; border-radius: 8px; background: #F05A62; box-shadow: none; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0; display: flex; align-items: center; justify-content: center; animation: k-up .45s ease .7s both">Los geht's</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

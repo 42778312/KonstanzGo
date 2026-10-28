@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Wann und wie</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-sheet{from{transform:translateY(200px)}to{transform:translateY(0)}}
+@keyframes k-fade{from{opacity:0}to{opacity:1}}
+@keyframes k-pop{0%{transform:scale(.4)}65%{transform:scale(1.2)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F2F1ED; font-family: Figtree, Arial, sans-serif; color: #000000">
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+<path d="M226 0H390V600C356 552 306 500 262 470C230 440 214 300 226 0Z" fill="#B9D8E8"></path>
+<rect width="390" height="844" fill="#000000" opacity=".45" style="animation: k-fade .4s ease both"></rect>
+</svg>
+
+<div style="position: absolute; left: 0; right: 0; top: 70px; bottom: 0; background: #FFFFFF; border-radius: 20px 20px 0 0; padding: 8px 20px 0; animation: k-sheet .45s cubic-bezier(.2,.9,.3,1) both">
+<div style="width: 36px; height: 5px; border-radius: 3px; background: #CFCFCF; margin: 0 auto 10px"></div>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h1 style="margin: 0; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 26px">Wann &amp; wie</h1>
+<a href="AppRoutes.dc.html" aria-label="Schließen" style="width: 40px; height: 40px; border-radius: 20px; background: #F6F6F6; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13" stroke="#000000" stroke-width="2.4" stroke-linecap="round"></path></svg></a>
+</div>
+
+<div role="tablist" aria-label="Zeit" style="margin-top: 14px; height: 42px; border-radius: 12px; background: #F6F6F6; padding: 3px; display: flex">
+<button type="button" role="tab" aria-selected="{{m0}}" onClick="{{set0}}" style="flex: 1; border: none; border-radius: 9px; font-family: inherit; font-size: 15px; font-weight: 800; color: #000000; cursor: pointer; background: {{bg0}}; box-shadow: {{sh0}}">Jetzt</button>
+<button type="button" role="tab" aria-selected="{{m1}}" onClick="{{set1}}" style="flex: 1; border: none; border-radius: 9px; font-family: inherit; font-size: 15px; font-weight: 800; color: #000000; cursor: pointer; background: {{bg1}}; box-shadow: {{sh1}}">Abfahrt</button>
+<button type="button" role="tab" aria-selected="{{m2}}" onClick="{{set2}}" style="flex: 1; border: none; border-radius: 9px; font-family: inherit; font-size: 15px; font-weight: 800; color: #000000; cursor: pointer; background: {{bg2}}; box-shadow: {{sh2}}">Ankunft</button>
+</div>
+
+<div style="position: relative; margin-top: 12px; height: 150px; display: flex; align-items: center; padding: 0 8px; opacity: {{pickOpacity}}; transition: opacity .25s">
+<div style="position: absolute; left: 0; right: 0; top: 57px; height: 36px; border-radius: 10px; background: #EEEEEE"></div>
+<div style="position: relative; flex: 2; display: flex; flex-direction: column; align-items: center; font-variant-numeric: tabular-nums">
+<span style="height: 30px; display: flex; align-items: center; font-size: 15px; color: #9E9E9E">Mo 26. Okt.</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 17px; color: #545454">Di 27. Okt.</span>
+<span style="height: 30px; display: flex; align-items: center; font-family: Figtree, Arial, sans-serif; font-size: 20px; font-weight: 700; color: #000000">Heute</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 17px; color: #545454">Do 29. Okt.</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 15px; color: #9E9E9E">Fr 30. Okt.</span>
+</div>
+<div style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; font-variant-numeric: tabular-nums">
+<span style="height: 30px; display: flex; align-items: center; font-size: 15px; color: #9E9E9E">13</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 17px; color: #545454">14</span>
+<span style="height: 30px; display: flex; align-items: center; font-family: Figtree, Arial, sans-serif; font-size: 20px; font-weight: 700; color: #000000">15</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 17px; color: #545454">16</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 15px; color: #9E9E9E">17</span>
+</div>
+<div style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; font-variant-numeric: tabular-nums">
+<span style="height: 30px; display: flex; align-items: center; font-size: 15px; color: #9E9E9E">50</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 17px; color: #545454">55</span>
+<span style="height: 30px; display: flex; align-items: center; font-family: Figtree, Arial, sans-serif; font-size: 20px; font-weight: 700; color: #000000">00</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 17px; color: #545454">05</span>
+<span style="height: 30px; display: flex; align-items: center; font-size: 15px; color: #9E9E9E">10</span>
+</div>
+</div>
+
+<div style="margin-top: 12px; font-size: 13px; font-weight: 800; letter-spacing: .06em; color: #545454">BEVORZUGEN</div>
+<div role="radiogroup" aria-label="Bevorzugen" style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px">
+<button type="button" role="radio" aria-checked="{{p0}}" onClick="{{pick0}}" style="height: 58px; border-radius: 16px; border: 2px solid {{pb0}}; box-shadow: 0 3px 0 {{ps0}}; background: {{pf0}}; font-family: inherit; color: inherit; display: flex; align-items: center; gap: 12px; padding: 0 14px; text-align: left; cursor: pointer; transition: all .2s">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 4 14h7l-1 7 9-11h-7z"></path></svg>
+<span style="flex: 1"><span style="display: block; font-size: 16px; font-weight: 800">Schnellste</span><span style="display: block; font-size: 13px; color: #545454">Früheste Ankunft</span></span>
+<sc-if value="{{p0}}" hint-placeholder-val="{{ true }}"><span style="width: 24px; height: 24px; border-radius: 12px; background: #000000; display: flex; align-items: center; justify-content: center; animation: k-pop .3s ease both"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if>
+</button>
+<button type="button" role="radio" aria-checked="{{p1}}" onClick="{{pick1}}" style="height: 58px; border-radius: 16px; border: 2px solid {{pb1}}; box-shadow: 0 3px 0 {{ps1}}; background: {{pf1}}; font-family: inherit; color: inherit; display: flex; align-items: center; gap: 12px; padding: 0 14px; text-align: left; cursor: pointer; transition: all .2s">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"></circle><path d="M11 8 8.5 13l3 2.5-1 5M11 8l3.5 4M8.5 13 6 20"></path></svg>
+<span style="flex: 1"><span style="display: block; font-size: 16px; font-weight: 800">Wenig laufen</span><span style="display: block; font-size: 13px; color: #545454">Kürzere Fußwege</span></span>
+<sc-if value="{{p1}}" hint-placeholder-val="{{ false }}"><span style="width: 24px; height: 24px; border-radius: 12px; background: #000000; display: flex; align-items: center; justify-content: center; animation: k-pop .3s ease both"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if>
+</button>
+<button type="button" role="radio" aria-checked="{{p2}}" onClick="{{pick2}}" style="height: 58px; border-radius: 16px; border: 2px solid {{pb2}}; box-shadow: 0 3px 0 {{ps2}}; background: {{pf2}}; font-family: inherit; color: inherit; display: flex; align-items: center; gap: 12px; padding: 0 14px; text-align: left; cursor: pointer; transition: all .2s">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg>
+<span style="flex: 1"><span style="display: block; font-size: 16px; font-weight: 800">Wenig umsteigen</span><span style="display: block; font-size: 13px; color: #545454">Möglichst in einem Bus</span></span>
+<sc-if value="{{p2}}" hint-placeholder-val="{{ false }}"><span style="width: 24px; height: 24px; border-radius: 12px; background: #000000; display: flex; align-items: center; justify-content: center; animation: k-pop .3s ease both"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if>
+</button>
+</div>
+
+<div style="height: 54px; display: flex; align-items: center; gap: 12px; margin-top: 8px">
+<span style="flex: 1; font-size: 16px; font-weight: 800">Barrierefrei</span>
+<button type="button" role="switch" aria-checked="{{acc}}" aria-label="Barrierefrei" onClick="{{toggleAcc}}" style="width: 51px; height: 31px; border-radius: 16px; border: none; padding: 0; position: relative; cursor: pointer; background: {{accBg}}; transition: background .25s"><span style="position: absolute; left: 2px; top: 2px; width: 27px; height: 27px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.16); transform: {{accKnob}}; transition: transform .3s cubic-bezier(.3,1.3,.5,1)"></span></button>
+</div>
+</div>
+
+<a href="AppFinding.dc.html" style="position: absolute; left: 20px; right: 20px; bottom: 44px; height: 52px; border-radius: 8px; background: #F05A62; box-shadow: none; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0; display: flex; align-items: center; justify-content: center">{{cta}}</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 1, pref: 0, acc: false };
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var on = '#FFFFFF', sh = '0 2px 6px rgba(0,0,0,.12)';
+    function pb(i) { return s.pref === i ? '#000000' : '#E2E2E2'; }
+    function ps(i) { return s.pref === i ? 'transparent' : 'transparent'; }
+    function pf(i) { return s.pref === i ? '#F6F6F6' : '#FFFFFF'; }
+    var label = s.mode === 0 ? 'Jetzt suchen' : (s.mode === 1 ? 'Ab heute 15:00 suchen' : 'Ankunft heute 15:00 suchen');
+    return {
+      m0: s.mode === 0, m1: s.mode === 1, m2: s.mode === 2,
+      bg0: s.mode === 0 ? on : 'transparent', bg1: s.mode === 1 ? on : 'transparent', bg2: s.mode === 2 ? on : 'transparent',
+      sh0: s.mode === 0 ? sh : 'none', sh1: s.mode === 1 ? sh : 'none', sh2: s.mode === 2 ? sh : 'none',
+      pickOpacity: s.mode === 0 ? '0.35' : '1',
+      set0: function () { self.setState({ mode: 0 }); },
+      set1: function () { self.setState({ mode: 1 }); },
+      set2: function () { self.setState({ mode: 2 }); },
+      p0: s.pref === 0, p1: s.pref === 1, p2: s.pref === 2,
+      pb0: pb(0), pb1: pb(1), pb2: pb(2), ps0: ps(0), ps1: ps(1), ps2: ps(2), pf0: pf(0), pf1: pf(1), pf2: pf(2),
+      pick0: function () { self.setState({ pref: 0 }); },
+      pick1: function () { self.setState({ pref: 1 }); },
+      pick2: function () { self.setState({ pref: 2 }); },
+      acc: s.acc, accBg: s.acc ? '#05944F' : '#E9E9EB', accKnob: s.acc ? 'translateX(20px)' : 'translateX(0)',
+      toggleAcc: function () { self.setState({ acc: !self.state.acc }); },
+      cta: label
+    };
+  }
+}
+</script>
+</body>
+</html>

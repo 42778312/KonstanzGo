@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Widgets</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-pop{0%{opacity:0;transform:scale(.85)}70%{opacity:1;transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
+@keyframes k-live{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.6);opacity:0}}
+@keyframes k-drive{0%{transform:translateX(0)}100%{transform:translateX(98px)}}
+@keyframes k-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes k-blob{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-12px)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFD9D4; font-family: Figtree, Arial, sans-serif; color: #000000">
+<span style="position: absolute; left: -80px; top: 120px; width: 320px; height: 320px; border-radius: 160px; background: #FFC2BA; animation: k-blob 9s ease-in-out infinite" aria-hidden="true"></span>
+<span style="position: absolute; right: -100px; top: 420px; width: 340px; height: 340px; border-radius: 170px; background: #FFE7A6; animation: k-blob 11s ease-in-out 1s infinite" aria-hidden="true"></span>
+<span style="position: absolute; left: 40px; bottom: -120px; width: 300px; height: 300px; border-radius: 150px; background: #B9D8E8; animation: k-blob 10s ease-in-out 2s infinite" aria-hidden="true"></span>
+
+<div style="position: absolute; left: 24px; right: 24px; top: 70px; height: 158px; border-radius: 24px; background: #FFFFFF; padding: 14px 16px; box-shadow: 0 8px 24px rgba(120,40,40,.12); animation: k-pop .5s cubic-bezier(.2,.9,.3,1) both">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 16px">Sternenplatz</span>
+<span style="width: 24px; height: 24px; border-radius: 7px; background: #F05A62; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 100 100" aria-hidden="true"><rect x="20" y="22" width="60" height="42" rx="15" fill="#FFFFFF"></rect><circle cx="40" cy="41" r="7" fill="#000000"></circle><circle cx="60" cy="41" r="7" fill="#000000"></circle><path d="M 16 79 q 8.5 -8 17 0 t 17 0 t 17 0 t 17 0" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round"></path></svg></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="height: 22px; min-width: 32px; padding: 0 7px; border-radius: 11px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center">9A</span><span style="flex: 1; font-size: 15px; font-weight: 700">Universität</span><span style="position: relative; width: 7px; height: 7px"><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F; animation: k-live 1.3s ease-out infinite"></span><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F"></span></span><span style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 17px; color: #05944F">3 Min.</span></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="height: 22px; min-width: 32px; padding: 0 7px; border-radius: 11px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center">1</span><span style="flex: 1; font-size: 15px; font-weight: 700">Staad</span><span style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 17px">6 Min.</span></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="height: 22px; min-width: 32px; padding: 0 7px; border-radius: 11px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center">5</span><span style="flex: 1; font-size: 15px; font-weight: 700">Petershausen</span><span style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 17px">11 Min.</span></div>
+</div>
+</div>
+
+<div style="position: absolute; left: 24px; top: 250px; width: 158px; height: 158px; border-radius: 24px; background: #000000; color: #FFFFFF; padding: 14px; box-shadow: 0 8px 24px rgba(120,40,40,.18); overflow: hidden; animation: k-pop .5s cubic-bezier(.2,.9,.3,1) .12s both">
+<div style="font-size: 13px; font-weight: 800">Nach Hause</div>
+<div style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 34px; line-height: 1.1; margin-top: 4px">18 Min.</div>
+<div style="font-size: 13px; font-weight: 700; margin-top: 2px">Bus 1 · ab 14:24</div>
+<div style="position: absolute; left: 14px; right: 14px; bottom: 16px; height: 22px">
+<span style="position: absolute; left: 0; right: 0; top: 9px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.35)"></span>
+<svg width="32" height="20" viewBox="0 0 46 26" style="position: absolute; left: 0; top: 0; animation: k-drive 5s ease-in-out infinite alternate" aria-hidden="true"><rect x="1" y="2" width="44" height="18" rx="6" fill="#FFFFFF"></rect><rect x="6" y="5" width="8" height="6" rx="1.5" fill="#000000"></rect><rect x="16" y="5" width="8" height="6" rx="1.5" fill="#C4363F"></rect><rect x="34" y="5" width="8" height="9" rx="2" fill="#C4363F"></rect><circle cx="11" cy="21" r="3.6" fill="#33283A"></circle><circle cx="35" cy="21" r="3.6" fill="#33283A"></circle></svg>
+</div>
+</div>
+
+<div style="position: absolute; left: 208px; top: 250px; width: 158px; height: 158px; border-radius: 24px; background: #FFFFFF; padding: 14px; box-shadow: 0 8px 24px rgba(120,40,40,.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; animation: k-pop .5s cubic-bezier(.2,.9,.3,1) .24s both">
+<svg width="62" height="66" viewBox="0 0 160 170" style="animation: k-bob 2s ease-in-out infinite" aria-hidden="true">
+<rect x="20" y="16" width="120" height="136" rx="30" fill="#F05A62"></rect><rect x="50" y="6" width="60" height="18" rx="6" fill="#33283A"></rect><rect x="32" y="32" width="96" height="60" rx="18" fill="#EAF6FF"></rect>
+<path d="M 50 62 Q 62 50 74 62 M 86 62 Q 98 50 110 62" fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round"></path>
+<path d="M 68 72 Q 80 88 92 72 Z" fill="#000000"></path><rect x="20" y="134" width="120" height="18" rx="9" fill="#33283A"></rect>
+</svg>
+<div style="font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 20px">5 Fahrten</div>
+<div style="font-size: 12px; font-weight: 700; color: #545454">diese Woche</div>
+</div>
+
+<div style="position: absolute; left: 24px; top: 432px; display: flex; flex-direction: column; align-items: center; gap: 6px; animation: k-pop .5s cubic-bezier(.2,.9,.3,1) .36s both">
+<span style="width: 64px; height: 64px; border-radius: 15px; background: #F05A62; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(120,40,40,.2)"><svg width="56" height="56" viewBox="0 0 100 100" aria-hidden="true"><rect x="36" y="11" width="28" height="7" rx="3.5" fill="#FFFFFF" opacity=".7"></rect><rect x="20" y="22" width="60" height="42" rx="15" fill="#FFFFFF"></rect><circle cx="40" cy="41" r="6" fill="#000000"></circle><circle cx="60" cy="41" r="6" fill="#000000"></circle><path d="M 43 52 Q 50 58 57 52" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round"></path><path d="M 16 79 q 8.5 -8 17 0 t 17 0 t 17 0 t 17 0" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"></path></svg></span>
+<span style="font-size: 12px; font-weight: 700">KonstanzGo</span>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 130px; display: flex; justify-content: center; gap: 8px" aria-hidden="true"><span style="width: 7px; height: 7px; border-radius: 4px; background: #000000"></span><span style="width: 7px; height: 7px; border-radius: 4px; background: rgba(42,30,46,.3)"></span></div>
+<div style="position: absolute; left: 12px; right: 12px; bottom: 16px; height: 96px; border-radius: 34px; background: rgba(255,255,255,.45); backdrop-filter: blur(20px)" aria-hidden="true"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

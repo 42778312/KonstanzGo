@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Karte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-sheet{from{transform:translateY(120px)}to{transform:translateY(0)}}
+@keyframes k-pulse{0%{transform:scale(1);opacity:.35}100%{transform:scale(3.4);opacity:0}}
+@keyframes k-live{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.6);opacity:0}}
+@keyframes k-live2{0%{transform:scale(.9);opacity:.5}100%{transform:scale(2.2);opacity:0}}
+@keyframes k-busbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+@keyframes k-l5{0%{offset-distance:0%}45%,60%{offset-distance:66.7%}100%{offset-distance:100%}}
+@keyframes k-l9{0%{offset-distance:0%}25%,35%{offset-distance:36.8%}60%,70%{offset-distance:69.7%}100%{offset-distance:100%}}
+@keyframes k-l1{0%{offset-distance:0%}30%,42%{offset-distance:33.3%}100%{offset-distance:100%}}
+@keyframes k-peek{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(-3deg)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F2F1ED; font-family: Figtree, Arial, sans-serif; color: #000000">
+
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+<path d="M232 0H390V600C368 560 344 520 318 488C292 456 262 440 222 432C160 420 90 424 0 438V372C84 356 160 352 214 344C246 300 236 160 232 0Z" fill="#B9D8E8"></path>
+<rect x="34" y="132" width="96" height="74" rx="16" fill="#D8E8D2"></rect>
+<rect x="252" y="650" width="112" height="84" rx="18" fill="#D8E8D2"></rect>
+<g fill="#E5E2DE">
+<rect x="104" y="476" width="34" height="22" rx="4"></rect><rect x="144" y="472" width="28" height="28" rx="4"></rect>
+<rect x="100" y="506" width="40" height="26" rx="4"></rect><rect x="150" y="512" width="26" height="30" rx="4"></rect>
+<rect x="60" y="250" width="36" height="24" rx="4"></rect><rect x="110" y="262" width="30" height="30" rx="4"></rect>
+<rect x="56" y="300" width="44" height="22" rx="4"></rect>
+</g>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<g stroke="#D5D3CF" stroke-width="14">
+<path d="M20 0 C50 110 120 220 176 300 L200 470"></path>
+<path d="M0 560 C80 548 150 530 200 470 L330 560"></path>
+<path d="M200 470 C190 600 160 720 130 844"></path>
+<path d="M0 236 C80 232 140 250 176 300"></path>
+<path d="M0 690 C120 700 260 690 390 720"></path>
+</g>
+<g stroke="#FFFFFF" stroke-width="10">
+<path d="M20 0 C50 110 120 220 176 300 L200 470"></path>
+<path d="M0 560 C80 548 150 530 200 470 L330 560"></path>
+<path d="M200 470 C190 600 160 720 130 844"></path>
+<path d="M0 236 C80 232 140 250 176 300"></path>
+<path d="M0 690 C120 700 260 690 390 720"></path>
+</g>
+</g>
+<text x="30" y="338" font-family="Figtree, Arial, sans-serif" font-weight="700" font-size="11" letter-spacing="1.5" fill="#757575">PETERSHAUSEN</text>
+<text x="96" y="458" font-family="Figtree, Arial, sans-serif" font-weight="700" font-size="11" letter-spacing="1.5" fill="#757575">ALTSTADT</text>
+<text x="292" y="230" font-family="Figtree, Arial, sans-serif" font-style="italic" font-weight="600" font-size="15" fill="#3F6FB0">Bodensee</text>
+<text x="40" y="404" font-family="Figtree, Arial, sans-serif" font-style="italic" font-weight="600" font-size="13" fill="#3F6FB0">Rhein</text>
+<g fill="#FFFFFF" stroke="#F05A62" stroke-width="3.5">
+<circle cx="176" cy="300" r="6"></circle><circle cx="200" cy="470" r="6"></circle><circle cx="24" cy="236" r="6"></circle><circle cx="300" cy="545" r="6"></circle><circle cx="96" cy="160" r="6"></circle>
+</g>
+</svg>
+
+<div style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M20 0 C50 110 120 220 176 300 L200 470'); offset-rotate: auto; offset-distance: 40%; animation: k-l5 12s ease-in-out 0s infinite" aria-hidden="true">
+<svg width="60" height="30" viewBox="0 0 60 30" style="position: absolute; left: 0; top: 0"><path d="M 47 9 L 58 15 L 47 21 Z" fill="#D1343E" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"></path></svg>
+</div>
+<div role="img" aria-label="Bus Linie 5, live" style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M20 0 C50 110 120 220 176 300 L200 470'); offset-rotate: 0deg; offset-distance: 40%; animation: k-l5 12s ease-in-out 0s infinite; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 15px; background: #F05A62; animation: k-live2 1.8s ease-out infinite"></span>
+<span style="position: relative; height: 28px; padding: 0 9px 0 3px; border-radius: 14px; background: #D1343E; border: 2.5px solid #FFFFFF; box-shadow: 0 4px 10px rgba(120,20,30,.3); display: flex; align-items: center; gap: 4px; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; animation: k-busbob .5s ease-in-out infinite">
+<span style="width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D1343E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg></span>5
+</span>
+</div>
+<div style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M200 470 L176 300 C120 220 50 110 20 0'); offset-rotate: auto; offset-distance: 20%; animation: k-l1 11s ease-in-out -4s infinite" aria-hidden="true">
+<svg width="60" height="30" viewBox="0 0 60 30" style="position: absolute; left: 0; top: 0"><path d="M 47 9 L 58 15 L 47 21 Z" fill="#D1343E" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"></path></svg>
+</div>
+<div role="img" aria-label="Bus Linie 1, live" style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M200 470 L176 300 C120 220 50 110 20 0'); offset-rotate: 0deg; offset-distance: 20%; animation: k-l1 11s ease-in-out -4s infinite; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 15px; background: #F05A62; animation: k-live2 1.8s ease-out infinite"></span>
+<span style="position: relative; height: 28px; padding: 0 9px 0 3px; border-radius: 14px; background: #D1343E; border: 2.5px solid #FFFFFF; box-shadow: 0 4px 10px rgba(120,20,30,.3); display: flex; align-items: center; gap: 4px; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; animation: k-busbob .5s ease-in-out infinite">
+<span style="width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D1343E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg></span>1
+</span>
+</div>
+<div style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M0 236 C80 232 140 250 176 300 L200 470 L330 560'); offset-rotate: auto; offset-distance: 36.8%; animation: k-l9 14s ease-in-out -2s infinite" aria-hidden="true">
+<svg width="60" height="30" viewBox="0 0 60 30" style="position: absolute; left: 0; top: 0"><path d="M 47 9 L 58 15 L 47 21 Z" fill="#D1343E" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"></path></svg>
+</div>
+<div role="img" aria-label="Bus Linie 9A, live" style="position: absolute; left: 0; top: 0; width: 60px; height: 30px; offset-path: path('M0 236 C80 232 140 250 176 300 L200 470 L330 560'); offset-rotate: 0deg; offset-distance: 36.8%; animation: k-l9 14s ease-in-out -2s infinite; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 15px; background: #F05A62; animation: k-live2 1.8s ease-out infinite"></span>
+<span style="position: relative; height: 28px; padding: 0 9px 0 3px; border-radius: 14px; background: #D1343E; border: 2.5px solid #FFFFFF; box-shadow: 0 4px 10px rgba(120,20,30,.3); display: flex; align-items: center; gap: 4px; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; animation: k-busbob .5s ease-in-out infinite">
+<span style="width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D1343E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg></span>9A
+</span>
+</div>
+
+<span style="position: absolute; left: 172px; top: 386px; width: 40px; height: 40px; border-radius: 20px; background: #276EF1; animation: k-pulse 2.4s ease-out infinite" aria-hidden="true"></span>
+<span style="position: absolute; left: 180px; top: 394px; width: 24px; height: 24px; border-radius: 12px; background: #276EF1; border: 4px solid #FFFFFF; box-shadow: 0 3px 10px rgba(39,110,241,.4)" aria-hidden="true"></span>
+
+<a href="AppSearch.dc.html" style="position: absolute; left: 16px; right: 16px; top: 58px; height: 56px; border-radius: 18px; background: #FFFFFF; display: flex; align-items: center; gap: 12px; padding: 0 10px 0 18px; box-shadow: 0 6px 20px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.08)">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5 16 16"></path></svg>
+<span style="flex: 1; font-size: 17px; font-weight: 600; color: #757575">Wohin möchtest du?</span>
+<span style="width: 38px; height: 38px; border-radius: 11px; background: #F05A62; display: flex; align-items: center; justify-content: center"><svg width="32" height="32" viewBox="0 0 100 100" aria-hidden="true"><rect x="20" y="22" width="60" height="42" rx="15" fill="#FFFFFF"></rect><circle cx="40" cy="41" r="6" fill="#000000"></circle><circle cx="60" cy="41" r="6" fill="#000000"></circle><path d="M 43 52 Q 50 58 57 52" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round"></path><path d="M 16 79 q 8.5 -8 17 0 t 17 0 t 17 0 t 17 0" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"></path></svg></span>
+</a>
+<a href="AppMore.dc.html" style="position: absolute; left: 16px; top: 126px; height: 34px; padding: 0 12px 0 8px; border-radius: 17px; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,.1)">
+<span style="width: 20px; height: 20px; border-radius: 10px; background: #05944F; display: flex; align-items: center; justify-content: center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+Offline bereit
+</a>
+
+<div style="position: absolute; right: 16px; top: 300px; display: flex; flex-direction: column; gap: 12px">
+<button type="button" aria-label="Kartenebenen" style="width: 48px; height: 48px; border-radius: 14px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,.12)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg></button>
+<button type="button" aria-label="Mein Standort" style="width: 48px; height: 48px; border-radius: 14px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,.12)"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5 3.8 10.6c-.8.4-.7 1.5.1 1.7l6.6 1.2 1.2 6.6c.2.8 1.3.9 1.7.1z" fill="#276EF1"></path></svg></button>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 470px; bottom: 0; animation: k-sheet .6s cubic-bezier(.2,.9,.3,1) both">
+<div style="position: absolute; right: 22px; top: -50px; width: 62px; height: 66px; animation: k-peek 2.6s ease-in-out infinite">
+<svg width="62" height="66" viewBox="0 0 160 170" aria-hidden="true">
+<rect x="8" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="142" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="20" y="16" width="120" height="136" rx="30" fill="#F05A62"></rect>
+<rect x="50" y="6" width="60" height="18" rx="6" fill="#33283A"></rect>
+<rect x="32" y="32" width="96" height="60" rx="18" fill="#EAF6FF"></rect>
+<ellipse cx="62" cy="60" rx="9" ry="11" fill="#000000"></ellipse>
+<ellipse cx="98" cy="60" rx="9" ry="11" fill="#000000"></ellipse>
+<circle cx="65" cy="56" r="3" fill="#FFFFFF"></circle>
+<circle cx="101" cy="56" r="3" fill="#FFFFFF"></circle>
+<path d="M 70 78 Q 80 88 90 78" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round"></path>
+</svg>
+</div>
+<div style="position: absolute; inset: 0; background: #FFFFFF; border-radius: 20px 20px 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.12); padding: 8px 16px 0">
+<div style="width: 36px; height: 5px; border-radius: 3px; background: #D1D1D6; margin: 0 auto 14px"></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px 12px">
+<h2 style="margin: 0; font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 22px">In deiner Nähe</h2>
+<a href="AppStop.dc.html" style="font-size: 15px; font-weight: 600; color: #276EF1">Alle</a>
+</div>
+<a href="AppStop.dc.html" style="display: block; border-radius: 20px; background: #F6F6F6; padding: 12px 14px 6px">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px">
+<span style="font-size: 17px; font-weight: 700">Sternenplatz</span>
+<span style="height: 26px; padding: 0 10px 0 8px; border-radius: 13px; background: #FFFFFF; display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #3C3C43"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="2"></circle><path d="M11 8 8.5 13l3 2.5-1 5M11 8l3.5 4M8.5 13 6 20"></path></svg>2 Min.</span>
+</div>
+<div style="height: 44px; display: flex; align-items: center; gap: 10px">
+<span style="height: 26px; min-width: 36px; padding: 0 9px; border-radius: 13px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">9A</span>
+<span style="flex: 1; font-size: 16px">Universität</span>
+<span style="position: relative; width: 8px; height: 8px; margin-right: 2px"><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F; animation: k-live 1.3s ease-out infinite"></span><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F"></span></span>
+<span style="font-family: Figtree, Arial, sans-serif; font-size: 17px; font-weight: 800; color: #05944F">3 Min.</span>
+</div>
+<div style="height: 44px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #E2E2E2">
+<span style="height: 26px; min-width: 36px; padding: 0 9px; border-radius: 13px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">1</span>
+<span style="flex: 1; font-size: 16px">Staad</span>
+<span style="font-family: Figtree, Arial, sans-serif; font-size: 17px; font-weight: 800">6 Min.</span>
+</div>
+<div style="height: 44px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #E2E2E2">
+<span style="height: 26px; min-width: 36px; padding: 0 9px; border-radius: 13px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center">5</span>
+<span style="flex: 1; font-size: 16px">Petershausen</span>
+<span style="font-family: Figtree, Arial, sans-serif; font-size: 17px; font-weight: 800">11 Min.</span>
+</div>
+</a>
+</div>
+</div>
+
+<nav aria-label="Tabs" style="position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); display: flex; gap: 2px; padding: 5px; border-radius: 34px; background: rgba(255,255,255,.92); backdrop-filter: blur(24px); box-shadow: 0 10px 30px rgba(0,0,0,.14), inset 0 0 0 .5px rgba(0,0,0,.08)">
+<a href="AppMap.dc.html" aria-current="page" style="width: 96px; height: 54px; border-radius: 27px; background: #EEEEEE; color: #000000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 700"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FFCDD0" stroke="#F05A62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"></path><path d="M9 4v14M15 6v14"></path></svg>Karte</a>
+<a href="AppSaved.dc.html" style="width: 96px; height: 54px; border-radius: 27px; color: #757575; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#757575" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"></path></svg>Favoriten</a>
+<a href="AppMore.dc.html" style="width: 96px; height: 54px; border-radius: 27px; color: #757575; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#757575" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="7.5" cy="12" r="1.2" fill="#757575"></circle><circle cx="12" cy="12" r="1.2" fill="#757575"></circle><circle cx="16.5" cy="12" r="1.2" fill="#757575"></circle></svg>Mehr</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo Haltestelle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-pop{0%{opacity:0;transform:scale(.4)}65%{opacity:1;transform:scale(1.2)}100%{opacity:1;transform:scale(1)}}
+@keyframes k-pulse{0%{transform:scale(1);opacity:.4}100%{transform:scale(3);opacity:0}}
+@keyframes k-live{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.6);opacity:0}}
+@keyframes k-panel{from{transform:translateY(60px)}to{transform:translateY(0)}}
+@keyframes k-ring{0%,100%{transform:rotate(0)}20%{transform:rotate(18deg)}40%{transform:rotate(-16deg)}60%{transform:rotate(10deg)}80%{transform:rotate(-6deg)}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; color: #000000">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 250px; background: #F2F1ED; overflow: hidden">
+<svg width="390" height="250" viewBox="0 0 390 250" aria-hidden="true">
+<path d="M260 0H390V130C350 110 300 100 280 70C268 50 262 30 260 0Z" fill="#B9D8E8"></path>
+<rect x="30" y="40" width="80" height="56" rx="14" fill="#D8E8D2"></rect>
+<g fill="none" stroke-linecap="round"><g stroke="#D5D3CF" stroke-width="14"><path d="M0 170 C120 160 250 175 390 160"></path><path d="M180 0 C190 80 196 160 200 250"></path></g><g stroke="#FFFFFF" stroke-width="10"><path d="M0 170 C120 160 250 175 390 160"></path><path d="M180 0 C190 80 196 160 200 250"></path></g></g>
+<g fill="#E5E2DE"><rect x="230" y="190" width="40" height="28" rx="4"></rect><rect x="110" y="190" width="44" height="24" rx="4"></rect><rect x="60" y="120" width="34" height="26" rx="4"></rect></g>
+</svg>
+<span style="position: absolute; left: 175px; top: 140px; width: 40px; height: 40px; border-radius: 20px; background: #F05A62; animation: k-pulse 2.2s ease-out infinite" aria-hidden="true"></span>
+<span style="position: absolute; left: 171px; top: 136px; width: 48px; height: 48px; border-radius: 24px; background: #F05A62; border: 4px solid #FFFFFF; box-shadow: 0 6px 16px rgba(240,90,98,.4); display: flex; align-items: center; justify-content: center; animation: k-pop .5s cubic-bezier(.2,.9,.3,1) both" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="3"></rect><path d="M5 11h14M8 18v2M16 18v2"></path></svg></span>
+<a href="AppMap.dc.html" aria-label="Zurück" style="position: absolute; left: 16px; top: 58px; width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 4px 14px rgba(0,0,0,.12); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<button type="button" onClick="{{toggleFav}}" aria-label="Favorit" aria-pressed="{{fav}}" style="position: absolute; right: 16px; top: 58px; width: 44px; height: 44px; border-radius: 22px; border: none; background: #FFFFFF; box-shadow: 0 4px 14px rgba(0,0,0,.12); display: flex; align-items: center; justify-content: center; cursor: pointer">
+<sc-if value="{{fav}}" hint-placeholder-val="{{ true }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFC043" stroke="#E0A800" stroke-width="1.6" stroke-linejoin="round" style="animation: k-pop .45s cubic-bezier(.2,.9,.3,1) both" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"></path></svg>
+</sc-if>
+<sc-if value="{{notFav}}" hint-placeholder-val="{{ false }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"></path></svg>
+</sc-if>
+</button>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 222px; bottom: 0; background: #FFFFFF; border-radius: 20px 20px 0 0; padding: 22px 20px 0; animation: k-panel .5s cubic-bezier(.2,.9,.3,1) both">
+<h1 style="margin: 0; font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.01em">Sternenplatz</h1>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 6px">
+<span style="font-size: 15px; color: #545454">Haltestelle · 2 Min. zu Fuß</span>
+<span style="flex: 1"></span>
+<span style="height: 24px; min-width: 32px; padding: 0 8px; border-radius: 12px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">1</span>
+<span style="height: 24px; min-width: 32px; padding: 0 8px; border-radius: 12px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">5</span>
+<span style="height: 24px; min-width: 32px; padding: 0 8px; border-radius: 12px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">9A</span>
+</div>
+
+<div role="tablist" aria-label="Ansicht" style="margin-top: 18px; height: 36px; border-radius: 10px; background: #F6F6F6; padding: 2px; display: flex">
+<button type="button" role="tab" aria-selected="{{isDep}}" onClick="{{showDep}}" style="flex: 1; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; color: #000000; cursor: pointer; background: {{depBg}}; box-shadow: {{depShadow}}">Abfahrten</button>
+<button type="button" role="tab" aria-selected="{{isLines}}" onClick="{{showLines}}" style="flex: 1; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; color: #000000; cursor: pointer; background: {{linesBg}}; box-shadow: {{linesShadow}}">Linien</button>
+</div>
+
+<sc-if value="{{isDep}}" hint-placeholder-val="{{ true }}">
+<div style="margin-top: 8px">
+<a href="AppTrip.dc.html" style="height: 64px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E2E2; animation: k-up .35s ease .05s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">9A</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Universität</div><div style="font-size: 13px; color: #545454">Steig A</div></div>
+<span style="position: relative; width: 8px; height: 8px"><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F; animation: k-live 1.3s ease-out infinite"></span><span style="position: absolute; inset: 0; border-radius: 4px; background: #05944F"></span></span>
+<div style="text-align: right; color: #05944F"><span style="font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 24px">3</span> <span style="font-size: 13px; font-weight: 600">Min.</span></div>
+</a>
+<div style="height: 64px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E2E2; animation: k-up .35s ease .1s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">1</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Staad</div><div style="font-size: 13px; color: #545454">Steig B</div></div>
+<div style="text-align: right"><span style="font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 24px">6</span> <span style="font-size: 13px; font-weight: 600">Min.</span></div>
+</div>
+<div style="height: 64px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E2E2; animation: k-up .35s ease .15s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">5</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Petershausen</div><div style="font-size: 13px; color: #545454">Steig A</div></div>
+<div style="text-align: right"><span style="font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 24px">11</span> <span style="font-size: 13px; font-weight: 600">Min.</span></div>
+</div>
+<div style="height: 64px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E2E2; animation: k-up .35s ease .2s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">9A</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Universität</div><div style="font-size: 13px; color: #545454">Steig A</div></div>
+<div style="text-align: right"><span style="font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 24px">18</span> <span style="font-size: 13px; font-weight: 600">Min.</span></div>
+</div>
+<div style="height: 64px; display: flex; align-items: center; gap: 12px; animation: k-up .35s ease .25s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">1</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Staad</div><div style="font-size: 13px; color: #545454">Steig B</div></div>
+<div style="text-align: right"><span style="font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 24px">21</span> <span style="font-size: 13px; font-weight: 600">Min.</span></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isLines}}" hint-placeholder-val="{{ false }}">
+<div style="margin-top: 8px">
+<a href="AppRoutes.dc.html" style="height: 72px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E2E2; animation: k-up .35s ease .05s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">9A</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Richtung Universität</div><div style="font-size: 13px; color: #545454">14:21 · 14:36 · 14:51</div></div>
+<svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true"><path d="M2 2l6 6-6 6" fill="none" stroke="#C7C7CC" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+<a href="AppRoutes.dc.html" style="height: 72px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E2E2; animation: k-up .35s ease .1s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">1</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Richtung Staad</div><div style="font-size: 13px; color: #545454">14:24 · 14:39 · 14:54</div></div>
+<svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true"><path d="M2 2l6 6-6 6" fill="none" stroke="#C7C7CC" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+<a href="AppRoutes.dc.html" style="height: 72px; display: flex; align-items: center; gap: 12px; animation: k-up .35s ease .15s both">
+<span style="height: 28px; min-width: 40px; padding: 0 10px; border-radius: 14px; background: #FFC043; color: #3A2A00; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center">5</span>
+<div style="flex: 1"><div style="font-size: 17px; font-weight: 600">Richtung Petershausen</div><div style="font-size: 13px; color: #545454">14:29 · 14:44 · 14:59</div></div>
+<svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true"><path d="M2 2l6 6-6 6" fill="none" stroke="#C7C7CC" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{notAlarm}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{toggleAlarm}}" style="position: absolute; left: 20px; right: 20px; bottom: 44px; height: 52px; border-radius: 8px; border: none; background: #F05A62; box-shadow: none; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z" fill="#FFFFFF"></path><path d="M10 21h4" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path></svg>
+Alarm stellen
+</button>
+</sc-if>
+<sc-if value="{{alarm}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{toggleAlarm}}" style="position: absolute; left: 20px; right: 20px; bottom: 44px; height: 52px; border-radius: 8px; border: 1px solid #E2E2E2; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,.10); color: #05944F; font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 17px; letter-spacing: .03em; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; animation: k-pop .4s cubic-bezier(.2,.9,.3,1) both">
+<svg width="20" height="20" viewBox="0 0 24 24" style="transform-origin: 50% 10%; animation: k-ring .8s ease .2s both" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z" fill="#05944F"></path><path d="M10 21h4" stroke="#05944F" stroke-width="2.4" stroke-linecap="round"></path></svg>
+Alarm 2 Min. vorher
+</button>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { fav: true, tab: 'dep', alarm: false };
+  }
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var dep = s.tab === 'dep';
+    var on = '#FFFFFF', off = 'transparent', sh = '0 1px 4px rgba(0,0,0,.12)';
+    return {
+      fav: s.fav, notFav: !s.fav,
+      isDep: dep, isLines: !dep,
+      depBg: dep ? on : off, linesBg: dep ? off : on,
+      depShadow: dep ? sh : 'none', linesShadow: dep ? 'none' : sh,
+      alarm: s.alarm, notAlarm: !s.alarm,
+      toggleFav: function () { self.setState({ fav: !self.state.fav }); },
+      showDep: function () { self.setState({ tab: 'dep' }); },
+      showLines: function () { self.setState({ tab: 'lines' }); },
+      toggleAlarm: function () { self.setState({ alarm: !self.state.alarm }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

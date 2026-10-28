@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>KonstanzGo alles bereit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes k-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes k-fade{from{opacity:0}to{opacity:1}}
+@keyframes k-pop{0%{opacity:0;transform:scale(.3)}65%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+@keyframes k-enter{0%{opacity:0;transform:scale(.2) translateY(60px)}60%{opacity:1;transform:scale(1.1) translateY(-10px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes k-jump{0%,100%{transform:translateY(0) scale(1.05,.95)}15%{transform:translateY(0) scale(.95,1.06)}45%{transform:translateY(-34px) scale(1,1) rotate(-4deg)}60%{transform:translateY(-34px) rotate(4deg)}85%{transform:translateY(0) scale(1.06,.94)}}
+@keyframes k-shadow{0%,15%,85%,100%{transform:scale(1);opacity:.14}45%,60%{transform:scale(.6);opacity:.06}}
+@keyframes k-confetti{0%{transform:translateY(-60px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(500px) rotate(620deg);opacity:0}}
+@keyframes k-burst{0%{transform:scale(.4);opacity:.5}100%{transform:scale(2.6);opacity:0}}
+@media (prefers-reduced-motion: reduce){.sr *{animation:none !important}}
+</style>
+</helmet>
+<div class="sr" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FFFFFF; font-family: Figtree, Arial, sans-serif; color: #000000">
+
+
+<span style="position: absolute; left: 31px; top: 38px; width: 10px; height: 16px; border-radius: 3px; background: #F05A62; opacity: 0; animation: k-confetti 3.2s linear .5s infinite"></span>
+<span style="position: absolute; left: 70px; top: 38px; width: 12px; height: 12px; border-radius: 6px; background: #FFC043; opacity: 0; animation: k-confetti 3.8s linear .9s infinite"></span>
+<span style="position: absolute; left: 105px; top: 38px; width: 8px; height: 18px; border-radius: 3px; background: #05944F; opacity: 0; animation: k-confetti 3.4s linear .2s infinite"></span>
+<span style="position: absolute; left: 140px; top: 38px; width: 12px; height: 10px; border-radius: 3px; background: #276EF1; opacity: 0; animation: k-confetti 4s linear 1.3s infinite"></span>
+<span style="position: absolute; left: 179px; top: 38px; width: 10px; height: 16px; border-radius: 3px; background: #FFB3A7; opacity: 0; animation: k-confetti 3.6s linear .7s infinite"></span>
+<span style="position: absolute; left: 214px; top: 38px; width: 12px; height: 12px; border-radius: 6px; background: #F05A62; opacity: 0; animation: k-confetti 3.3s linear 1.6s infinite"></span>
+<span style="position: absolute; left: 250px; top: 38px; width: 8px; height: 18px; border-radius: 3px; background: #FFC043; opacity: 0; animation: k-confetti 3.9s linear .4s infinite"></span>
+<span style="position: absolute; left: 285px; top: 38px; width: 12px; height: 10px; border-radius: 3px; background: #05944F; opacity: 0; animation: k-confetti 3.5s linear 1.1s infinite"></span>
+<span style="position: absolute; left: 320px; top: 38px; width: 10px; height: 16px; border-radius: 3px; background: #276EF1; opacity: 0; animation: k-confetti 3.7s linear .6s infinite"></span>
+<span style="position: absolute; left: 355px; top: 38px; width: 12px; height: 12px; border-radius: 6px; background: #F05A62; opacity: 0; animation: k-confetti 3.1s linear 1.4s infinite"></span>
+<span style="position: absolute; left: 51px; top: 38px; width: 8px; height: 14px; border-radius: 3px; background: #276EF1; opacity: 0; animation: k-confetti 4.2s linear 2s infinite"></span>
+<span style="position: absolute; left: 160px; top: 38px; width: 10px; height: 10px; border-radius: 5px; background: #FFC043; opacity: 0; animation: k-confetti 3.6s linear 2.3s infinite"></span>
+<span style="position: absolute; left: 269px; top: 38px; width: 8px; height: 16px; border-radius: 3px; background: #FFB3A7; opacity: 0; animation: k-confetti 4.1s linear 1.8s infinite"></span>
+<span style="position: absolute; left: 339px; top: 38px; width: 10px; height: 14px; border-radius: 3px; background: #05944F; opacity: 0; animation: k-confetti 3.4s linear 2.6s infinite"></span>
+
+
+<span style="position: absolute; left: 95px; top: 210px; width: 200px; height: 200px; border-radius: 100px; background: #EEEEEE; opacity: 0; animation: k-burst 1s ease-out .5s both" aria-hidden="true"></span>
+
+<div style="position: absolute; left: 95px; top: 202px; width: 200px; height: 210px; animation: k-enter .7s cubic-bezier(.2,.9,.3,1) .2s both">
+<svg width="200" height="212" viewBox="0 0 160 170" style="overflow: visible" aria-hidden="true">
+<ellipse cx="80" cy="164" rx="48" ry="6" fill="#000000" opacity=".14" style="transform-box: fill-box; transform-origin: center; animation: k-shadow 1.3s ease-in-out 1s infinite"></ellipse>
+<g style="transform-box: fill-box; transform-origin: 50% 100%; animation: k-jump 1.3s cubic-bezier(.4,0,.4,1) 1s infinite">
+<rect x="8" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="142" y="44" width="10" height="26" rx="5" fill="#33283A"></rect>
+<rect x="20" y="16" width="120" height="136" rx="30" fill="#F05A62"></rect>
+<rect x="50" y="6" width="60" height="18" rx="6" fill="#33283A"></rect>
+<text x="80" y="19" text-anchor="middle" font-family="Figtree, Arial, sans-serif" font-weight="800" font-size="10" fill="#FFC043">GO!</text>
+<rect x="32" y="32" width="96" height="60" rx="18" fill="#EAF6FF"></rect>
+<path d="M 52 62 Q 62 50 72 62 M 88 62 Q 98 50 108 62" fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round"></path>
+<circle cx="46" cy="78" r="7" fill="#FFB3A7" opacity=".85"></circle>
+<circle cx="114" cy="78" r="7" fill="#FFB3A7" opacity=".85"></circle>
+<path d="M 66 74 Q 80 94 94 74 Z" fill="#000000" stroke="#000000" stroke-width="3" stroke-linejoin="round"></path>
+<path d="M 72 82 Q 80 88 88 82" fill="#FFC043"></path>
+<path d="M 20 104 q 10 -5 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"></path>
+<circle cx="42" cy="120" r="9" fill="#FFE7A8" stroke="#C93D45" stroke-width="3"></circle>
+<circle cx="118" cy="120" r="9" fill="#FFE7A8" stroke="#C93D45" stroke-width="3"></circle>
+<rect x="62" y="114" width="36" height="12" rx="6" fill="#C93D45"></rect>
+<rect x="20" y="134" width="120" height="18" rx="9" fill="#33283A"></rect>
+<rect x="32" y="148" width="22" height="14" rx="5" fill="#000000"></rect>
+<rect x="106" y="148" width="22" height="14" rx="5" fill="#000000"></rect>
+</g>
+</svg>
+</div>
+
+<div style="position: absolute; left: 24px; right: 24px; top: 462px; display: flex; flex-direction: column; align-items: center; gap: 8px">
+<h1 style="margin: 0; font-family: Figtree, Arial, sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.01em; animation: k-pop .5s cubic-bezier(.2,.9,.3,1) .8s both">Alles bereit!</h1>
+<p style="margin: 0; font-size: 17px; color: #545454; animation: k-up .5s cubic-bezier(.2,.8,.2,1) 1s both">Gute Fahrt durch Konstanz.</p>
+</div>
+
+<div style="position: absolute; left: 20px; right: 20px; top: 582px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap">
+<span style="height: 40px; padding: 0 14px 0 10px; border-radius: 20px; background: #F6F6F6; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; animation: k-pop .45s cubic-bezier(.2,.9,.3,1) 1.2s both">
+<span style="width: 24px; height: 24px; border-radius: 12px; background: #05944F; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+Offline gespeichert
+</span>
+<span style="height: 40px; padding: 0 14px 0 10px; border-radius: 20px; background: #F6F6F6; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; animation: k-pop .45s cubic-bezier(.2,.9,.3,1) 1.35s both">
+<span style="width: 24px; height: 24px; border-radius: 12px; background: #05944F; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+Alarme an
+</span>
+</div>
+
+<a href="AppMap.dc.html" style="position: absolute; left: 20px; right: 20px; bottom: 44px; height: 52px; border-radius: 8px; background: #F05A62; box-shadow: none; color: #FFFFFF; font-family: Figtree, Arial, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0; display: flex; align-items: center; justify-content: center; animation: k-up .5s cubic-bezier(.2,.8,.2,1) 1.5s both">Losfahren</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Seelinie launch</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#9FC6D4}a:hover{color:#F4EFE6}
+@keyframes sl-fade{0%{opacity:0}10%{opacity:1}92%{opacity:1}100%{opacity:0}}
+@keyframes sl-sun{0%{transform:translateY(70px);opacity:0}12%{opacity:1}30%{transform:translateY(0)}92%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+@keyframes sl-sky{0%,8%{transform:translateY(30px);opacity:0}26%{transform:translateY(0);opacity:1}92%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+@keyframes sl-draw{0%,24%{stroke-dashoffset:460}46%{stroke-dashoffset:0}92%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes sl-stop{0%,40%{transform:scale(0)}45%{transform:scale(1.4)}49%{transform:scale(1)}92%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes sl-bus{0%,44%{transform:translateX(-160px);opacity:0}47%{opacity:1}68%{transform:translateX(152px)}92%{transform:translateX(152px);opacity:1}100%{transform:translateX(210px);opacity:0}}
+@keyframes sl-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.2px)}}
+@keyframes sl-beam{0%,60%{opacity:0}68%{opacity:.35}92%{opacity:.35}100%{opacity:0}}
+@keyframes sl-letter{0%,56%{transform:translateY(30px);opacity:0}66%{transform:translateY(0);opacity:1}92%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}
+@keyframes sl-tag{0%,68%{opacity:0;transform:translateY(8px)}76%{opacity:1;transform:translateY(0)}92%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+@keyframes sl-bar{0%,16%{transform:scaleX(0)}82%{transform:scaleX(1)}92%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes sl-saving{0%,8%{opacity:0}14%{opacity:1}78%{opacity:1}82%,100%{opacity:0}}
+@keyframes sl-ready{0%,82%{opacity:0;transform:translateY(4px)}86%{opacity:1;transform:translateY(0)}92%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+@keyframes sl-wave{from{transform:translateX(0)}to{transform:translateX(-80px)}}
+@keyframes sl-twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes sl-shimmer{0%,100%{opacity:.2;transform:scaleX(.6)}50%{opacity:.7;transform:scaleX(1)}}
+@media (prefers-reduced-motion: reduce){.sl-root *{animation:none !important}}
+</style>
+</helmet>
+<div class="sl-root" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B1E2D; font-family: Inter, system-ui, sans-serif">
+
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+<circle cx="300" cy="405" r="40" fill="{{accent}}" style="animation: sl-sun 7s cubic-bezier(.2,.8,.2,1) infinite both"></circle>
+<g style="animation: sl-sky 7s cubic-bezier(.2,.8,.2,1) infinite both">
+<rect x="18" y="430" width="42" height="40" fill="#1A4560"></rect>
+<polygon points="60,470 60,425 80,405 100,425 100,470" fill="#1A4560"></polygon>
+<rect x="104" y="440" width="44" height="30" fill="#1A4560"></rect>
+<rect x="150" y="350" width="36" height="120" fill="#1F5170"></rect>
+<polygon points="150,350 168,286 186,350" fill="#1F5170"></polygon>
+<rect x="186" y="415" width="50" height="55" fill="#1A4560"></rect>
+<polygon points="186,415 211,398 236,415" fill="#1A4560"></polygon>
+<rect x="236" y="435" width="34" height="35" fill="#1A4560"></rect>
+<polygon points="270,470 270,420 290,402 310,420 310,470" fill="#1A4560"></polygon>
+<rect x="310" y="440" width="30" height="30" fill="#1A4560"></rect>
+<rect x="340" y="428" width="52" height="42" fill="#1A4560"></rect>
+<rect x="163" y="372" width="10" height="16" rx="5" fill="#0B1E2D"></rect>
+<rect x="30" y="444" width="6" height="8" fill="#FFD58A" style="animation: sl-twinkle 2.4s ease-in-out infinite"></rect>
+<rect x="76" y="440" width="6" height="8" fill="#FFD58A" style="animation: sl-twinkle 3.1s ease-in-out .6s infinite"></rect>
+<rect x="246" y="446" width="6" height="8" fill="#FFD58A" style="animation: sl-twinkle 2.8s ease-in-out 1.1s infinite"></rect>
+<rect x="356" y="440" width="6" height="8" fill="#FFD58A" style="animation: sl-twinkle 3.4s ease-in-out .3s infinite"></rect>
+</g>
+<rect x="0" y="470" width="390" height="374" fill="#0E3249"></rect>
+<g style="animation: sl-fade 7s ease infinite both">
+<rect x="270" y="482" width="60" height="3" rx="1.5" fill="{{accent}}" style="transform-box: fill-box; transform-origin: center; animation: sl-shimmer 3s ease-in-out infinite"></rect>
+<rect x="282" y="516" width="40" height="3" rx="1.5" fill="{{accent}}" style="transform-box: fill-box; transform-origin: center; animation: sl-shimmer 3.6s ease-in-out .5s infinite"></rect>
+<rect x="290" y="538" width="24" height="3" rx="1.5" fill="{{accent}}" style="transform-box: fill-box; transform-origin: center; animation: sl-shimmer 2.6s ease-in-out 1s infinite"></rect>
+</g>
+<g transform="translate(0,580)"><path d="M -80 0 q 20 -6 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0" fill="none" stroke="#2FB8C9" stroke-width="2" stroke-linecap="round" opacity=".35" style="animation: sl-wave 5s linear infinite"></path></g>
+<g transform="translate(0,640)"><path d="M -80 0 q 20 -6 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0" fill="none" stroke="#2FB8C9" stroke-width="2" stroke-linecap="round" opacity=".22" style="animation: sl-wave 7s linear infinite"></path></g>
+<g transform="translate(0,730)"><path d="M -80 0 q 20 -6 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0" fill="none" stroke="#2FB8C9" stroke-width="2" stroke-linecap="round" opacity=".15" style="animation: sl-wave 9s linear infinite"></path></g>
+<path d="M 0 500 Q 50 548 100 500 Q 150 548 200 500 Q 250 548 300 500 Q 350 548 400 500" fill="none" stroke="#2FB8C9" stroke-width="2.5" stroke-dasharray="460" style="animation: sl-draw 7s cubic-bezier(.6,0,.2,1) infinite both"></path>
+<path d="M -10 500 L 400 500" fill="none" stroke="#F4EFE6" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="460" style="animation: sl-draw 7s cubic-bezier(.6,0,.2,1) infinite both"></path>
+<circle cx="70" cy="500" r="6" fill="#F4EFE6" stroke="#0B1E2D" stroke-width="3" style="transform-box: fill-box; transform-origin: center; animation: sl-stop 7s ease infinite both"></circle>
+<circle cx="195" cy="500" r="6" fill="#F4EFE6" stroke="#0B1E2D" stroke-width="3" style="transform-box: fill-box; transform-origin: center; animation: sl-stop 7s ease .2s infinite both"></circle>
+<circle cx="320" cy="500" r="6" fill="#F4EFE6" stroke="#0B1E2D" stroke-width="3" style="transform-box: fill-box; transform-origin: center; animation: sl-stop 7s ease .4s infinite both"></circle>
+<g transform="translate(152,0)" style="animation: sl-bus 7s cubic-bezier(.25,.9,.3,1) infinite both">
+<g style="animation: sl-bob .45s ease-in-out infinite">
+<polygon points="86,484 140,474 140,498" fill="#FFE7B0" style="animation: sl-beam 7s ease infinite both"></polygon>
+<rect x="0" y="466" width="86" height="28" rx="8" fill="{{accent}}"></rect>
+<rect x="8" y="471" width="14" height="10" rx="2" fill="#0B1E2D" opacity=".85"></rect>
+<rect x="26" y="471" width="14" height="10" rx="2" fill="#0B1E2D" opacity=".85"></rect>
+<rect x="44" y="471" width="14" height="10" rx="2" fill="#0B1E2D" opacity=".85"></rect>
+<rect x="62" y="471" width="18" height="10" rx="2" fill="#0B1E2D" opacity=".85"></rect>
+<rect x="0" y="485" width="86" height="3" fill="#0B1E2D" opacity=".25"></rect>
+<circle cx="83" cy="489" r="2" fill="#FFE7B0"></circle>
+<circle cx="18" cy="495" r="5" fill="#0B1E2D" stroke="#F4EFE6" stroke-width="1.5"></circle>
+<circle cx="68" cy="495" r="5" fill="#0B1E2D" stroke="#F4EFE6" stroke-width="1.5"></circle>
+</g>
+</g>
+</svg>
+
+<div style="position: absolute; left: 0; right: 0; top: 92px; text-align: center; font-size: 12px; font-weight: 600; letter-spacing: .24em; color: #9FC6D4; animation: sl-fade 7s ease infinite both">KONSTANZ · BODENSEE</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 592px; text-align: center; font-family: Sora, Inter, sans-serif; font-weight: 700; font-size: 56px; letter-spacing: -0.02em; color: #F4EFE6; line-height: 1">
+<span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) 0s infinite both">S</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .06s infinite both">e</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .12s infinite both">e</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .18s infinite both">l</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .24s infinite both">i</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .30s infinite both">n</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .36s infinite both">i</span><span style="display: inline-block; animation: sl-letter 7s cubic-bezier(.2,.8,.2,1) .42s infinite both">e</span>
+</div>
+<div style="position: absolute; left: 0; right: 0; top: 664px; text-align: center; font-size: 16px; font-weight: 500; color: #9FC6D4; animation: sl-tag 7s ease infinite both">Konstanz, in motion.</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 756px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<div style="position: relative; height: 18px; width: 240px">
+<div style="position: absolute; inset: 0; text-align: center; font-size: 13px; color: #9FC6D4; opacity: 0; animation: sl-saving 7s ease infinite both">Saving Konstanz for offline use</div>
+<div style="position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #F4EFE6; animation: sl-ready 7s ease infinite both">
+<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="7" fill="#2FB8C9"></circle><path d="M 4 7.2 L 6.2 9.3 L 10 5" fill="none" stroke="#0B1E2D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span>Offline map ready</span>
+</div>
+</div>
+<div style="width: 120px; height: 3px; border-radius: 2px; background: #1A4560; overflow: hidden">
+<div style="width: 100%; height: 100%; background: #2FB8C9; transform-origin: left center; animation: sl-bar 7s cubic-bezier(.4,0,.2,1) infinite both"></div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF8A3D","options":["#FF8A3D","#F2C230","#FF5E5B","#2FB8C9"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#FF8A3D' };
+  }
+}
+</script>
+</body>
+</html>

@@ -82,8 +82,8 @@ Every snapshot test runs on **both** an iOS 18 and an iOS 27 simulator (T1).
 
 ### 0.5 Reference material
 
-- [ ] 0.5.1 Export all 29 artboards from the canvas as PNG at 1×, 2× and 3× into `Design/Reference/` (`01-start.png` … `29-saisonal.png`, `brand.png`).
-- [ ] 0.5.2 Copy the design's HTML sources into `Design/Source/` (read-only). They are the source for exact numbers: positions, sizes, colours, curves, delays.
+- [ ] 0.5.1 *(open — needs a claude.ai sign-in to the canvas, or Share › Export from it; needed from Milestone 2)* Export all 29 artboards from the canvas as PNG at 1×, 2× and 3× into `Design/Reference/` (`01-start.png` … `29-saisonal.png`, `brand.png`).
+- [x] 0.5.2 Copy the design's HTML sources into `Design/Source/` (read-only). They are the source for exact numbers: positions, sizes, colours, curves, delays.
 - [ ] 0.5.3 Write `Design/Spec/<screen>.md` for each screen: every element with its frame (x, y, w, h), font, colour, radius, shadow, animation, and what it links to. This is the checklist each screen step is compared with. (Done screen by screen, just before the screen is built.)
 - [ ] 0.5.4 Record the animated screens (01, 02–06, 07, 11, 20, 29) as short videos from the canvas so motion can be compared, not only still frames.
 

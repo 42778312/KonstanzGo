@@ -1,0 +1,438 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AppDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "28 Dunkelmodus",
+      "w": 390,
+      "x": 1880,
+      "y": 4976
+    },
+    "AppFinding.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "20 Suche läuft",
+      "w": 390,
+      "x": 470,
+      "y": 3732
+    },
+    "AppHalloween.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "29 Saisonaler Start",
+      "w": 390,
+      "x": 2350,
+      "y": 4976
+    },
+    "AppJourney.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "11 Unterwegs",
+      "w": 390,
+      "x": 1880,
+      "y": 1244
+    },
+    "AppLive.dc.html": {
+      "h": 844,
+      "page": "seerot",
+      "radius": 48,
+      "title": "14 Live-Aktivität",
+      "w": 390,
+      "x": 3290,
+      "y": 1244
+    },
+    "AppMap.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "07 Karte",
+      "w": 390,
+      "x": 0,
+      "y": 1244
+    },
+    "AppMore.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "13 Mehr",
+      "w": 390,
+      "x": 2820,
+      "y": 1244
+    },
+    "AppNoRoute.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "23 Keine Verbindung",
+      "w": 390,
+      "x": 1880,
+      "y": 3732
+    },
+    "AppOffline.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "24 Offline-Daten",
+      "w": 390,
+      "x": 0,
+      "y": 4976
+    },
+    "AppPin.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "16 Pin gesetzt",
+      "w": 390,
+      "x": 470,
+      "y": 2488
+    },
+    "AppPlace.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "15 Ort",
+      "w": 390,
+      "x": 0,
+      "y": 2488
+    },
+    "AppPrivacy.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "25 Datenschutz",
+      "w": 390,
+      "x": 470,
+      "y": 4976
+    },
+    "AppRecent.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "18 Zuletzt",
+      "w": 390,
+      "x": 1410,
+      "y": 2488
+    },
+    "AppRouteMap.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "21 Route auf Karte",
+      "w": 390,
+      "x": 940,
+      "y": 3732
+    },
+    "AppRoutes.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "10 Verbindungen",
+      "w": 390,
+      "x": 1410,
+      "y": 1244
+    },
+    "AppSaved.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "12 Favoriten",
+      "w": 390,
+      "x": 2350,
+      "y": 1244
+    },
+    "AppSearch.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "08 Suche",
+      "w": 390,
+      "x": 470,
+      "y": 1244
+    },
+    "AppSiri.dc.html": {
+      "h": 844,
+      "page": "seerot",
+      "radius": 48,
+      "title": "27 Siri & Spotlight",
+      "w": 390,
+      "x": 1410,
+      "y": 4976
+    },
+    "AppStop.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "09 Haltestelle",
+      "w": 390,
+      "x": 940,
+      "y": 1244
+    },
+    "AppTrip.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "17 Abfahrtsdetails",
+      "w": 390,
+      "x": 940,
+      "y": 2488
+    },
+    "AppWalk.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "22 Fußweg",
+      "w": 390,
+      "x": 1410,
+      "y": 3732
+    },
+    "AppWhen.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "19 Wann & wie",
+      "w": 390,
+      "x": 0,
+      "y": 3732
+    },
+    "AppWidgets.dc.html": {
+      "h": 844,
+      "page": "seerot",
+      "radius": 48,
+      "title": "26 Widgets",
+      "w": 390,
+      "x": 940,
+      "y": 4976
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "page": "draft",
+      "radius": 44,
+      "title": "Launch animation",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Onboarding.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "draft",
+      "radius": 44,
+      "title": "Onboarding: offline map, search, ride",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "SeerotBrand.dc.html": {
+      "h": 760,
+      "page": "seerot",
+      "title": "KonstanzGo Marke",
+      "w": 1200,
+      "x": 0,
+      "y": 6220
+    },
+    "SeerotLaunch.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "01 Start",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "SeerotLocation.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "05 Standort & Mitteilungen",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "SeerotOffline.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "03 Offline-Karte & Haltestellen",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "SeerotReady.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "06 Alles bereit",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "SeerotSearch.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "04 Suchen & Live-Abfahrten",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "SeerotWelcome.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "seerot",
+      "radius": 48,
+      "title": "02 Willkommen",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-28T11:20:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "page": "seerot",
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "title",
+    "seerotTitle",
+    "appTitle",
+    "stopsTitle",
+    "planTitle",
+    "extrasTitle"
+  ],
+  "notes": {
+    "appTitle": {
+      "kind": "title1",
+      "maxW": 3680,
+      "page": "seerot",
+      "text": "2 · App",
+      "w": 240,
+      "x": 0,
+      "y": 944
+    },
+    "extrasTitle": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "seerot",
+      "text": "5 · Daten & iPhone-Extras",
+      "w": 240,
+      "x": 0,
+      "y": 4676
+    },
+    "planTitle": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "seerot",
+      "text": "4 · Reise planen",
+      "w": 240,
+      "x": 0,
+      "y": 3432
+    },
+    "seerotTitle": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "seerot",
+      "text": "1 · Onboarding",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "stopsTitle": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "seerot",
+      "text": "3 · Orte & Abfahrten",
+      "w": 240,
+      "x": 0,
+      "y": 2188
+    },
+    "title": {
+      "kind": "title1",
+      "maxW": 860,
+      "page": "draft",
+      "text": "Seelinie · Konstanz bus app motion",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    }
+  },
+  "order": [
+    "SeerotLaunch.dc.html",
+    "SeerotWelcome.dc.html",
+    "SeerotOffline.dc.html",
+    "SeerotSearch.dc.html",
+    "SeerotLocation.dc.html",
+    "AppMap.dc.html",
+    "AppSearch.dc.html",
+    "AppStop.dc.html",
+    "AppRoutes.dc.html",
+    "AppJourney.dc.html",
+    "AppSaved.dc.html",
+    "AppMore.dc.html",
+    "AppLive.dc.html",
+    "AppPlace.dc.html",
+    "AppPin.dc.html",
+    "AppTrip.dc.html",
+    "AppRecent.dc.html",
+    "AppWhen.dc.html",
+    "AppFinding.dc.html",
+    "AppRouteMap.dc.html",
+    "AppWalk.dc.html",
+    "AppNoRoute.dc.html",
+    "AppOffline.dc.html",
+    "AppPrivacy.dc.html",
+    "AppWidgets.dc.html",
+    "AppSiri.dc.html",
+    "AppDark.dc.html",
+    "AppHalloween.dc.html",
+    "SeerotBrand.dc.html",
+    "SeerotReady.dc.html",
+    "Main.dc.html",
+    "Onboarding.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "seerot",
+      "name": "KonstanzGo"
+    },
+    {
+      "id": "draft",
+      "name": "First draft (Seelinie)"
+    }
+  ],
+  "title": "KonstanzGo"
+}

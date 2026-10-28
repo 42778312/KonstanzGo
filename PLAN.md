@@ -158,7 +158,7 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 - [x] C8. **Vehicle positions** (Android motion model: 12 s speed-up/brake, 15 s dwell, minute-rounded times evened out, top speed per mode; every position marked estimated): for each running trip, the estimated position along its shape at time t, plus heading. Smooth between stops; waits at stops.
 - [x] C9. **Trip progress** (by the clock, or by the phone's position when the bus runs late): current stop, stops left, minutes to arrival, progress 0…1 (screen 11, Live Activity).
 - [x] C10. **UserStore** (GRDB, writable, in the App Group container so widgets can read it): favourites (Zuhause, Arbeit, Uni + stops, with order), recent searches, finished trips (for "5 Fahrten diese Woche"), alarms. Nothing leaves the phone.
-- [ ] C11. **Mock data** with exactly the design's examples (Sternenplatz; 9A Universität 3 Min.; 1 Staad 6 Min.; 5 Petershausen 11 Min.; route 14:21–14:35) for previews and snapshot tests, behind the same protocols as the real stores.
+- [x] C11. **Mock data** (`DesignSample`, behind the `TransitService` protocol that `OfflineTransit` also implements; the design's numbers fit at Wed 28 Oct 2026 14:18; design conflicts recorded in Design/README.md) with exactly the design's examples (Sternenplatz; 9A Universität 3 Min.; 1 Staad 6 Min.; 5 Petershausen 11 Min.; route 14:21–14:35) for previews and snapshot tests, behind the same protocols as the real stores.
 
 ---
 

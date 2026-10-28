@@ -48,3 +48,22 @@ The files in `Source/` are read-only copies; the canvas stays the source of trut
 |---|---|
 | Launch animation | `Main.dc.html` |
 | Onboarding: offline map, search, ride | `Onboarding.dc.html` |
+
+## Rules read from the design
+
+- **Route cards (screens 10, 21) count from the first bus's departure to arrival**, not from leaving home:
+  14:21–14:35, 14:24–14:42 and 14:36–14:50 all start when the first bus leaves; the walk to the stop shows
+  only as an icon. "Fährt in 3 Min. ab Sternenplatz" tells when to leave.
+
+## Where the design disagrees with itself
+
+Found while building the sample data (`KGCore/DesignSample.swift`). The app follows the last column until
+decided otherwise.
+
+| What | Screens | Says | Followed |
+|---|---|---|---|
+| Legs of the fastest trip | 21 | walk 2 · 9A 10 Min. · walk 2 | |
+| | 11, 22 | walk 14:18–14:21, 9A 14:21–14:35 (14 Min.) | **this one** (explicit timelines) |
+| 9A platform at Sternenplatz | 09 | Steig A | A for the 14:21/14:36/14:51 departures |
+| | 17, 22 | Steig D | D for the trip shown on 17 and the walk on 22 |
+| Line number | all | "9A" | sample only; the real line is **9** |

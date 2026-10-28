@@ -35,6 +35,29 @@ public struct Platform: Sendable, Hashable, Identifiable, Codable {
     }
 }
 
+/// What drives a line, for its top speed on the map.
+public enum VehicleMode: String, Sendable, Hashable, Codable {
+    case bus, train, ferry
+
+    /// GTFS route_type: trams (0, the S-Bahn here), metro (1) and rail (2) are trains; 4 is a ferry.
+    public init(routeType: Int) {
+        switch routeType {
+        case 0, 1, 2: self = .train
+        case 4: self = .ferry
+        default: self = .bus
+        }
+    }
+
+    /// Fastest it drives, km/h. The motion never goes past it unless the timetable itself asks for more.
+    public var topSpeedKmh: Double {
+        switch self {
+        case .bus: 80
+        case .train: 160
+        case .ferry: 40
+        }
+    }
+}
+
 /// A bus line or ferry, "9A".
 public struct Line: Sendable, Hashable, Identifiable, Codable {
     public var id: Int
@@ -43,12 +66,14 @@ public struct Line: Sendable, Hashable, Identifiable, Codable {
     public var longName: String
     /// One of the Konstanz city lines (others are regional buses passing through).
     public var isCity: Bool
+    public var mode: VehicleMode
 
-    public init(id: Int, name: String, longName: String, isCity: Bool) {
+    public init(id: Int, name: String, longName: String, isCity: Bool, mode: VehicleMode = .bus) {
         self.id = id
         self.name = name
         self.longName = longName
         self.isCity = isCity
+        self.mode = mode
     }
 }
 

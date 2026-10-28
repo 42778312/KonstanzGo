@@ -36,19 +36,13 @@ extension JourneyPlanner {
         return tags
     }
 
-    /// The part of a trip's shape between two platforms (nearest shape points to each).
+    /// The part of a trip's shape between two platforms, matched pass by pass (ring lines drive a street twice);
+    /// a straight line when the shape does not fit.
     static func slice(_ shape: [Coordinate], from: Coordinate, to: Coordinate) -> [Coordinate] {
-        guard shape.count >= 2 else { return [from, to] }
-        func nearest(_ point: Coordinate, after start: Int) -> Int {
-            var best = start, bestDistance = Double.infinity
-            for index in start..<shape.count {
-                let distance = shape[index].distance(to: point)
-                if distance < bestDistance { bestDistance = distance; best = index }
-            }
-            return best
-        }
-        let first = nearest(from, after: 0)
-        let last = nearest(to, after: first)
-        return [from] + shape[first...last] + [to]
+        let dense = Shapes.densify(shape)
+        guard let matched = Shapes.match([from, to], to: dense),
+              let piece = Shapes.piece(of: dense, from: matched[0], to: matched[1], between: from, and: to)
+        else { return [from, to] }
+        return [from] + piece + [to]
     }
 }

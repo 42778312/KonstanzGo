@@ -20,6 +20,12 @@ public struct Coordinate: Sendable, Hashable, Codable {
         return 2 * earthRadius * asin(min(1, sqrt(haversine)))
     }
 
+    /// The point `fraction` (0…1) of the way towards `other`, on a straight line.
+    public func interpolated(to other: Coordinate, fraction: Double) -> Coordinate {
+        Coordinate(latitude: latitude + (other.latitude - latitude) * fraction,
+                   longitude: longitude + (other.longitude - longitude) * fraction)
+    }
+
     /// Compass bearing towards `other` in degrees, 0 = north, clockwise.
     public func bearing(to other: Coordinate) -> Double {
         let lat1 = latitude * .pi / 180, lat2 = other.latitude * .pi / 180

@@ -123,6 +123,20 @@ struct JourneyPlannerTests {
         #expect(journeys.allSatisfy { $0.start >= leave.addingTimeInterval(-60) })
     }
 
+    @Test func withTheWalkingRouterWalksFollowTheStreets() throws {
+        let walker = WalkRouter(graph: try WalkGraph.read(from: repoData.walkGraph))
+        let streets = try JourneyPlanner(store: store, url: repoData.timetable, walker: walker)
+        let request = try PlanRequest(from: sternenplatz, to: bahnhof, time: at(20261028, 14, 0))
+        let walk = try #require(try streets.plan(request).first { $0.rides.isEmpty }?.walks.first)
+        #expect(walk.path.count > 2)
+        #expect(walk.steps.first?.maneuver == .depart && walk.steps.last?.maneuver == .arrive)
+        // Same options and times as without it: only the walks' shapes and steps change.
+        let plain = try planner.plan(request)
+        let withStreets = try streets.plan(request)
+        #expect(plain.filter { !$0.rides.isEmpty }.map(\.id) == withStreets.filter { !$0.rides.isEmpty }.map(\.id))
+        #expect(plain.filter { !$0.rides.isEmpty }.map(\.end) == withStreets.filter { !$0.rides.isEmpty }.map(\.end))
+    }
+
     @Test func accessIncludesTheNearestTwoEvenFarAway() {
         // A point on the lake, far from any stop.
         let access = planner.access(near: Coordinate(latitude: 47.62, longitude: 9.30))

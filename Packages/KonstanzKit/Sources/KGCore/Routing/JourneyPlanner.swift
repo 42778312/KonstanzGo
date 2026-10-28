@@ -53,13 +53,17 @@ public final class JourneyPlanner: Sendable {
     private let store: TimetableStore
     private let queue: DatabaseQueue
     private let clock: ServiceClock
+    /// Street paths and steps for walking legs; without it walks are straight-line estimates.
+    private let walker: WalkRouter?
     private let footpaths: [Int: [Access]]
     /// The scan for the most recent planning day; building it takes a few tens of ms.
     private let cache = Mutex<(day: ServiceDay, scan: ConnectionScan)?>(nil)
 
-    public init(store: TimetableStore, url: URL, clock: ServiceClock = ServiceClock()) throws {
+    public init(store: TimetableStore, url: URL, walker: WalkRouter? = nil,
+                clock: ServiceClock = ServiceClock()) throws {
         self.store = store
         self.clock = clock
+        self.walker = walker
         var config = Configuration()
         config.readonly = true
         queue = try DatabaseQueue(path: url.path, configuration: config)
@@ -144,40 +148,6 @@ public final class JourneyPlanner: Sendable {
             }
         }
         return arriveBy ? Array(kept.sorted { $0.leaveAt > $1.leaveAt }.prefix(Self.maxOptions)) : kept
-    }
-
-    /// Sorts journeys by a preference; ties go to the earlier arrival.
-    public static func ranked(_ journeys: [Journey], by preference: RoutePreference, arriveBy: Bool) -> [Journey] {
-        journeys.sorted { lhs, rhs in
-            switch preference {
-            case .fastest:
-                if arriveBy, lhs.start != rhs.start { return lhs.start > rhs.start }
-                return (lhs.end, lhs.minutes) < (rhs.end, rhs.minutes)
-            case .leastWalking:
-                return (lhs.walkingMinutes, lhs.end) < (rhs.walkingMinutes, rhs.end)
-            case .fewestTransfers:
-                return (lhs.transfers, lhs.end) < (rhs.transfers, rhs.end)
-            }
-        }
-    }
-
-    /// The labels on the cards (screen 10): the earliest arrival is "Schnellste"; the journey with
-    /// clearly less walking or fewer changes gets that label when it is a different one.
-    public static func tags(for journeys: [Journey]) -> [String: Set<JourneyTag>] {
-        guard !journeys.isEmpty else { return [:] }
-        var tags: [String: Set<JourneyTag>] = [:]
-        let fastest = journeys.min { ($0.end, $0.minutes) < ($1.end, $1.minutes) }
-        if let fastest { tags[fastest.id, default: []].insert(.fastest) }
-        let bus = journeys.filter { !$0.rides.isEmpty }
-        if let least = bus.min(by: { ($0.walkingMinutes, $0.end) < ($1.walkingMinutes, $1.end) }),
-           let fastest, least.id != fastest.id, least.walkingMinutes < fastest.walkingMinutes {
-            tags[least.id, default: []].insert(.leastWalking)
-        }
-        if let fewest = bus.min(by: { ($0.transfers, $0.end) < ($1.transfers, $1.end) }),
-           let fastest, fewest.id != fastest.id, fewest.transfers < fastest.transfers {
-            tags[fewest.id, default: []].insert(.fewestTransfers)
-        }
-        return tags
     }
 
     // MARK: Building blocks
@@ -290,41 +260,41 @@ public final class JourneyPlanner: Sendable {
     private func transferLeg(from: Int, to: Int, minutes: Int, after previous: Leg?) -> WalkLeg? {
         guard let origin = store.station(id: from), let target = store.station(id: to), let start = previous?.end
         else { return nil }
-        return WalkLeg(start: start, end: start.addingTimeInterval(TimeInterval(minutes * 60)),
-                       metres: Int(Walking.estimatedMetres(from: origin.coordinate, to: target.coordinate)),
-                       destinationName: target.shortName, path: [origin.coordinate, target.coordinate])
+        return onStreets(WalkLeg(start: start, end: start.addingTimeInterval(TimeInterval(minutes * 60)),
+                                 metres: Int(Walking.estimatedMetres(from: origin.coordinate, to: target.coordinate)),
+                                 destinationName: target.shortName, path: [origin.coordinate, target.coordinate]))
     }
 
     private func walkLeg(from: Coordinate, to: Coordinate, name: String, end: Date, minutes: Int) -> WalkLeg {
-        WalkLeg(start: end.addingTimeInterval(TimeInterval(-minutes * 60)), end: end,
-                metres: Int(Walking.estimatedMetres(from: from, to: to)), destinationName: name, path: [from, to])
+        onStreets(WalkLeg(start: end.addingTimeInterval(TimeInterval(-minutes * 60)), end: end,
+                          metres: Int(Walking.estimatedMetres(from: from, to: to)), destinationName: name,
+                          path: [from, to]))
+    }
+
+    /// The leg with its real street path, steps and length when the walking router knows a way.
+    /// Its times stay as planned, so the journey still fits the timetable.
+    private func onStreets(_ leg: WalkLeg) -> WalkLeg {
+        guard let from = leg.path.first, let to = leg.path.last, let route = walker?.route(from: from, to: to)
+        else { return leg }
+        var result = leg
+        result.path = route.path
+        result.steps = route.steps
+        result.metres = Int(route.metres.rounded())
+        return result
     }
 
     /// Walking the whole way: always for short trips (≤ 20 min), otherwise when about as quick as the bus.
     private func walkOnly(_ request: PlanRequest, quickestBus: Int?) -> Journey? {
-        let metres = Walking.estimatedMetres(from: request.from.coordinate, to: request.to.coordinate)
+        // The real street route when known (no timetable to fit, so its own time counts), else an estimate.
+        let route = walker?.route(from: request.from.coordinate, to: request.to.coordinate)
+        let metres = route?.metres ?? Walking.estimatedMetres(from: request.from.coordinate, to: request.to.coordinate)
         let minutes = Walking.minutes(forMetres: metres)
         guard minutes <= 20 || (minutes <= 45 && (quickestBus.map { minutes <= $0 + 5 } ?? true)) else { return nil }
         let duration = TimeInterval(minutes * 60)
         let start = request.arriveBy ? request.time.addingTimeInterval(-duration) : request.time
-        return Journey(legs: [.walk(WalkLeg(start: start, end: start.addingTimeInterval(duration), metres: Int(metres),
-                                            destinationName: request.to.name,
-                                            path: [request.from.coordinate, request.to.coordinate]))])
-    }
-
-    /// The part of a trip's shape between two platforms (nearest shape points to each).
-    static func slice(_ shape: [Coordinate], from: Coordinate, to: Coordinate) -> [Coordinate] {
-        guard shape.count >= 2 else { return [from, to] }
-        func nearest(_ point: Coordinate, after start: Int) -> Int {
-            var best = start, bestDistance = Double.infinity
-            for index in start..<shape.count {
-                let distance = shape[index].distance(to: point)
-                if distance < bestDistance { bestDistance = distance; best = index }
-            }
-            return best
-        }
-        let first = nearest(from, after: 0)
-        let last = nearest(to, after: first)
-        return [from] + shape[first...last] + [to]
+        return Journey(legs: [.walk(WalkLeg(start: start, end: start.addingTimeInterval(duration),
+                                            metres: Int(metres.rounded()), destinationName: request.to.name,
+                                            steps: route?.steps ?? [],
+                                            path: route?.path ?? [request.from.coordinate, request.to.coordinate]))])
     }
 }

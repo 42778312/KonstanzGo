@@ -2,23 +2,38 @@ import Foundation
 
 /// What to do at the start of a walking step; the icon in the directions.
 public enum Maneuver: String, Sendable, Hashable, Codable, CaseIterable {
-    case depart, straight, slightLeft, slightRight, left, right, sharpLeft, sharpRight, uTurn, cross, arrive
+    case depart, straight, slightLeft, slightRight, left, right, sharpLeft, sharpRight, uTurn, stairs, cross, arrive
 }
 
-/// One step of walking directions: "Rechts in die Bahnhofstraße · 120 m".
+/// What kind of way a walking step follows (values as in `konstanz-walk.bin`).
+public enum WayKind: UInt8, Sendable, Hashable, Codable {
+    case street = 0, footpath = 1, steps = 2, pedestrian = 3, crossing = 4
+}
+
+/// One step of walking directions: "Rechts in die Bahnhofstraße · 120 m". The screen turns it into words.
 public struct WalkStep: Sendable, Hashable {
     public var maneuver: Maneuver
     /// Street walked along after the turn; nil for unnamed paths.
     public var street: String?
+    /// The kind of way, for unnamed paths ("über die Treppe", "durch die Fußgängerzone").
+    public var way: WayKind
+    public var onBridge: Bool
+    /// Rounded for reading: 5 m steps under 100 m, then 10 m steps. 0 for the arrival.
     public var metres: Int
     /// Where the step starts.
     public var start: Coordinate
+    /// Compass direction of the first metres, for the first step ("Richtung Norden").
+    public var heading: Double
 
-    public init(maneuver: Maneuver, street: String?, metres: Int, start: Coordinate) {
+    public init(maneuver: Maneuver, street: String?, way: WayKind = .street, onBridge: Bool = false,
+                metres: Int, start: Coordinate, heading: Double = 0) {
         self.maneuver = maneuver
         self.street = street
+        self.way = way
+        self.onBridge = onBridge
         self.metres = metres
         self.start = start
+        self.heading = heading
     }
 }
 

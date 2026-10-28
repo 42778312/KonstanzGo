@@ -7,68 +7,90 @@ public enum SVGPath {
     public enum Failure: Error, Equatable { case unknownCommand(Character), missingNumber }
 
     public static func path(_ data: String) throws -> Path {
-        var scanner = Scanner(Array(data))
-        var path = Path()
-        var current = CGPoint.zero, start = CGPoint.zero
-        var lastControl: CGPoint?
+        var builder = Builder(scanner: Scanner(Array(data)))
         var command: Character = "M"
-
-        while scanner.skipSeparators() {
-            if let letter = scanner.letter() { command = letter } else if command == "M" { command = "L" }
-            else if command == "m" { command = "l" }
-            let relative = command.isLowercase
-            func point() throws -> CGPoint {
-                let x = try scanner.number(), y = try scanner.number()
-                return relative ? CGPoint(x: current.x + x, y: current.y + y) : CGPoint(x: x, y: y)
+        while builder.scanner.skipSeparators() {
+            if let letter = builder.scanner.letter() {
+                command = letter
+            } else if command == "M" || command == "m" {
+                // Numbers after a move are implicit line-tos.
+                command = command == "M" ? "L" : "l"
             }
+            try builder.apply(command)
+        }
+        return builder.path
+    }
+
+    /// The path drawn so far, the pen position and the last curve control point (for S and T).
+    private struct Builder {
+        var scanner: Scanner
+        var path = Path()
+        var current = CGPoint.zero
+        var start = CGPoint.zero
+        var lastControl: CGPoint?
+        var relative = false
+
+        mutating func point() throws -> CGPoint {
+            let x = try scanner.number(), y = try scanner.number()
+            return relative ? CGPoint(x: current.x + x, y: current.y + y) : CGPoint(x: x, y: y)
+        }
+
+        mutating func apply(_ command: Character) throws {
+            relative = command.isLowercase
             var control: CGPoint?
             switch command.uppercased().first ?? command {
-            case "M":
-                current = try point(); start = current
-                path.move(to: current)
-            case "L":
-                current = try point()
-                path.addLine(to: current)
-            case "H":
-                let x = try scanner.number()
-                current.x = relative ? current.x + x : x
-                path.addLine(to: current)
-            case "V":
-                let y = try scanner.number()
-                current.y = relative ? current.y + y : y
-                path.addLine(to: current)
-            case "C":
-                let first = try point(), second = try point(), end = try point()
-                path.addCurve(to: end, control1: first, control2: second)
-                control = second; current = end
-            case "S":
-                let first = reflect(lastControl, around: current), second = try point(), end = try point()
-                path.addCurve(to: end, control1: first, control2: second)
-                control = second; current = end
-            case "Q":
-                let middle = try point(), end = try point()
-                path.addQuadCurve(to: end, control: middle)
-                control = middle; current = end
-            case "T":
-                let middle = reflect(lastControl, around: current), end = try point()
-                path.addQuadCurve(to: end, control: middle)
-                control = middle; current = end
-            case "A":
-                let rx = try scanner.number(), ry = try scanner.number(), rotation = try scanner.number()
-                let large = try scanner.flag(), sweep = try scanner.flag()
-                let end = try point()
-                addArc(to: &path, from: current, to: end, radii: CGSize(width: rx, height: ry),
-                       rotation: rotation, largeArc: large, sweep: sweep)
-                current = end
-            case "Z":
-                path.closeSubpath()
-                current = start
-            default:
-                throw Failure.unknownCommand(command)
+            case "M": current = try point(); start = current; path.move(to: current)
+            case "L": current = try point(); path.addLine(to: current)
+            case "H": try horizontal()
+            case "V": try vertical()
+            case "C", "S": control = try cubic(smooth: command.uppercased() == "S")
+            case "Q", "T": control = try quadratic(smooth: command.uppercased() == "T")
+            case "A": try arc()
+            case "Z": path.closeSubpath(); current = start
+            default: throw Failure.unknownCommand(command)
             }
             lastControl = control
         }
-        return path
+
+        mutating func horizontal() throws {
+            let x = try scanner.number()
+            current.x = relative ? current.x + x : x
+            path.addLine(to: current)
+        }
+
+        mutating func vertical() throws {
+            let y = try scanner.number()
+            current.y = relative ? current.y + y : y
+            path.addLine(to: current)
+        }
+
+        /// C, or S with the first control point mirrored from the previous curve. Returns the second control.
+        mutating func cubic(smooth: Bool) throws -> CGPoint {
+            let first = smooth ? reflect(lastControl, around: current) : try point()
+            let second = try point(), end = try point()
+            path.addCurve(to: end, control1: first, control2: second)
+            current = end
+            return second
+        }
+
+        /// Q, or T with the control point mirrored from the previous curve. Returns the control.
+        mutating func quadratic(smooth: Bool) throws -> CGPoint {
+            let middle = smooth ? reflect(lastControl, around: current) : try point()
+            let end = try point()
+            path.addQuadCurve(to: end, control: middle)
+            current = end
+            return middle
+        }
+
+        mutating func arc() throws {
+            let radii = CGSize(width: try scanner.number(), height: try scanner.number())
+            let rotation = try scanner.number()
+            let large = try scanner.flag(), sweep = try scanner.flag()
+            let end = try point()
+            SVGPath.addArc(to: &path, from: current, to: end, radii: radii, rotation: rotation,
+                           largeArc: large, sweep: sweep)
+            current = end
+        }
     }
 
     private static func reflect(_ control: CGPoint?, around point: CGPoint) -> CGPoint {

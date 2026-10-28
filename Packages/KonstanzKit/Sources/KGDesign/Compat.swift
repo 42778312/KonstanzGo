@@ -32,7 +32,7 @@ extension EnvironmentValues {
 
 extension View {
     /// A floating glass surface (tab bar, map buttons): Liquid Glass on iOS 26+, otherwise a blur
-    /// material under a light tint, as in the design (white 92 % light, #242424 at 94 % dark).
+    /// material under the design's tab bar tint (`KGPalette.tabBar`).
     public func kgGlass<S: Shape>(in shape: S) -> some View {
         modifier(KGGlassModifier(shape: shape))
     }
@@ -41,7 +41,6 @@ extension View {
 private struct KGGlassModifier<S: Shape>: ViewModifier {
     let shape: S
     @Environment(\.kgLegacyLook) private var legacyLook
-    @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
         if #available(iOS 26, macOS 26, *), KGCompat.usesGlass(legacyLook: legacyLook) {
@@ -50,9 +49,7 @@ private struct KGGlassModifier<S: Shape>: ViewModifier {
             content.background {
                 ZStack {
                     shape.fill(.ultraThinMaterial)
-                    shape.fill(colorScheme == .dark
-                               ? Color(red: 36 / 255, green: 36 / 255, blue: 36 / 255).opacity(0.94)
-                               : Color.white.opacity(0.92))
+                    shape.fill(KGColor.tabBar)
                 }
             }
         }

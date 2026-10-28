@@ -1,0 +1,26 @@
+{
+  "sourceLanguage" : "de",
+  "strings" : {
+    "Fahrplan bis %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timetable until %@"
+          }
+        }
+      }
+    },
+    "Offline-Daten fehlen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline data is missing"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

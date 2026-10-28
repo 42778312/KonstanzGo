@@ -200,20 +200,20 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 ### A3. Shape, spacing, shadows
 
-- [ ] A3.1 Radius: 4, 8, 12, 14 (buttons, map buttons), 18 (search bar), 20 (cards, sheet top), capsule. Use `.continuous` corners (iOS look).
-- [ ] A3.2 Spacing on a 2/4 pt grid: 4, 6, 8, 10, 12, 14, 16 (screen side margin), 20, 24, 32.
-- [ ] A3.3 Sizes: row 44, button 56, search bar 56, map button 48, line badge 26 high (min 36 wide), tab item 96×54, toggle = system.
-- [ ] A3.4 Shadow modifiers (two layers where the design has two):
+- [x] A3.1 Radius: 4, 8, 12, 14 (buttons, map buttons), 18 (search bar), 20 (cards, sheet top), capsule. Use `.continuous` corners (iOS look).
+- [x] A3.2 Spacing on a 2/4 pt grid: 4, 6, 8, 10, 12, 14, 16 (screen side margin), 20, 24, 32.
+- [x] A3.3 Sizes: row 44, button 56, search bar 56, map button 48, line badge 26 high (min 36 wide), tab item 96×54, toggle = system.
+- [x] A3.4 Shadow modifiers (two layers where the design has two):
   - `.kgShadowCard` 0/2/8 at 10 %
   - `.kgShadowFloating` 0/4/14 at 12 % (map buttons, chips on the map)
   - `.kgShadowSearch` 0/6/20 at 10 % + 0/1/3 at 8 %
   - `.kgShadowSheet` 0/−8/30 at 12 %
   - `.kgShadowBus` 0/4/10 rgba(120,20,30,.3)
-- [ ] A3.5 Dark mode: shadows become a 1 pt `white 8 %` outline.
+- [x] A3.5 Dark mode: shadows become a 1 pt `white 8 %` outline.
 
 ### A4. Motion
 
-- [ ] A4.1 `KGMotion` with the design's curves and timings as SwiftUI animations:
+- [x] A4.1 `KGMotion` with the design's curves and timings as SwiftUI animations:
   - `rise`: 18 pt up + fade, `timingCurve(.2, .8, .2, 1)`, 0.45 s (`k-up`, used 26 times)
   - `sheet`: `timingCurve(.2, .9, .3, 1)`, 0.6 s, from 120 pt below (`k-sheet`)
   - `pop`: scale 0.6 → 1.08 → 1 (`k-pop`), with a `keyframeAnimator`
@@ -225,9 +225,9 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
   - `seeriBounce`: squash and stretch (`k-bounce`)
   - `drive`: from −260 pt with tilt, overshoot 8 pt, settle (`k-drive`, 1 s)
   - `typing`: letters appear + blinking caret (`k-type`, `k-caret`)
-- [ ] A4.2 **Reduce Motion:** every loop stops, moves become cross-fades. One environment value checked by all components.
-- [ ] A4.3 Loops run only while their view is on screen (no battery use in the background).
-- [ ] A4.4 Haptics: `.sensoryFeedback` for selection (segmented controls, wheels), success (saved, alarm set), warning (delete).
+- [x] A4.2 **Reduce Motion:** every loop stops, moves become cross-fades. One environment value checked by all components.
+- [x] A4.3 Loops run only while their view is on screen (no battery use in the background).
+- [x] A4.4 Haptics: `.sensoryFeedback` for selection (segmented controls, wheels), success (saved, alarm set), warning (delete).
 
 ### A5. Icons
 

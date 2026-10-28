@@ -22,7 +22,7 @@ line_length:
   ignores_comments: true
 
 identifier_name:
-  excluded: [id, x, y, n, db, ok, to, at]
+  excluded: [id, x, y, n, db, ok, to, at, xs, xl]
 
 custom_rules:
   no_raw_colours_outside_design:

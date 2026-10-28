@@ -157,7 +157,7 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 - [x] C7. **Reverse lookup:** nearest street name and nearest station to a point (screen 16).
 - [x] C8. **Vehicle positions** (Android motion model: 12 s speed-up/brake, 15 s dwell, minute-rounded times evened out, top speed per mode; every position marked estimated): for each running trip, the estimated position along its shape at time t, plus heading. Smooth between stops; waits at stops.
 - [x] C9. **Trip progress** (by the clock, or by the phone's position when the bus runs late): current stop, stops left, minutes to arrival, progress 0…1 (screen 11, Live Activity).
-- [ ] C10. **UserStore** (GRDB, writable, in the App Group container so widgets can read it): favourites (Zuhause, Arbeit, Uni + stops, with order), recent searches, finished trips (for "5 Fahrten diese Woche"), alarms. Nothing leaves the phone.
+- [x] C10. **UserStore** (GRDB, writable, in the App Group container so widgets can read it): favourites (Zuhause, Arbeit, Uni + stops, with order), recent searches, finished trips (for "5 Fahrten diese Woche"), alarms. Nothing leaves the phone.
 - [ ] C11. **Mock data** with exactly the design's examples (Sternenplatz; 9A Universität 3 Min.; 1 Staad 6 Min.; 5 Petershausen 11 Min.; route 14:21–14:35) for previews and snapshot tests, behind the same protocols as the real stores.
 
 ---

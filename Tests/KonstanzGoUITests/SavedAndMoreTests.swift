@@ -25,13 +25,13 @@ final class SavedAndMoreTests: XCTestCase {
         let result = element(labelContains: name)
         XCTAssertTrue(result.waitForExistence(timeout: 5))
         result.tap()
-        // The stop opens in the map's sheet.
-        XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5))
+        // A stop picked in the search opens as the target, with the connections and its star.
+        XCTAssertTrue(app.buttons["closePlace"].waitForExistence(timeout: 5))
     }
 
-    /// Closes the stop's sheet to reach the tabs.
+    /// Closes the stop's sheet to get back to the map.
     private func closeStop() {
-        app.buttons["closeStation"].tap()
+        app.buttons["closePlace"].tap()
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 5))
     }
 

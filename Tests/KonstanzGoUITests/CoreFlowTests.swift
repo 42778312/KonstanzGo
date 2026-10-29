@@ -37,7 +37,12 @@ final class CoreFlowTests: XCTestCase {
         let result = element(labelContains: "Sternenplatz")
         XCTAssertTrue(result.waitForExistence(timeout: 5), "no search result")
         result.tap()
-        // The stop opens in the map's sheet with its lines and departures.
+        // Picked in the search, the stop becomes the target with the connections there.
+        let target = app.buttons["placeTo"]
+        XCTAssertTrue(target.waitForExistence(timeout: 5), "the connections did not open")
+        XCTAssertTrue(target.label.contains("Sternenplatz"), "Nach should be the stop: \(target.label)")
+        // Tapped on the map (it sits in the middle of the map above the sheet), it shows its departures.
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.36)).tap()
         XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "stop sheet did not open")
         XCTAssertTrue(app.buttons["Alle Linien"].exists)
         // A tap on the map folds the sheet to a bar with the stop's name; the bar opens it again.
@@ -65,7 +70,7 @@ final class CoreFlowTests: XCTestCase {
         let star = app.buttons["Favorit"].firstMatch
         XCTAssertTrue(star.waitForExistence(timeout: 5))
         if !star.isSelected { star.tap() }
-        app.buttons["closeStation"].tap()
+        app.buttons["closePlace"].tap()
         app.buttons["seeriMenu"].tap()
         XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
         app.buttons["openFavorites"].tap()
@@ -97,7 +102,7 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(element(labelContains: "Ankunft").exists)
         XCTAssertFalse(element(labelContains: "Sperrbildschirm").exists, "the lock screen button was removed")
         // A tap on the map folds the stops into a bar; the bar brings them back.
-        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.36)).tap()
         let bar = app.buttons["foldedBar"]
         XCTAssertTrue(bar.waitForExistence(timeout: 3), "the sheet did not fold")
         bar.tap()

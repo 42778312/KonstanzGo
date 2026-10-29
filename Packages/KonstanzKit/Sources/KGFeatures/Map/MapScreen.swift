@@ -282,14 +282,11 @@ public struct MapScreen: View {
         }
     }
 
-    /// From the search: a stop opens its departures, anything else the connections there.
+    /// From the search: anything picked, a stop too, becomes the target ("Nach") with the connections there.
+    /// A stop's departures open from tapping it on the map.
     private func pick(_ target: SavedTarget) {
         services.updateUser { try $0.addRecent(target) }
-        if case let .station(id, _, _) = target {
-            sheet = .station(id)
-        } else {
-            sheet = .place(target)
-        }
+        sheet = .place(target)
     }
 
     /// Marks what the sheet is about on the map and keeps it in view above the sheet.

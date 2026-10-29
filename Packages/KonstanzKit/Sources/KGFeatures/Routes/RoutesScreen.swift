@@ -108,7 +108,7 @@ struct RoutesScreen: View {
                 if let journey = journeys.first(where: { $0.id == selected }) {
                     BottomBar {
                         KGButton(Text("Los geht's", bundle: .module)) {
-                            services.router.open(.routeMap(journey, query))
+                            services.router.open(.journey(journey))
                         }
                         .accessibilityIdentifier("startJourney")
                     }

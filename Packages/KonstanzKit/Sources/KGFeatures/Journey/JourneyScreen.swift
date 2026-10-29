@@ -3,20 +3,27 @@ import KGDesign
 import SwiftUI
 
 /// Screen 11 (Unterwegs): the map with the bus, "Fahrt beenden", where the trip goes; in the sheet Seeri
-/// counting the stops, minutes to arrival, a progress bar and the stops timeline. It moves through the
-/// journey's phases (walk, wait, ride, change, arrive) by the clock and, when known, the user's position
-/// (plan S15).
+/// counting the stops, minutes to arrival, a progress bar and the stops timeline. A tap on the map folds the
+/// sheet into a bar so the whole map shows; tapping the bar (or pulling it up) brings the stops back. It moves
+/// through the journey's phases (walk, wait, ride, change, arrive) by the clock and, when known, the user's
+/// position (plan S15).
 struct JourneyScreen: View {
     let services: AppServices
     let journey: Journey
     @State private var now = Date.now
     @State private var savedArrival = false
-    @State private var activityStarted = false
+    @State private var expanded = true
+
+    private static let sheetHeight: CGFloat = 472
+    private static let barHeight: CGFloat = 132
 
     var body: some View {
         ZStack(alignment: .top) {
-            JourneyMap(services: services, journey: journey, bottomInset: 470,
-                       focus: currentRide.map { $0.stops.map(\.platform.coordinate) })
+            JourneyMap(services: services, journey: journey,
+                       bottomInset: expanded ? Self.sheetHeight : Self.barHeight,
+                       focus: currentRide.map { $0.stops.map(\.platform.coordinate) }) {
+                if expanded { withAnimation(KGMotion.sheet) { expanded = false } }
+            }
             HStack(spacing: KGSpace.small) {
                 KGRoundIconButton(.close, label: Text("Fahrt beenden", bundle: .module)) {
                     TripActivity.end()
@@ -41,8 +48,15 @@ struct JourneyScreen: View {
             .padding(.top, 11)
             VStack {
                 Spacer()
-                KGSheetSurface { sheet }
-                    .frame(height: 472)
+                KGSheetSurface {
+                    if expanded { sheet } else { bar }
+                }
+                .frame(height: expanded ? Self.sheetHeight : Self.barHeight)
+                .gesture(DragGesture(minimumDistance: 16).onEnded { drag in
+                    let down = drag.translation.height > 40
+                    let up = drag.translation.height < -40
+                    if down || up { withAnimation(KGMotion.sheet) { expanded = up } }
+                })
             }
             .ignoresSafeArea(edges: .bottom)
         }
@@ -108,15 +122,31 @@ struct JourneyScreen: View {
                 }
             }
             .scrollIndicators(.hidden)
-            KGButton(activityStarted ? Text("Auf dem Sperrbildschirm", bundle: .module)
-                                     : Text("Auf den Sperrbildschirm", bundle: .module),
-                     icon: .lockScreen, kind: .secondary) {
-                activityStarted = TripActivity.start(journey: journey, now: now)
-            }
-            .disabled(activityStarted || phase == .arrived)
-            .padding(.bottom, KGSpace.compact)
         }
         .padding(.horizontal, KGSpace.large)
+    }
+
+    /// The folded sheet: Seeri, what's next, minutes and arrival; tap to see the stops again.
+    private var bar: some View {
+        Button { withAnimation(KGMotion.sheet) { expanded = true } } label: {
+            HStack(spacing: KGSpace.compact) {
+                SeeriAlive(phase == .arrived ? .joyful : .excited, detail: .compact).frame(width: 40, height: 43)
+                VStack(alignment: .leading, spacing: 2) {
+                    cheer.kgFont(.callout.weighted(KGFont.bold)).foregroundStyle(KGColor.ink).lineLimit(1)
+                    (KGMinutesValue(departure: journey.end, now: now).text + Text(verbatim: " · ")
+                        + Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end)))
+                        .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2).lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                KGIconView(.chevronRight, size: 14).foregroundStyle(KGColor.chevron).rotationEffect(.degrees(-90))
+            }
+            .padding(.horizontal, KGSpace.large)
+            .frame(minHeight: 60)
+            .contentShape(.rect)
+        }
+        .buttonStyle(KGPressStyle())
+        .accessibilityHint(Text("Zeigt die Haltestellen", bundle: .module))
+        .accessibilityIdentifier("expandStops")
     }
 
     /// What Seeri says in each phase ("Noch 4 Haltestellen!").

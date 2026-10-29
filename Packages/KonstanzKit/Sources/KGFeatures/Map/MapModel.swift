@@ -29,6 +29,8 @@ public final class MapModel {
     public private(set) var pendingMove: CameraMove?
     /// Called when a stop on the map is tapped.
     public var onSelectStation: ((Station) -> Void)?
+    /// Called on a tap that hits no stop.
+    public var onTapMap: (() -> Void)?
     /// Called on a long press on the map (drop a pin, plan M8).
     public var onLongPress: ((Coordinate) -> Void)?
     /// The middle of the visible map after the last move.

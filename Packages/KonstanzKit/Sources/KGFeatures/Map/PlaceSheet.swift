@@ -190,7 +190,7 @@ struct PlaceSheet: View {
             ForEach(journeys) { journey in
                 JourneyCard(journey: journey, tag: tags[journey.id]?.first, when: query.when,
                             isFirst: journey.id == journeys.first?.id, isSelected: false, now: now) {
-                    services.router.open(.routeMap(journey, query))
+                    services.router.open(.journey(journey))
                 }
             }
             HStack {

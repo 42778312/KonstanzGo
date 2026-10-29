@@ -2804,6 +2804,16 @@
         }
       }
     },
+    "Zeigt die Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows the stops"
+          }
+        }
+      }
+    },
     "Ziel ändern": {
       "localizations": {
         "en": {

@@ -1,7 +1,7 @@
 import XCTest
 
 /// The main flows end to end on the real offline data (plan T7): search → stop sheet → stop → departure;
-/// place → its connections → route map → journey; "Wann & wie"; the alarm dialog; dropping a pin.
+/// place → its connections → journey (fold and unfold the stops); "Wann & wie"; the alarm dialog; dropping a pin.
 final class CoreFlowTests: XCTestCase {
     var app: XCUIApplication!
 
@@ -82,12 +82,18 @@ final class CoreFlowTests: XCTestCase {
         let card = app.buttons["routeCard"].firstMatch
         guard card.waitForExistence(timeout: 15) else { return } // nothing runs at this hour
         card.tap()
-        let begin = app.buttons["beginJourney"]
-        XCTAssertTrue(begin.waitForExistence(timeout: 5), "route map did not open")
-        begin.tap()
+        // A connection opens the trip itself.
         let end = app.buttons["endJourney"]
         XCTAssertTrue(end.waitForExistence(timeout: 5), "journey did not open")
         XCTAssertTrue(element(labelContains: "Ankunft").exists)
+        XCTAssertFalse(element(labelContains: "Sperrbildschirm").exists, "the lock screen button was removed")
+        // A tap on the map folds the stops into a bar; the bar brings them back.
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
+        let bar = app.buttons["expandStops"]
+        XCTAssertTrue(bar.waitForExistence(timeout: 3), "the sheet did not fold")
+        bar.tap()
+        XCTAssertTrue(app.otherElements["Fahrtfortschritt"].waitForExistence(timeout: 3) ||
+                      element(labelContains: "Fahrtfortschritt").waitForExistence(timeout: 1), "the stops did not come back")
         end.tap()
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 5))
     }

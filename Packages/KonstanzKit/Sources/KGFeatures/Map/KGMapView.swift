@@ -343,7 +343,10 @@ public struct KGMapView: UIViewRepresentable {
                     < distance(map.convert(rhs.coordinate, toPointTo: map), point)
             }
             guard let id = (nearest?.attribute(forKey: "id") as? NSNumber)?.intValue,
-                  let station = model.stations.first(where: { $0.id == id }) else { return }
+                  let station = model.stations.first(where: { $0.id == id }) else {
+                model.onTapMap?()
+                return
+            }
             model.onSelectStation?(station)
         }
 

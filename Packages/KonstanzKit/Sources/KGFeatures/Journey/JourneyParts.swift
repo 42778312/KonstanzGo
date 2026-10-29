@@ -109,6 +109,8 @@ struct JourneyMap: View {
     let journey: Journey
     let bottomInset: CGFloat
     var focus: [Coordinate]?
+    /// A tap on the map away from any stop.
+    var onTap: (() -> Void)?
     @State private var model = MapModel()
     @State private var buses: [VehiclePosition] = []
 
@@ -146,6 +148,7 @@ struct JourneyMap: View {
         .onAppear {
             model.lines = journey.mapLines
             model.insets = MapInsets(top: 110, bottom: bottomInset)
+            model.onTapMap = onTap
             model.userLocation = services.location.coordinate
             var ends: [MapPin] = []
             if let first = journey.allPoints.first { ends.append(MapPin(id: "start", coordinate: first)) }
@@ -154,6 +157,7 @@ struct JourneyMap: View {
             model.move(.fitting(focus ?? journey.allPoints, animated: false))
         }
         .onChange(of: services.location.coordinate) { _, point in model.userLocation = point }
+        .onChange(of: bottomInset) { _, inset in model.insets.bottom = inset }
         .task { await followBuses() }
     }
 

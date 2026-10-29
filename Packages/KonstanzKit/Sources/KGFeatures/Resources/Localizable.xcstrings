@@ -131,12 +131,12 @@
         }
       }
     },
-    "Ab zu %@! Bus %@ um %@.": {
+    "Ab zu %@. Bus %@ um %@.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Off to %1$@! Bus %2$@ at %3$@."
+            "value": "Off to %1$@. Bus %2$@ at %3$@."
           }
         }
       }
@@ -341,12 +341,12 @@
         }
       }
     },
-    "Alles bereit!": {
+    "Alles bereit": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All set!"
+            "value": "All set"
           }
         }
       }
@@ -762,22 +762,22 @@
         }
       }
     },
-    "Die roten Busse fahren nach Fahrplan mit. Die gelben fahren nach Kreuzlingen!": {
+    "Die roten Busse fahren nach Fahrplan mit. Die gelben fahren nach Kreuzlingen.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The red buses move along with the timetable. The yellow ones go to Kreuzlingen!"
+            "value": "The red buses move along with the timetable. The yellow ones go to Kreuzlingen."
           }
         }
       }
     },
-    "Du bist da!": {
+    "Du bist da": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You're there!"
+            "value": "You're there"
           }
         }
       }
@@ -1083,12 +1083,12 @@
         }
       }
     },
-    "Fertig! Gute Fahrt durch Konstanz!": {
+    "Fertig. Gute Fahrt durch Konstanz.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Done! Have a good ride through Konstanz!"
+            "value": "Done. Have a good ride through Konstanz."
           }
         }
       }
@@ -1233,12 +1233,12 @@
         }
       }
     },
-    "Gleich kommt dein Bus!": {
+    "Gleich kommt dein Bus": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your bus is coming!"
+            "value": "Your bus is coming"
           }
         }
       }
@@ -1253,32 +1253,32 @@
         }
       }
     },
-    "Hallo! Ich bin Seeri und bring dich durch ganz Konstanz.": {
+    "Hallo, ich bin Seeri und bring dich durch ganz Konstanz.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hi! I'm Seeri and I'll take you all over Konstanz."
+            "value": "Hi, I'm Seeri and I'll take you all over Konstanz."
           }
         }
       }
     },
-    "Hallo! Ich bin Seeri, dein Bus. Komm, ich zeig dir schnell, wie alles geht!": {
+    "Hallo, ich bin Seeri, dein Bus. Komm, ich zeig dir schnell, wie alles geht.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hi! I'm Seeri, your bus. Come on, I'll quickly show you how everything works!"
+            "value": "Hi, I'm Seeri, your bus. Come on, I'll quickly show you how everything works."
           }
         }
       }
     },
-    "Halte die Karte gedrückt – zack, da ist dein Ziel!": {
+    "Halte die Karte gedrückt – zack, da ist dein Ziel": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Press and hold the map – boom, there's your destination!"
+            "value": "Press and hold the map – boom, there's your destination"
           }
         }
       }
@@ -1494,12 +1494,12 @@
         }
       }
     },
-    "Ich warte an Steig %@!": {
+    "Ich warte an Steig %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "I'm waiting at platform %@!"
+            "value": "I'm waiting at platform %@"
           }
         }
       }
@@ -1554,12 +1554,12 @@
         }
       }
     },
-    "Jetzt umsteigen!": {
+    "Jetzt umsteigen": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Change now!"
+            "value": "Change now"
           }
         }
       }
@@ -1614,12 +1614,12 @@
         }
       }
     },
-    "Kein Netz? Kein Problem!": {
+    "Kein Netz? Kein Problem.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No signal? No problem!"
+            "value": "No signal? No problem."
           }
         }
       }
@@ -1644,12 +1644,12 @@
         }
       }
     },
-    "Keine Lust zu tippen? Sag's mir einfach. Klappt sogar ohne Internet!": {
+    "Keine Lust zu tippen? Sag's mir einfach. Klappt sogar ohne Internet.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Don't feel like typing? Just tell me. Works even without internet!"
+            "value": "Don't feel like typing? Just tell me. Works even without internet."
           }
         }
       }
@@ -1834,12 +1834,12 @@
         }
       }
     },
-    "Los geht's zu Fuß!": {
+    "Los geht's zu Fuß": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Off you go on foot!"
+            "value": "Off you go on foot"
           }
         }
       }
@@ -2024,7 +2024,7 @@
         }
       }
     },
-    "Noch %lld Haltestellen!": {
+    "Noch %lld Haltestellen": {
       "localizations": {
         "de": {
           "variations": {
@@ -2032,13 +2032,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Noch %lld Haltestelle!"
+                  "value": "Noch %lld Haltestelle"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Noch %lld Haltestellen!"
+                  "value": "Noch %lld Haltestellen"
                 }
               }
             }
@@ -2050,13 +2050,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld more stop!"
+                  "value": "%lld more stop"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld more stops!"
+                  "value": "%lld more stops"
                 }
               }
             }
@@ -2114,22 +2114,22 @@
         }
       }
     },
-    "Nur noch ein Stück zu Fuß!": {
+    "Nur noch ein Stück zu Fuß": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Just a short walk left!"
+            "value": "Just a short walk left"
           }
         }
       }
     },
-    "Nächste Haltestelle aussteigen!": {
+    "Nächste Haltestelle aussteigen": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Get off at the next stop!"
+            "value": "Get off at the next stop"
           }
         }
       }
@@ -2824,12 +2824,12 @@
         }
       }
     },
-    "Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an!": {
+    "Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "And this is where I live: favourites and settings. Go on, tap me!"
+            "value": "And this is where I live: favourites and settings. Go on, tap me."
           }
         }
       }

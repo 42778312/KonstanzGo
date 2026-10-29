@@ -215,8 +215,8 @@ private struct SwipeToDelete: ViewModifier {
 
 #Preview("Feedback") {
     VStack(spacing: 24) {
-        KGSpeechBubble(Text(verbatim: "Hallo! Ich bin Seeri und bring dich durch ganz Konstanz."))
-        KGSpeechBubble(Text(verbatim: "Ich warte an Steig D!"), size: .small)
+        KGSpeechBubble(Text(verbatim: "Hallo, ich bin Seeri und bring dich durch ganz Konstanz."))
+        KGSpeechBubble(Text(verbatim: "Ich warte an Steig D"), size: .small)
         KGToast(Text(verbatim: "Gelöscht")) {}
         KGEmptyState(.sleepy, title: Text(verbatim: "Keine Verbindung gefunden"),
                      message: Text(verbatim: "Um 01:30 fährt leider kein Bus zur Insel Mainau."),

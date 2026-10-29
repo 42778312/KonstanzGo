@@ -29,7 +29,7 @@ public struct KGTextStyle: Sendable, Hashable {
 }
 
 extension KGTextStyle {
-    /// 40 Bold: start screen wordmark, "Alles bereit!".
+    /// 40 Bold: start screen wordmark, "Alles bereit".
     public static let hero = KGTextStyle(fontName: KGFont.bold, size: 40, relativeTo: .largeTitle)
     /// 32 ExtraBold: onboarding titles.
     public static let display = KGTextStyle(fontName: KGFont.extraBold, size: 32, relativeTo: .largeTitle)

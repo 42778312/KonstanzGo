@@ -1,25 +1,23 @@
 {
-  "sourceLanguage" : "de",
-  "strings" : {
-    "%@" : {
-
-    },
-    "%lld Fahrten" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld ride"
+  "sourceLanguage": "de",
+  "strings": {
+    "%@": {},
+    "%lld Fahrten": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld ride"
                 }
               },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld rides"
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld rides"
                 }
               }
             }
@@ -27,231 +25,199 @@
         }
       }
     },
-    "ab %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "from %@"
+    "Abfahrten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departures"
           }
         }
       }
     },
-    "Abfahrten" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Departures"
+    "Abfahrten an einer Haltestelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departures at a stop"
           }
         }
       }
     },
-    "Abfahrten an einer Haltestelle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Departures at a stop"
+    "An %@ fährt heute nichts mehr.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing leaves %@ today any more."
           }
         }
       }
     },
-    "An %@ fährt heute nichts mehr." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nothing leaves %@ today any more."
+    "Ankunft %@": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrival %@"
           }
         }
       }
     },
-    "Ankunft %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrival %@"
+    "Arbeit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work"
           }
         }
       }
     },
-    "Arbeit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Work"
+    "Bus nach Hause": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bus home"
           }
         }
       }
     },
-    "Bus nach Hause" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bus home"
+    "Dein Bus %@ fährt jetzt an der Haltestelle %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus %1$@ is leaving %2$@ now."
           }
         }
       }
     },
-    "Dein Bus %@ fährt jetzt an der Haltestelle %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your bus %1$@ is leaving %2$@ now."
+    "Dein Bus %@ kommt in %lld Minuten an der Haltestelle %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus %1$@ comes in %2$lld minutes at %3$@."
           }
         }
       }
     },
-    "Dein Bus %@ kommt in %lld Minuten an der Haltestelle %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your bus %1$@ comes in %2$lld minutes at %3$@."
+    "Der nächste Bus von deinen Haltestellen nach Hause.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The next bus home from your stops."
           }
         }
       }
     },
-    "Der nächste Bus von deinen Haltestellen nach Hause." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The next bus home from your stops."
+    "Die nächsten Abfahrten an einer Haltestelle.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The next departures at a stop."
           }
         }
       }
     },
-    "Die nächsten Abfahrten an einer Haltestelle." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The next departures at a stop."
+    "Fahrten": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rides"
           }
         }
       }
     },
-    "diese Woche" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "this week"
+    "Gerade fährt kein Bus nach Hause.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bus home right now."
           }
         }
       }
     },
-    "Fahrten" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rides"
+    "Haltestelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
           }
         }
       }
     },
-    "Gerade fährt kein Bus nach Hause." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No bus home right now."
+    "Heute fährt hier nichts mehr.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing leaves here today any more."
           }
         }
       }
     },
-    "Haltestelle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stop"
+    "Ich finde gerade keine Haltestelle.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can't find a stop right now."
           }
         }
       }
     },
-    "Heute fährt hier nichts mehr." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nothing leaves here today any more."
+    "Lege in der App dein Zuhause fest.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set your home in the app."
           }
         }
       }
     },
-    "Ich finde gerade keine Haltestelle." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I can't find a stop right now."
+    "Nach Hause": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
           }
         }
       }
     },
-    "Lege in der App dein Zuhause fest." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set your home in the app."
-          }
-        }
-      }
-    },
-    "Nach Hause" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Home"
-          }
-        }
-      }
-    },
-    "Nächster Bus" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next bus"
-          }
-        }
-      }
-    },
-    "Noch %lld Haltestellen" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld more stop"
+    "Noch %lld Haltestellen": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld more stop"
                 }
               },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld more stops"
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld more stops"
                 }
               }
             }
@@ -259,78 +225,110 @@
         }
       }
     },
-    "Noch %lld Haltestellen · jetzt %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld more stops · now %2$@"
+    "Noch %lld Haltestellen · jetzt %@": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld more stops · now %2$@"
           }
         }
       }
     },
-    "Sagt dir, wann der nächste Bus an deiner Haltestelle kommt." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tells you when the next bus comes at your stop."
+    "Nächster Bus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next bus"
           }
         }
       }
     },
-    "Uni" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uni"
+    "Sagt dir, wann der nächste Bus an deiner Haltestelle kommt.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tells you when the next bus comes at your stop."
           }
         }
       }
     },
-    "Wann kommt mein Bus?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When is my bus?"
+    "Uni": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uni"
           }
         }
       }
     },
-    "Wie oft du diese Woche mit Seeri gefahren bist." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How often you rode with Seeri this week."
+    "Wann kommt mein Bus?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When is my bus?"
           }
         }
       }
     },
-    "Ziel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Destination"
+    "Wie oft du diese Woche mit Seeri gefahren bist.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How often you rode with Seeri this week."
           }
         }
       }
     },
-    "Zuhause" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Home"
+    "Ziel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destination"
+          }
+        }
+      }
+    },
+    "Zuhause": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        }
+      }
+    },
+    "ab %@": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "from %@"
+          }
+        }
+      }
+    },
+    "diese Woche": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "this week"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

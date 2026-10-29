@@ -31,24 +31,6 @@
         }
       }
     },
-    "NSLocationAlwaysAndWhenInUseUsageDescription": {
-      "comment": "Privacy - Location Always and When In Use Usage Description",
-      "extractionState": "extracted_with_value",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "new",
-            "value": "Während einer Fahrt hält KonstanzGo die Anzeige auf dem Sperrbildschirm aktuell. Dein Standort bleibt auf diesem iPhone."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "During a trip, KonstanzGo keeps the Lock Screen display up to date. Your location stays on this iPhone."
-          }
-        }
-      }
-    },
     "NSLocationWhenInUseUsageDescription": {
       "comment": "Privacy - Location When In Use Usage Description",
       "extractionState": "extracted_with_value",

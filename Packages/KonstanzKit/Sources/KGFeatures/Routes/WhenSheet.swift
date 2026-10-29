@@ -207,7 +207,7 @@ private struct DrivingScene: View {
                                  with: .color(index == 1 ? KGColor.lineFill : KGColor.coral))
                 }
             }
-            Seeri(.focused, sign: "GO!")
+            Seeri(.focused, sign: "GO")
                 .frame(width: 110, height: 117)
                 .offset(x: 110, y: 104 + CGFloat(sin(time * 12)) * 1.5)
         }

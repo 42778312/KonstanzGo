@@ -46,22 +46,22 @@ struct SeeriTour: View {
 
     static let steps: [Step] = [
         Step(seeri: .excited,
-             text: Text("Hallo! Ich bin Seeri, dein Bus. Komm, ich zeig dir schnell, wie alles geht!", bundle: .module)),
+             text: Text("Hallo, ich bin Seeri, dein Bus. Komm, ich zeig dir schnell, wie alles geht.", bundle: .module)),
         Step(spot: .search, seeri: .looking,
              text: Text("Tippe hier und such dein Ziel: Haltestelle, Straße oder Ort.", bundle: .module)),
         Step(spot: .mic, seeri: .happy,
-             text: Text("Keine Lust zu tippen? Sag's mir einfach. Klappt sogar ohne Internet!", bundle: .module)),
+             text: Text("Keine Lust zu tippen? Sag's mir einfach. Klappt sogar ohne Internet.", bundle: .module)),
         Step(demo: .tapStop, seeri: .curious,
              text: Text("Tipp auf eine Haltestelle, dann siehst du, wann welcher Bus fährt.", bundle: .module)),
         Step(demo: .longPress, seeri: .focused,
-             text: Text("Halte die Karte gedrückt – zack, da ist dein Ziel!", bundle: .module)),
+             text: Text("Halte die Karte gedrückt – zack, da ist dein Ziel", bundle: .module)),
         Step(demo: .vehicles, seeri: .joyful,
-             text: Text("Die roten Busse fahren nach Fahrplan mit. Die gelben fahren nach Kreuzlingen!", bundle: .module)),
+             text: Text("Die roten Busse fahren nach Fahrplan mit. Die gelben fahren nach Kreuzlingen.", bundle: .module)),
         Step(spot: .controls, seeri: .happy,
              text: Text("Hier findest du dich selbst und schaltest Busse und Haltestellen an und aus.", bundle: .module)),
         Step(spot: .seeri, seeri: .joyful,
-             text: Text("Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an!", bundle: .module)),
-        Step(seeri: .joyful, text: Text("Fertig! Gute Fahrt durch Konstanz!", bundle: .module)),
+             text: Text("Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an.", bundle: .module)),
+        Step(seeri: .joyful, text: Text("Fertig. Gute Fahrt durch Konstanz.", bundle: .module)),
     ]
 
     private var current: Step { Self.steps[step] }

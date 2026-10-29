@@ -41,7 +41,7 @@ public struct Seeri: View {
     let shadow: Bool
     /// 0 eyes open … 1 closed, for blinking.
     let blink: Double
-    /// Text on the roof sign: "GO!" on the start, welcome and ready screens; empty elsewhere.
+    /// Text on the roof sign: "GO" on the start, welcome and ready screens; empty elsewhere.
     let sign: String?
 
     public init(_ expression: Expression = .happy, detail: Detail = .full, hat: Hat = .none,

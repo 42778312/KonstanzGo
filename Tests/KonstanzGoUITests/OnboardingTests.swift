@@ -35,7 +35,7 @@ final class OnboardingTests: XCTestCase {
         let allow = app.buttons["allowPermissions"]
         XCTAssertTrue(allow.waitForExistence(timeout: 3))
         allow.tap()
-        XCTAssertTrue(app.staticTexts["Alles bereit!"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Alles bereit"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Alarme an"].waitForExistence(timeout: 3))
         app.buttons["finishOnboarding"].tap()
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
@@ -46,7 +46,7 @@ final class OnboardingTests: XCTestCase {
         let app = launch(permissions: "deny")
         walkToPermissions(app)
         app.buttons["allowPermissions"].tap()
-        XCTAssertTrue(app.staticTexts["Alles bereit!"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Alles bereit"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["Alarme an"].exists)
         app.buttons["finishOnboarding"].tap()
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))

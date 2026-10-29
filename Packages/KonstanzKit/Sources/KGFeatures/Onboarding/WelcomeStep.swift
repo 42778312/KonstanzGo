@@ -1,7 +1,7 @@
 import KGDesign
 import SwiftUI
 
-/// Screen 02: Seeri drives in over the lake with a "GO!" sign and says hello.
+/// Screen 02: Seeri drives in over the lake with a "GO" sign and says hello.
 struct WelcomeStep: View {
     let onNext: () -> Void
     @State private var drive = false
@@ -19,12 +19,12 @@ struct WelcomeStep: View {
                         .frame(height: 300)
                         .offset(y: 194 * scale)
                     if bubble {
-                        KGSpeechBubble(Text("Hallo! Ich bin Seeri und bring dich durch ganz Konstanz.",
+                        KGSpeechBubble(Text("Hallo, ich bin Seeri und bring dich durch ganz Konstanz.",
                                             bundle: .module))
                             .padding(.horizontal, 40)
                             .padding(.top, 48 * scale)
                     }
-                    SeeriAlive(.excited, sign: "GO!")
+                    SeeriAlive(.excited, sign: "GO")
                         .frame(width: 200, height: 212)
                         .offset(x: drive ? 0 : 320)
                         .rotationEffect(.degrees(drive ? 0 : 6))

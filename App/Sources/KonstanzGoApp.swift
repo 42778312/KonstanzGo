@@ -14,6 +14,16 @@ struct KonstanzGoApp: App {
     /// The real permission prompts; UI tests answer them with `-KGPermissions allow|deny` (debug builds).
     private let permissions: PermissionAsking = {
         #if DEBUG
+        // `-KGFreshInstall YES`: like a first launch after installing (onboarding, saved things, map layers).
+        if UserDefaults.standard.bool(forKey: "KGFreshInstall") {
+            for key in ["onboarding.finished", "onboarding.step", "map.showsStops", "map.showsVehicles", "alarm.minutes"] {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+            if let store = try? UserStore.shared() {
+                try? store.clearHistory()
+                for favorite in (try? store.favorites()) ?? [] { try? store.removeFavorite(id: favorite.id) }
+            }
+        }
         if UserDefaults.standard.bool(forKey: "KGResetOnboarding") {
             UserDefaults.standard.removeObject(forKey: "onboarding.finished")
             UserDefaults.standard.removeObject(forKey: "onboarding.step")

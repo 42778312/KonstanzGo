@@ -1,7 +1,7 @@
 import KGDesign
 import SwiftUI
 
-/// Screen 06: confetti, Seeri jumping for joy, "Alles bereit!", what is done, "Losfahren".
+/// Screen 06: confetti, Seeri jumping for joy, "Alles bereit", what is done, "Losfahren".
 struct ReadyStep: View {
     let notificationsOn: Bool
     let onFinish: () -> Void
@@ -27,7 +27,7 @@ struct ReadyStep: View {
                             .opacity(entered ? 1 : 0)
                     }
                     .padding(.top, 155)
-                    Text("Alles bereit!", bundle: .module)
+                    Text("Alles bereit", bundle: .module)
                         .kgFont(.display.sized(34))
                         .tracking(-0.34)
                         .foregroundStyle(KGColor.ink)
@@ -82,7 +82,7 @@ private struct DoneChip: View {
     }
 }
 
-/// Seeri with the "GO!" sign jumping (k-jump, 1.3 s from 1 s) over a shadow that shrinks while in the air.
+/// Seeri with the "GO" sign jumping (k-jump, 1.3 s from 1 s) over a shadow that shrinks while in the air.
 private struct JumpingSeeri: View {
     let start: Date
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -96,7 +96,7 @@ private struct JumpingSeeri: View {
                 Ellipse().fill(Color.black.opacity(pose.shadowOpacity))
                     .frame(width: 120 * pose.shadowScale, height: 15 * pose.shadowScale)
                     .offset(y: -4)
-                SeeriAlive(.joyful, sign: "GO!")
+                SeeriAlive(.joyful, sign: "GO")
                     .scaleEffect(x: pose.scaleX, y: pose.scaleY, anchor: .bottom)
                     .rotationEffect(.degrees(pose.rotation), anchor: .bottom)
                     .offset(y: pose.lift)

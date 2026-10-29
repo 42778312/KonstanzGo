@@ -9,8 +9,8 @@ public struct TypeSpecimen: View {
     }
 
     static let samples: [Sample] = [
-        Sample(name: "hero 40", style: .hero, text: "Alles bereit!"),
-        Sample(name: "display 32", style: .display, text: "Kein Netz? Kein Problem!"),
+        Sample(name: "hero 40", style: .hero, text: "Alles bereit"),
+        Sample(name: "display 32", style: .display, text: "Kein Netz? Kein Problem."),
         Sample(name: "titleL 28", style: .titleL, text: "Favoriten"),
         Sample(name: "title 22", style: .title, text: "In deiner Nähe"),
         Sample(name: "headline 19", style: .headline, text: "14:21 – 14:35"),

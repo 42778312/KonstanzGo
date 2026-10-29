@@ -204,9 +204,9 @@ private struct JourneyPart: View {
 private struct FeedbackPart: View {
     var body: some View {
         Caption("Sprechblasen (02, 22)")
-        KGSpeechBubble(Text(verbatim: "Hallo! Ich bin Seeri und bring dich durch ganz Konstanz."))
+        KGSpeechBubble(Text(verbatim: "Hallo, ich bin Seeri und bring dich durch ganz Konstanz."))
             .frame(maxWidth: .infinity)
-        KGSpeechBubble(Text(verbatim: "Ich warte an Steig D!"), size: .small)
+        KGSpeechBubble(Text(verbatim: "Ich warte an Steig D"), size: .small)
         Caption("Hinweis")
         KGToast(Text(verbatim: "Verlauf gelöscht")) {}
             .frame(maxWidth: .infinity)

@@ -28,7 +28,7 @@ public struct StartScreen: View {
                 VStack(spacing: 0) {
                     ZStack {
                         Circle().fill(KGColor.white).frame(width: 180, height: 180)
-                        Seeri(.excited, sign: "GO!")
+                        Seeri(.excited, sign: "GO")
                             .frame(width: 160, height: 170)
                             .padding(.top, 8)
                     }

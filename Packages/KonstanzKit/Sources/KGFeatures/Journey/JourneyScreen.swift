@@ -164,27 +164,27 @@ struct JourneyScreen: View {
         services.router.back()
     }
 
-    /// What Seeri says in each phase ("Noch 4 Haltestellen!").
+    /// What Seeri says in each phase ("Noch 4 Haltestellen").
     private var cheer: Text {
         switch phase {
         case .walkToStop:
             if let ride = journey.firstRide {
-                return Text("Ab zu \(ride.boarding.station.shortName)! Bus \(ride.line.name) um \(KGStrings.clock(ride.start)).",
+                return Text("Ab zu \(ride.boarding.station.shortName). Bus \(ride.line.name) um \(KGStrings.clock(ride.start)).",
                             bundle: .module)
             }
-            return Text("Los geht's zu Fuß!", bundle: .module)
+            return Text("Los geht's zu Fuß", bundle: .module)
         case .waiting:
-            return Text("Gleich kommt dein Bus!", bundle: .module)
+            return Text("Gleich kommt dein Bus", bundle: .module)
         case .riding:
             let left = currentRide.map { TripProgress(ride: $0, at: now, near: services.location.coordinate ?? $0.boarding.platform.coordinate).stopsLeft } ?? 0
-            return left == 1 ? Text("Nächste Haltestelle aussteigen!", bundle: .module)
-                : Text("Noch \(left) Haltestellen!", bundle: .module)
+            return left == 1 ? Text("Nächste Haltestelle aussteigen", bundle: .module)
+                : Text("Noch \(left) Haltestellen", bundle: .module)
         case .changing:
-            return Text("Jetzt umsteigen!", bundle: .module)
+            return Text("Jetzt umsteigen", bundle: .module)
         case .walkToTarget:
-            return Text("Nur noch ein Stück zu Fuß!", bundle: .module)
+            return Text("Nur noch ein Stück zu Fuß", bundle: .module)
         case .arrived:
-            return Text("Du bist da!", bundle: .module)
+            return Text("Du bist da", bundle: .module)
         }
     }
 

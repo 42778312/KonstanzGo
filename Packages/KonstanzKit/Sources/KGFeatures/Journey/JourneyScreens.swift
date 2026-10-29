@@ -110,7 +110,7 @@ struct WalkScreen: View {
                 JourneyMap(services: services, journey: Journey(legs: [.walk(walk)]), bottomInset: 400)
                     .overlay(alignment: .center) {
                         if let platform = nextRide?.boarding.platform.code {
-                            KGSpeechBubble(Text("Ich warte an Steig \(platform)!", bundle: .module), size: .small)
+                            KGSpeechBubble(Text("Ich warte an Steig \(platform)", bundle: .module), size: .small)
                                 .offset(y: -150)
                         }
                     }

@@ -1,7 +1,7 @@
 import KGDesign
 import SwiftUI
 
-/// Screen 03: "Kein Netz? Kein Problem!" with a little map that draws its roads, buses driving on them, and
+/// Screen 03: "Kein Netz? Kein Problem." with a little map that draws its roads, buses driving on them, and
 /// a "no signal" badge with a green check.
 struct OfflineStep: View {
     let onNext: () -> Void
@@ -9,7 +9,7 @@ struct OfflineStep: View {
     var body: some View {
         OnboardingPage {
             VStack(spacing: 0) {
-                SeeriSays(expression: .happy, text: Text("Kein Netz? Kein Problem!", bundle: .module))
+                SeeriSays(expression: .happy, text: Text("Kein Netz? Kein Problem.", bundle: .module))
                 Spacer(minLength: KGSpace.large)
                 OfflineMapCard()
                     .frame(width: 310, height: 270)

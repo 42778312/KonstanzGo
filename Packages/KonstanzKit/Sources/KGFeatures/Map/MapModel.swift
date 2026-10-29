@@ -40,6 +40,18 @@ public final class MapModel {
         pendingMove = move
     }
 
+    /// A zoom step for the map view to run once (+ / − buttons).
+    public private(set) var pendingZoom: Double?
+
+    public func zoom(by step: Double) {
+        pendingZoom = step
+    }
+
+    func takePendingZoom() -> Double? {
+        defer { pendingZoom = nil }
+        return pendingZoom
+    }
+
     func takePendingMove() -> CameraMove? {
         defer { pendingMove = nil }
         return pendingMove

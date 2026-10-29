@@ -184,20 +184,11 @@ layers += [
      "layout": {"text-field": NAME, "text-font": ["Noto Sans Italic"], "text-size": 13, "text-max-width": 8,
                 "text-letter-spacing": 0.05},
      "paint": {"text-color": WATER_LABEL, "text-halo-color": WATER_HALO, "text-halo-width": 1.2}},
-    # Places: a coloured dot with a white ring and the name under it.
-    {"id": "poi-dots", "type": "circle", "source": "osm", "source-layer": "pois", "minzoom": 16,
-     "filter": ["all", ["in", ["get", "kind"], ["literal", POI_KINDS]], ["has", "name"]],
-     "paint": {"circle-color": POI_COLOR, "circle-radius": zoom(16, 3.5, 18, 5.5, base=1),
-               "circle-stroke-color": HALO, "circle-stroke-width": 1.5}},
-    {"id": "poi-names", "type": "symbol", "source": "osm", "source-layer": "pois", "minzoom": 16,
-     "filter": ["all", ["in", ["get", "kind"], ["literal", POI_KINDS]], ["has", "name"]],
-     "layout": {"text-field": NAME, "text-font": ["Noto Sans Medium"], "text-size": 11, "text-max-width": 8,
-                "text-anchor": "top", "text-offset": [0, 0.7], "text-padding": 4, "text-optional": True},
-     "paint": {"text-color": POI_COLOR, "text-halo-color": HALO, "text-halo-width": 1.5}},
+    # No shops, cafés or other places: the map shows streets, water, parks and the bus stops (drawn by the
+    # app), nothing else (decided after testing on a phone: the places made the map busy).
     # Towns and districts (KONSTANZ, PETERSHAUSEN …) — uppercase and spaced like the design's DistrictLabel;
     # the many small neighbourhoods only when zoomed in.
     district("district-names", ["locality", "macrohood"], minzoom=0, size=12),
-    district("neighbourhood-names", ["neighbourhood"], minzoom=14, size=11),
 ]
 
 """

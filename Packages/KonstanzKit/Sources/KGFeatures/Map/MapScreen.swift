@@ -2,93 +2,103 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// Screen 07 (Karte) and its dark version 28: the offline map full screen, the search bar and "Offline bereit"
-/// on top, layers and location buttons above the sheet, and "In deiner Nähe" in the sheet (plan S4).
+/// Screen 07 (Karte), Apple Maps style: the offline map full screen and free to move, "Offline bereit" on
+/// top, layers and location on the right, and one glass search bar at the bottom with Seeri. Search, a tapped
+/// stop and a picked place each open in a sheet over the map (reworked after testing on a phone).
 public struct MapScreen: View {
     let services: AppServices
-    /// Room the floating tab bar takes at the bottom.
+    /// Room the floating tab bar takes, from the screen's bottom edge.
     let bottomBar: CGFloat
     @State private var map = MapModel()
-    @State private var nearby: NearbyModel
-    @State private var detent = SheetDetent.medium
-    @State private var sheetHeight: CGFloat = 374
+    @State private var sheet: MapSheet?
+    @State private var height: CGFloat = 800
     @State private var showsLayers = false
     @State private var toast: Text?
     @AppStorage("map.showsStops") private var showsStops = true
-    @Environment(\.scenePhase) private var scenePhase
+
+    /// What the sheet over the map shows.
+    enum MapSheet: Identifiable, Hashable {
+        case search
+        case station(Int)
+        case place(SavedTarget)
+
+        var id: String {
+            switch self {
+            case .search: "search"
+            case let .station(id): "station-\(id)"
+            case let .place(target): "place-\(target.name)-\(target.coordinate.latitude)-\(target.coordinate.longitude)"
+            }
+        }
+    }
 
     public init(services: AppServices, bottomBar: CGFloat) {
         self.services = services
         self.bottomBar = bottomBar
-        _nearby = State(initialValue: NearbyModel(transit: services.transit))
     }
 
     private var transit: TransitService { services.transit }
     private var location: LocationModel { services.location }
+    /// The search bar and the tab bar under it.
+    private var barSpace: CGFloat { bottomBar + KGSize.searchBar + KGSpace.medium }
 
     public var body: some View {
         ZStack(alignment: .top) {
             mapLayer
-            topBar
-            MapSheet(detent: $detent, height: $sheetHeight, showsSeeri: nearby.selected == nil) {
-                NearbySheetContent(nearby: nearby, location: location, isLarge: detent == .large,
-                                   bottomPadding: bottomBar) {
-                    deselect()
-                } onShowAll: {
-                    detent = .large
-                } onOpenStop: { station in
-                    services.router.open(.stop(station.id))
-                } onAllowLocation: {
-                    location.requestAccess()
-                }
-            }
+            OfflinePill(info: transit.timetableInfo)
+                .padding(.horizontal, KGSpace.screen)
+                .padding(.top, KGSpace.small)
+                .frame(maxWidth: .infinity, alignment: .leading)
             Text(verbatim: "© OpenStreetMap")
                 .kgFont(.caption.weighted(KGFont.regular).sized(10))
                 .foregroundStyle(KGColor.ink3)
                 .padding(.horizontal, KGSpace.small)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                .padding(.bottom, sheetHeight + KGSpace.xxs)
+                .padding(.bottom, barSpace + KGSpace.xs)
                 .ignoresSafeArea(edges: .bottom)
                 .allowsHitTesting(false)
-            KGMapControls(isFollowing: false) {
-                showsLayers = true
-            } onLocate: {
-                locate()
-            }
-            .padding(.trailing, KGSpace.screen)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            // 62 pt above the sheet as in screen 07, which leaves room for Seeri peeking over its edge.
-            .padding(.bottom, sheetHeight + 62)
-            .opacity(detent == .large ? 0 : 1)
-            .ignoresSafeArea(edges: .bottom)
+            controls
+                .padding(.trailing, KGSpace.screen)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .padding(.bottom, barSpace + KGSpace.medium)
+                .ignoresSafeArea(edges: .bottom)
+            searchBar
+                .padding(.horizontal, KGSpace.screen)
+                .padding(.bottom, bottomBar + KGSpace.small)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .ignoresSafeArea(edges: .bottom)
             if let toast {
                 KGToast(toast)
                     .frame(maxHeight: .infinity, alignment: .bottom)
-                    .padding(.bottom, sheetHeight + KGSpace.large)
+                    .padding(.bottom, barSpace + KGSpace.large)
                     .ignoresSafeArea(edges: .bottom)
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
+        .sheet(item: presented) { sheet in sheetContent(sheet) }
         .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops) }
         .onAppear(perform: appear)
         .onDisappear { location.stop() }
         .onChange(of: location.coordinate) { old, point in
             map.userLocation = point
-            nearby.update(around: anchor)
             // The first fix: look at where the user is.
-            if old == nil, let point, MapRegion.contains(point) {
+            if old == nil, let point, MapRegion.contains(point), sheet == nil {
                 map.move(CameraMove(center: point, zoom: MapRegion.userZoom))
             }
         }
-        .onChange(of: location.access) { _, _ in nearby.update(around: anchor) }
         .onChange(of: showsStops) { _, show in map.stations = show ? transit.stations : [] }
-        .onChange(of: sheetHeight, initial: true) { _, height in map.insets.bottom = height }
-        .task(id: scenePhase) {
-            // "In deiner Nähe" refreshes every 30 s while on screen (S4.5).
-            while scenePhase == .active, !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(30))
-                nearby.refresh()
+        .onChange(of: sheet, initial: true) { _, new in sheetChanged(new) }
+        .onChange(of: services.wantsSearch) { _, wants in
+            if wants {
+                services.wantsSearch = false
+                sheet = .search
             }
         }
+    }
+
+    /// The sheet hides while a screen is pushed over the map and comes back with the map.
+    private var presented: Binding<MapSheet?> {
+        Binding(get: { services.router.path.isEmpty ? sheet : nil },
+                set: { if services.router.path.isEmpty { sheet = $0 } })
     }
 
     // MARK: Parts
@@ -105,46 +115,139 @@ public struct MapScreen: View {
                     .position(point)
                     .allowsHitTesting(false)
             }
-            if let point = map.selectedPoint, let station = map.selectedStation {
-                KGStopMarker(station.shortName, isSelected: true, showsName: false)
+            if let point = map.selectedPoint, map.selectedStation != nil {
+                KGStopMarker("", isSelected: true, showsName: false)
                     .position(point)
+                    .allowsHitTesting(false)
+            }
+            if let point = map.pinPoints["place"] {
+                KGIconView(.pinFilled, size: 40).foregroundStyle(KGColor.coral)
+                    .shadow(color: .black.opacity(0.2), radius: 4, y: 3)
+                    .position(x: point.x, y: point.y - 18)
                     .allowsHitTesting(false)
             }
         }
         .ignoresSafeArea()
     }
 
-    private var topBar: some View {
-        VStack(alignment: .leading, spacing: KGSpace.medium) {
-            KGMapSearchBar {
-                services.router.open(.search)
+    /// One glass bar: magnifier, "Wohin möchtest du?", and Seeri bouncing at the end.
+    private var searchBar: some View {
+        Button { sheet = .search } label: {
+            HStack(spacing: KGSpace.medium) {
+                KGIconView(.search, size: 21).foregroundStyle(KGColor.ink)
+                Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium).foregroundStyle(KGColor.ink2)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                SeeriAlive(.happy, detail: .compact)
+                    .frame(width: 40, height: 43)
+                    .accessibilityHidden(true)
             }
-            .accessibilityIdentifier("mapSearch")
-            OfflinePill(info: transit.timetableInfo)
+            .padding(.leading, KGSpace.mediumLarge)
+            .padding(.trailing, KGSpace.compact)
+            .frame(height: KGSize.searchBar)
+            .contentShape(.capsule)
         }
-        .padding(.horizontal, KGSpace.screen)
-        .padding(.top, KGSpace.mediumLarge)
-        .background(GeometryReader { proxy in
-            Color.clear.onAppear { map.insets.top = proxy.frame(in: .global).maxY }
-        })
+        .buttonStyle(KGPressStyle())
+        .kgGlass(in: Capsule())
+        .kgShadow(.search, in: Capsule())
+        .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
+        .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
+        .accessibilityIdentifier("mapSearch")
+    }
+
+    /// Layers and my location, one glass column.
+    private var controls: some View {
+        VStack(spacing: 0) {
+            controlButton(.layers, label: Text("Kartenebenen", bundle: .module), tint: KGColor.ink) {
+                showsLayers = true
+            }
+            Rectangle().fill(KGColor.line).frame(width: 26, height: 1)
+            controlButton(.locate, label: Text("Mein Standort", bundle: .module), tint: KGColor.location) {
+                locate()
+            }
+        }
+        .kgGlass(in: Capsule())
+        .kgShadow(.floating, in: Capsule())
+    }
+
+    private func controlButton(_ icon: KGIcon, label: Text, tint: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            KGIconView(icon, size: 21).foregroundStyle(tint)
+                .frame(width: KGSize.mapButton, height: KGSize.mapButton)
+                .contentShape(.rect)
+        }
+        .buttonStyle(KGPressStyle())
+        .accessibilityLabel(label)
+    }
+
+    @ViewBuilder private func sheetContent(_ sheet: MapSheet) -> some View {
+        switch sheet {
+        case .search:
+            MapSearchSheet(services: services) { pick($0) }
+        case let .station(id):
+            if let station = transit.station(id: id) {
+                StationPanel(services: services, station: station) { self.sheet = nil }
+                    .padding(.top, KGSpace.large)
+                    .halfSheet()
+            }
+        case let .place(target):
+            PlaceSheet(services: services, target: target) { self.sheet = nil }
+                .halfSheet()
+        }
     }
 
     // MARK: Actions
 
-    /// Where "nearby" is measured from: the user, or the old town without a usable position (S4.7).
-    private var anchor: Coordinate {
-        if let point = location.coordinate, MapRegion.contains(point) { return point }
-        return MapRegion.center
-    }
-
     private func appear() {
+        if services.wantsSearch {
+            services.wantsSearch = false
+            sheet = .search
+        }
         map.stations = showsStops ? transit.stations : []
-        map.onSelectStation = { select($0) }
+        map.onSelectStation = { station in
+            services.updateUser { try $0.addRecent(.station(id: station.id, name: station.shortName,
+                                                           coordinate: station.coordinate)) }
+            sheet = .station(station.id)
+        }
         map.onLongPress = { services.router.open(.pin($0)) }
         location.start()
-        nearby.update(around: anchor)
-        if let point = location.coordinate, MapRegion.contains(point) {
+        if let point = location.coordinate, MapRegion.contains(point), sheet == nil {
             map.move(CameraMove(center: point, zoom: MapRegion.userZoom, animated: false))
+        }
+    }
+
+    /// From the search: a stop opens its departures, anything else the connections there.
+    private func pick(_ target: SavedTarget) {
+        services.updateUser { try $0.addRecent(target) }
+        if case let .station(id, _, _) = target {
+            sheet = .station(id)
+        } else {
+            sheet = .place(target)
+        }
+    }
+
+    /// Marks what the sheet is about on the map and keeps it in view above the sheet.
+    private func sheetChanged(_ new: MapSheet?) {
+        let half = height * 0.5
+        switch new {
+        case let .station(id):
+            map.pins = []
+            withAnimation(KGMotion.sheet) { map.selectedStationID = id }
+            map.insets.bottom = half
+            if let station = transit.station(id: id) {
+                map.move(CameraMove(center: station.coordinate, zoom: max(MapRegion.userZoom, 16)))
+            }
+        case let .place(target):
+            map.selectedStationID = nil
+            map.pins = [MapPin(id: "place", coordinate: target.coordinate)]
+            map.insets.bottom = half
+            map.move(CameraMove(center: target.coordinate, zoom: 16))
+        case .search:
+            break
+        case nil:
+            withAnimation(KGMotion.sheet) { map.selectedStationID = nil }
+            map.pins = []
+            map.insets.bottom = barSpace
         }
     }
 
@@ -164,24 +267,21 @@ public struct MapScreen: View {
         }
     }
 
-    private func select(_ station: Station) {
-        map.selectedStationID = station.id
-        nearby.select(station)
-        map.move(CameraMove(center: station.coordinate, zoom: max(MapRegion.userZoom, 16)))
-        if detent == .peek { detent = .medium }
-    }
-
-    private func deselect() {
-        map.selectedStationID = nil
-        nearby.select(nil)
-    }
-
     private func show(_ message: Text) {
         withAnimation(KGMotion.sheet) { toast = message }
         Task {
             try? await Task.sleep(for: .seconds(2.5))
             withAnimation(.easeOut(duration: 0.25)) { toast = nil }
         }
+    }
+}
+
+private extension View {
+    /// Half the screen with the map still usable above it, or pulled up to full height (Apple Maps).
+    func halfSheet() -> some View {
+        presentationDetents([.fraction(0.5), .large])
+            .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.5)))
+            .presentationDragIndicator(.visible)
     }
 }
 

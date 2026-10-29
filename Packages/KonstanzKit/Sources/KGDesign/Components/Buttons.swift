@@ -29,8 +29,8 @@ public struct KGButtonStyle: ButtonStyle {
         configuration.label
             .kgFont(font)
             .foregroundStyle(foreground)
-            .lineLimit(kind == .outline ? 1 : 2)
-            .minimumScaleFactor(kind == .outline ? 0.8 : 1)
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
             .multilineTextAlignment(.center)
             .opacity(isLoading ? 0 : 1)
             .overlay { if isLoading { ProgressView().tint(foreground) } }

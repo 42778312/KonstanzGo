@@ -228,7 +228,7 @@ private struct QuickCard: View {
             } else {
                 Text("Noch keine Adresse", bundle: .module).kgFont(.caption.weighted(KGFont.regular))
                     .foregroundStyle(KGColor.ink2).padding(.top, KGSpace.compact)
-                Button { services.router.open(.search); services.selectTab?(.map) } label: {
+                Button { services.selectTab?(.map); services.router.home(); services.wantsSearch = true } label: {
                     Text("Festlegen", bundle: .module).kgFont(.footnote.weighted(KGFont.extraBold))
                         .foregroundStyle(KGColor.ink)
                         .frame(maxWidth: .infinity, minHeight: 32)

@@ -65,6 +65,9 @@ public struct KGMapView: UIViewRepresentable {
         }
         coordinator.updateStops(on: map)
         coordinator.updateLines(on: map)
+        if let step = model.takePendingZoom() {
+            map.setZoomLevel(min(max(map.zoomLevel + step, MapRegion.minZoom), MapRegion.maxZoom), animated: true)
+        }
         if let move = model.takePendingMove() {
             if move.fit.count > 1 {
                 let bounds = MLNCoordinateBounds(
@@ -93,6 +96,23 @@ public struct KGMapView: UIViewRepresentable {
         static let stopsSource = "kg-stops"
         static let stopsLayer = "kg-stops"
         static let stopNamesLayer = "kg-stop-names"
+        static let stopRingsLayer = "kg-stop-rings"
+        static let stopTileName = "kg-stop-tile"
+
+        /// The stop marker as an image for the map: 28 pt coral rounded square, white bus, white edge, shadow.
+        static func stopTileImage() -> UIImage? {
+            let tile = KGIconView(.bus, size: 16)
+                .foregroundStyle(KGColor.white)
+                .frame(width: 28, height: 28)
+                .background(KGColor.coral, in: .kgRounded(8))
+                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(KGColor.white, lineWidth: 2))
+                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                .padding(4)
+                .environment(\.colorScheme, .light)
+            let renderer = ImageRenderer(content: tile)
+            renderer.scale = 3
+            return renderer.uiImage
+        }
         static let routeSource = "kg-route"
 
         // MARK: Route lines (plan M7)
@@ -136,7 +156,7 @@ public struct KGMapView: UIViewRepresentable {
             walk.lineCap = NSExpression(forConstantValue: "round")
             walk.lineDashPattern = NSExpression(forConstantValue: [0.1, 2])
             for layer in [casing, bus, walk] {
-                if let stops = style.layer(withIdentifier: Self.stopsLayer) {
+                if let stops = style.layer(withIdentifier: Self.stopRingsLayer) {
                     style.insertLayer(layer, below: stops)
                 } else {
                     style.addLayer(layer)
@@ -169,13 +189,23 @@ public struct KGMapView: UIViewRepresentable {
             let source = MLNShapeSource(identifier: Self.stopsSource, shape: shape, options: nil)
             style.addSource(source)
 
-            let rings = MLNCircleStyleLayer(identifier: Self.stopsLayer, source: source)
-            rings.minimumZoomLevel = 14
+            // Far out: small coral rings; from zoom 14.5: the bus tile (white bus on coral, white edge).
+            let rings = MLNCircleStyleLayer(identifier: Self.stopRingsLayer, source: source)
+            rings.minimumZoomLevel = 12.5
+            rings.maximumZoomLevel = 14.5
             rings.circleColor = NSExpression(forConstantValue: UIColor.white)
-            rings.circleRadius = NSExpression(forConstantValue: 4.5)
+            rings.circleRadius = NSExpression(forConstantValue: 3)
             rings.circleStrokeColor = NSExpression(forConstantValue: UIColor(KGColor.coral))
-            rings.circleStrokeWidth = NSExpression(forConstantValue: 3.5)
+            rings.circleStrokeWidth = NSExpression(forConstantValue: 2.5)
             style.addLayer(rings)
+
+            if let tile = Self.stopTileImage() { style.setImage(tile, forName: Self.stopTileName) }
+            let tiles = MLNSymbolStyleLayer(identifier: Self.stopsLayer, source: source)
+            tiles.minimumZoomLevel = 14.5
+            tiles.iconImageName = NSExpression(forConstantValue: Self.stopTileName)
+            tiles.iconAllowsOverlap = NSExpression(forConstantValue: true)
+            tiles.iconIgnoresPlacement = NSExpression(forConstantValue: true)
+            style.addLayer(tiles)
 
             let names = MLNSymbolStyleLayer(identifier: Self.stopNamesLayer, source: source)
             names.minimumZoomLevel = 16
@@ -183,7 +213,7 @@ public struct KGMapView: UIViewRepresentable {
             names.textFontNames = NSExpression(forConstantValue: ["Noto Sans Medium"])
             names.textFontSize = NSExpression(forConstantValue: 12)
             names.textAnchor = NSExpression(forConstantValue: "top")
-            names.textOffset = NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: 0, dy: 0.9)))
+            names.textOffset = NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: 0, dy: 1.5)))
             names.textOptional = NSExpression(forConstantValue: true)
             names.textColor = NSExpression(forConstantValue: UIColor(dark ? KGColor.white : KGColor.ink))
             names.textHaloColor = NSExpression(forConstantValue: UIColor(KGColor.mapLand))
@@ -240,7 +270,7 @@ public struct KGMapView: UIViewRepresentable {
             guard let map = recognizer.view as? MLNMapView else { return }
             let point = recognizer.location(in: map)
             let area = CGRect(x: point.x - 22, y: point.y - 22, width: 44, height: 44)
-            let hits = map.visibleFeatures(in: area, styleLayerIdentifiers: [Self.stopsLayer])
+            let hits = map.visibleFeatures(in: area, styleLayerIdentifiers: [Self.stopsLayer, Self.stopRingsLayer])
             let nearest = hits.min { lhs, rhs in
                 distance(map.convert(lhs.coordinate, toPointTo: map), point)
                     < distance(map.convert(rhs.coordinate, toPointTo: map), point)

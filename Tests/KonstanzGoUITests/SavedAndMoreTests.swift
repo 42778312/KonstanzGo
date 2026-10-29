@@ -9,7 +9,7 @@ final class SavedAndMoreTests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE", "-onboarding.finished", "YES"]
         app.launch()
-        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 15))
     }
 
     private func element(labelContains text: String) -> XCUIElement {
@@ -25,6 +25,10 @@ final class SavedAndMoreTests: XCTestCase {
         let result = element(labelContains: name)
         XCTAssertTrue(result.waitForExistence(timeout: 5))
         result.tap()
+        // The stop opens in the map's sheet; "Alle Abfahrten" opens its screen.
+        let all = app.buttons["Alle Abfahrten"]
+        XCTAssertTrue(all.waitForExistence(timeout: 5))
+        all.tap()
         XCTAssertTrue(app.buttons["Abfahrten"].waitForExistence(timeout: 5))
     }
 
@@ -35,7 +39,10 @@ final class SavedAndMoreTests: XCTestCase {
         let wasSaved = star.isSelected
         if !wasSaved { star.tap() }
         app.buttons["Zurück"].firstMatch.tap()
-        app.buttons["Abbrechen"].firstMatch.tap()
+        // Back on the map the stop's sheet is open again; close it to reach the tabs.
+        let close = app.buttons["closeStation"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        close.tap()
         app.buttons["Favoriten"].firstMatch.tap()
         XCTAssertTrue(app.buttons["favoriteStop"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(element(labelContains: "Sternenplatz").exists)
@@ -51,7 +58,10 @@ final class SavedAndMoreTests: XCTestCase {
     func testRecentSearchesAndDeleteAll() {
         openStop("Bahnhof")
         app.buttons["Zurück"].firstMatch.tap()
-        app.buttons["Abbrechen"].firstMatch.tap()
+        // Back on the map the stop's sheet is open again; close it to reach the tabs.
+        let close = app.buttons["closeStation"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        close.tap()
         app.buttons["Favoriten"].firstMatch.tap()
         let link = app.buttons["recentLink"]
         XCTAssertTrue(link.waitForExistence(timeout: 5))

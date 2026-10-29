@@ -1,6 +1,6 @@
 import XCTest
 
-/// Starting the app after onboarding: the map with "In deiner Nähe" from the real timetable, and the tabs.
+/// Starting the app after onboarding: the map with the search bar at the bottom (no nearby list), and the tabs.
 final class LaunchTests: XCTestCase {
     override func setUp() {
         continueAfterFailure = false
@@ -14,44 +14,32 @@ final class LaunchTests: XCTestCase {
         return app
     }
 
-    /// A departure row ("Linie 9 nach …") or, late at night, the "nothing runs" card.
-    private func departuresOrNothing(_ app: XCUIApplication, line: String, nothing: String) -> Bool {
-        let row = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", line)).firstMatch
-        let empty = app.staticTexts[nothing]
-        let deadline = Date.now.addingTimeInterval(10)
-        while Date.now < deadline {
-            if row.exists || empty.exists { return true }
-            RunLoop.current.run(until: .now.addingTimeInterval(0.25))
-        }
-        return false
-    }
-
     @MainActor
-    func testMapShowsNearbyDeparturesFromTheTimetable() {
+    func testMapStartsWithWhereTo() {
         let app = launch(language: "de", locale: "de_DE")
-        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["Wohin möchtest du?"].exists)
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["mapSearch"].label.contains("Wohin möchtest du?"))
         XCTAssertTrue(app.staticTexts["Offline bereit"].exists)
-        XCTAssertTrue(departuresOrNothing(app, line: "Linie ", nothing: "Heute fährt hier nichts mehr."))
+        XCTAssertFalse(app.staticTexts["In deiner Nähe"].exists, "the nearby list was removed")
     }
 
     @MainActor
     func testTabs() {
         let app = launch(language: "de", locale: "de_DE")
-        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
         app.buttons["Mehr"].firstMatch.tap()
         XCTAssertTrue(app.buttons["replayOnboarding"].waitForExistence(timeout: 3))
         app.buttons["Favoriten"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["SCHNELL LOS"].waitForExistence(timeout: 3) ||
                       app.staticTexts["Schnell los"].exists)
         app.buttons["Karte"].firstMatch.tap()
-        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 5))
     }
 
     @MainActor
     func testEnglish() {
         let app = launch(language: "en", locale: "en_GB")
-        XCTAssertTrue(app.staticTexts["Near you"].waitForExistence(timeout: 10))
-        XCTAssertTrue(departuresOrNothing(app, line: "Line ", nothing: "Nothing leaves here today any more."))
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["mapSearch"].label.contains("Where do you want to go?"), "got: \(app.buttons["mapSearch"].label)")
     }
 }

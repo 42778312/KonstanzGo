@@ -15,6 +15,8 @@ public final class AppServices {
     public let router = Router()
     /// Switches home's tab (set by HomeView), so Favoriten and links can open screens on the map's stack.
     public var selectTab: ((HomeTab) -> Void)?
+    /// Set to open the map's search sheet (links and Favoriten); the map clears it.
+    public var wantsSearch = false
     /// Bumped whenever the user store changes, so lists re-read it.
     public private(set) var userVersion = 0
 
@@ -52,7 +54,7 @@ public final class AppServices {
             if let id = parts.first.flatMap(Int.init) { router.home(); router.open(.stop(id)) }
         case "route":
             let slot = parts.first.flatMap(Favorite.Slot.init(rawValue:)) ?? .home
-            guard let favorite = try? user?.slot(slot) else { router.home(); router.open(.search); return }
+            guard let favorite = try? user?.slot(slot) else { router.home(); wantsSearch = true; return }
             let start = here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module), coordinate: MapRegion.center)
             router.home()
             router.open(.routes(PlanQuery(from: start, to: Endpoint(name: favorite.displayName,

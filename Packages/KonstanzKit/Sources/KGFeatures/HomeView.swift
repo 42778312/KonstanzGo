@@ -13,9 +13,13 @@ public struct HomeView: View {
     @State private var services: AppServices?
     @State private var notifications: AlarmNotificationRouter?
     @State private var location = LocationModel()
+    /// A link that arrived before the offline data was open (the app was started by it).
+    @State private var pendingURL: URL?
 
-    /// The tab bar's height plus its gap above the safe area, for content to keep clear of.
-    static let barSpace: CGFloat = KGSize.tabItem.height + 2 * KGSize.tabBarPadding + KGSize.tabBarBottom
+    /// The tab bar sits this far from the screen's bottom edge, down by the home indicator.
+    static let barBottom: CGFloat = 14
+    /// The tab bar's height above the safe area, for content to keep clear of.
+    static let barSpace: CGFloat = KGSize.tabItem.height + 2 * KGSize.tabBarPadding
 
     public init(loader: TransitLoader, onReplayOnboarding: @escaping () -> Void) {
         self.loader = loader
@@ -38,9 +42,9 @@ public struct HomeView: View {
             }
         }
         .animation(KGMotion.slide, value: services?.router.path.isEmpty ?? true)
-        .onOpenURL { url in services?.open(url: url) }
+        .onOpenURL { open($0) }
         .onReceive(NotificationCenter.default.publisher(for: .kgDeepLink)) { note in
-            if let url = note.object as? URL { services?.open(url: url) }
+            if let url = note.object as? URL { open(url) }
         }
         .onChange(of: loader.transit != nil, initial: true) { _, ready in
             if ready, services == nil, let transit = loader.transit, let data = loader.data {
@@ -48,9 +52,17 @@ public struct HomeView: View {
                 new.selectTab = { tab = $0 }
                 services = new
                 notifications = AlarmNotificationRouter(services: new)
+                if let url = pendingURL {
+                    pendingURL = nil
+                    new.open(url: url)
+                }
                 Task { await AlarmScheduler.refresh(store: new.user) }
             }
         }
+    }
+
+    private func open(_ url: URL) {
+        if let services { services.open(url: url) } else { pendingURL = url }
     }
 
     private var tabBar: some View {
@@ -59,7 +71,9 @@ public struct HomeView: View {
                 KGTab(id: .saved, title: Text("Favoriten", bundle: .module), icon: .star),
                 KGTab(id: .more, title: Text("Mehr", bundle: .module), icon: .more),
             ])
-            .padding(.bottom, KGSize.tabBarBottom - 20)
+            .padding(.bottom, Self.barBottom)
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .ignoresSafeArea(edges: .bottom)
     }
 
     @ViewBuilder private var mapTab: some View {
@@ -117,7 +131,7 @@ private struct MapTab: View {
 
     var body: some View {
         NavigationStack(path: $router.path) {
-            MapScreen(services: services, bottomBar: HomeView.barSpace)
+            MapScreen(services: services, bottomBar: HomeView.barSpace + HomeView.barBottom)
                 .kgHideNavigationBar()
                 .navigationDestination(for: Route.self) { route in
                     RouteScreen(route: route, services: services)

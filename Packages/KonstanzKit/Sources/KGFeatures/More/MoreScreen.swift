@@ -15,7 +15,7 @@ enum AppInfo {
 enum MoreRoute: Hashable { case favorites, offline, privacy, about }
 
 /// Screen 13 (Mehr), opened from Seeri in the map's search bar as a half sheet: the offline status on top;
-/// Favoriten; notifications, alarm lead time; language, appearance; privacy, help, about; the version
+/// Favoriten; notifications, alarm lead time; language (the app is always dark); privacy, help, about; the version
 /// (plan S17.1).
 struct MoreScreen: View {
     let services: AppServices
@@ -23,7 +23,6 @@ struct MoreScreen: View {
     @State private var path: [MoreRoute] = []
     @State private var notifications = false
     @AppStorage("alarm.minutes") private var alarmMinutes = 2
-    @AppStorage("appearance") private var appearance = Appearance.automatic.rawValue
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
 
@@ -55,7 +54,6 @@ struct MoreScreen: View {
                                           forLanguageCode: Locale.current.language.languageCode?.identifier ?? "de") ?? "")) {
                             openSettings()
                         }
-                        appearanceRow
                     }
                     .riseIn(after: 0.2)
                     KGSettingsGroup {
@@ -122,19 +120,6 @@ struct MoreScreen: View {
                           value: Text("\(alarmMinutes) Min. vorher", bundle: .module)) {}
                 .allowsHitTesting(false)
         }
-    }
-
-    private var appearanceRow: some View {
-        Menu {
-            Picker(selection: $appearance) {
-                ForEach(Appearance.allCases, id: \.rawValue) { $0.title.tag($0.rawValue) }
-            } label: { EmptyView() }
-        } label: {
-            KGSettingsRow(Text("Darstellung", bundle: .module), icon: .appearance, tile: KGColor.tileBlack,
-                          value: (Appearance(rawValue: appearance) ?? .automatic).title) {}
-                .allowsHitTesting(false)
-        }
-        .accessibilityIdentifier("appearanceMenu")
     }
 
     private func readNotificationState() async {

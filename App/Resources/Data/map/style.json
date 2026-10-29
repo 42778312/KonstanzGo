@@ -27,6 +27,34 @@
    }
   },
   {
+   "id": "landuse-urban",
+   "type": "fill",
+   "source": "osm",
+   "source-layer": "landuse",
+   "filter": [
+    "in",
+    [
+     "get",
+     "kind"
+    ],
+    [
+     "literal",
+     [
+      "residential",
+      "neighbourhood",
+      "retail",
+      "garages",
+      "military",
+      "cemetery",
+      "construction"
+     ]
+    ]
+   ],
+   "paint": {
+    "fill-color": "#F2F1ED"
+   }
+  },
+  {
    "id": "landcover",
    "type": "fill",
    "source": "osm",

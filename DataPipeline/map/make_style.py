@@ -17,18 +17,21 @@ OUT = Path(__file__).resolve().parents[2] / "App/Resources/Data/map"
 # white streets on a grey casing, grey labels, blue water names. Values the design does not show
 # (industry, hospitals, motorways, paths …) are picked to sit quietly between them.
 LIGHT = dict(
-    LAND="#F2F1ED", BUILDING="#E5E2DE", BUILDING_LINE="#D9D5CF", PARK="#D8E8D2", PARK_DARK="#CCE0C4",
+    LAND="#F2F1ED", URBAN="#F2F1ED", BUILDING="#E5E2DE", BUILDING_LINE="#D9D5CF", PARK="#D8E8D2", PARK_DARK="#CCE0C4",
     PITCH="#D0E5C8", EDUCATION="#EEE9DF", HOSPITAL="#F3E3E1", INDUSTRIAL="#EAE8E3", PEDESTRIAN="#F8F7F4",
     WATER="#B9D8E8", SHORE="#A9CDE0", ROAD="#FFFFFF", ROAD_CASING="#D5D3CF", HIGHWAY="#FFFFFF",
     HIGHWAY_CASING="#C9C6C1", PATH="#C4C0B8", RAIL="#B8B4AD", BORDER="#B9B2C6", DISTRICT_LABEL="#757575",
     STREET_LABEL="#5E6168", WATER_LABEL="#3F6FB0", HALO="#FFFFFF", WATER_HALO="#D6EBF8", POI_DEFAULT="#6B7A90",
 )
+# Dark, the app's only look now: Apple Maps' night colours, sampled from a screenshot of Konstanz in Apple
+# Maps: teal-green countryside and woods, blue-grey towns, deep navy lake and Rhine, blue-grey streets.
 DARK = dict(
-    LAND="#1E1E1E", BUILDING="#2A2A2A", BUILDING_LINE="#333333", PARK="#203126", PARK_DARK="#1C2B21",
-    PITCH="#22352A", EDUCATION="#26241F", HOSPITAL="#2C2222", INDUSTRIAL="#232323", PEDESTRIAN="#262626",
-    WATER="#182D38", SHORE="#1F3846", ROAD="#3A3A3A", ROAD_CASING="#2D2D2D", HIGHWAY="#4A4A4A",
-    HIGHWAY_CASING="#2D2D2D", PATH="#4A4A4A", RAIL="#4E4E4E", BORDER="#5A5470", DISTRICT_LABEL="#9E9E9E",
-    STREET_LABEL="#B0B0B0", WATER_LABEL="#6E9BD6", HALO="#1E1E1E", WATER_HALO="#182D38", POI_DEFAULT="#8A96A8",
+    LAND="#0F3C45", URBAN="#1F2D3F", BUILDING="#2A384B", BUILDING_LINE="#334257", PARK="#0E4249",
+    PARK_DARK="#0B3D43", PITCH="#11454B", EDUCATION="#26334A", HOSPITAL="#2F2E4A", INDUSTRIAL="#1F2F40",
+    PEDESTRIAN="#39425D", WATER="#182858", SHORE="#1E3168", ROAD="#3A4659", ROAD_CASING="#1A2636",
+    HIGHWAY="#43546C", HIGHWAY_CASING="#1A2636", PATH="#3A4659", RAIL="#4C5A72", BORDER="#6B5A8E",
+    DISTRICT_LABEL="#8D97AA", STREET_LABEL="#B4BCCA", WATER_LABEL="#7C98E0", HALO="#1F2D3F",
+    WATER_HALO="#182858", POI_DEFAULT="#8A96A8",
 )
 globals().update(LIGHT)
 
@@ -121,6 +124,10 @@ path_w = zoom(15, 0.8, 18, 2.5)
 layers = [
     {"id": "water-background", "type": "background", "paint": {"background-color": WATER}},
     {"id": "earth", "type": "fill", "source": "osm", "source-layer": "earth", "paint": {"fill-color": LAND}},
+    # Towns and villages: blue-grey on the teal countryside in the dark map, like Apple Maps.
+    {"id": "landuse-urban", "type": "fill", "source": "osm", "source-layer": "landuse",
+     "filter": kinds("residential", "neighbourhood", "retail", "garages", "military", "cemetery", "construction"),
+     "paint": {"fill-color": URBAN}},
     {"id": "landcover", "type": "fill", "source": "osm", "source-layer": "landcover",
      "filter": kinds("forest", "grassland"), "paint": {"fill-color": PARK, "fill-opacity": 0.7}},
     {"id": "landuse-industrial", "type": "fill", "source": "osm", "source-layer": "landuse",

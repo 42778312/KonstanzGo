@@ -387,11 +387,10 @@ private struct OfflinePill: View {
     }
 }
 
-/// The layers menu (S4.4): stops and vehicles on or off, and the map's look.
+/// The layers menu (S4.4): stops and vehicles on or off. The app is always dark.
 private struct LayersSheet: View {
     @Binding var showsStops: Bool
     @Binding var showsVehicles: Bool
-    @AppStorage("appearance") private var appearance = Appearance.automatic.rawValue
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -404,35 +403,10 @@ private struct LayersSheet: View {
             }
             KGToggleRow(Text("Haltestellen", bundle: .module), isOn: $showsStops)
             KGToggleRow(Text("Busse & Züge", bundle: .module), isOn: $showsVehicles)
-            VStack(alignment: .leading, spacing: KGSpace.small) {
-                KGSectionHeader(Text("Darstellung", bundle: .module))
-                KGSegmentedControl(selection: $appearance, options: Appearance.allCases.map { ($0.rawValue, $0.title) })
-            }
             Spacer(minLength: 0)
         }
         .padding(KGSpace.large)
-        .presentationDetents([.height(360)])
+        .presentationDetents([.height(250)])
         .presentationCornerRadius(KGRadius.card)
-    }
-}
-
-/// The app's look: follow the system, or always light or dark (Mehr › Darstellung, layers menu).
-public enum Appearance: String, CaseIterable, Sendable {
-    case automatic, light, dark
-
-    var title: Text {
-        switch self {
-        case .automatic: Text("Automatisch", bundle: .module)
-        case .light: Text("Hell", bundle: .module)
-        case .dark: Text("Dunkel", bundle: .module)
-        }
-    }
-
-    public var colorScheme: ColorScheme? {
-        switch self {
-        case .automatic: nil
-        case .light: .light
-        case .dark: .dark
-        }
     }
 }

@@ -11,7 +11,6 @@ public struct RootView: View {
     @State private var onboarding: OnboardingModel
     /// Opens the timetable, search and walking data while the start animation plays (S1.2).
     @State private var loader: TransitLoader
-    @AppStorage("appearance") private var appearance = Appearance.automatic.rawValue
 
     public init(info: TimetableInfo?, data: BundledData?, permissions: PermissionAsking,
                 defaults: UserDefaults = .standard) {
@@ -46,7 +45,8 @@ public struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .preferredColorScheme(Appearance(rawValue: appearance)?.colorScheme)
+        // Always dark, with the Apple Maps night map (changed after testing on a phone).
+        .preferredColorScheme(.dark)
     }
 }
 

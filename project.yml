@@ -82,6 +82,7 @@ targets:
           - CFBundleURLName: de.konstanzgo.app
             CFBundleURLSchemes: [konstanzgo]
         UIBackgroundModes: [location]
+        UIUserInterfaceStyle: Dark
         NSMicrophoneUsageDescription: "Damit du Haltestellen und Orte per Sprache suchen kannst. Was du sagst, bleibt auf diesem iPhone."
         NSSpeechRecognitionUsageDescription: "KonstanzGo erkennt deine Sprachsuche direkt auf diesem iPhone, ohne Internet."
         NSLocationWhenInUseUsageDescription: "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone."

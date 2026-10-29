@@ -39,7 +39,7 @@ struct OfflineMapCard: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             TimelineView(.animation(paused: reduceMotion)) { timeline in
-                let elapsed = reduceMotion ? 10 : timeline.date.timeIntervalSince(start)
+                let elapsed = reduceMotion ? 10 : Tempo.clock(timeline.date.timeIntervalSince(start), intro: 2.6)
                 Canvas { context, _ in
                     Self.drawMap(&context, elapsed: elapsed)
                 }
@@ -54,7 +54,7 @@ struct OfflineMapCard: View {
         .opacity(appeared ? 1 : 0)
         .onAppear {
             start = .now
-            withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)?.delay(0.6)) { appeared = true }
+            withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)?.delay(0.1)) { appeared = true }
         }
         .accessibilityHidden(true)
     }

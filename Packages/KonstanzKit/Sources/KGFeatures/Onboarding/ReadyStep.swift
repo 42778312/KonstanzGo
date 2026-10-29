@@ -56,8 +56,8 @@ struct ReadyStep: View {
         .onAppear {
             start = .now
             let quick = reduceMotion
-            withAnimation(quick ? .easeOut(duration: 0.2) : KGMotion.pop.delay(0.2)) { entered = true }
-            if !quick { withAnimation(.easeOut(duration: 1).delay(0.5)) { burst = true } }
+            withAnimation(quick ? .easeOut(duration: 0.2) : KGMotion.pop) { entered = true }
+            if !quick { withAnimation(.easeOut(duration: 0.8).delay(0.1)) { burst = true } }
         }
     }
 }
@@ -89,7 +89,7 @@ private struct JumpingSeeri: View {
 
     var body: some View {
         TimelineView(.animation(paused: reduceMotion)) { timeline in
-            let elapsed = timeline.date.timeIntervalSince(start) - 1
+            let elapsed = timeline.date.timeIntervalSince(start) - 0.4
             let t = reduceMotion || elapsed < 0 ? 0 : (elapsed / 1.3).truncatingRemainder(dividingBy: 1)
             let pose = Self.pose(t)
             ZStack(alignment: .bottom) {

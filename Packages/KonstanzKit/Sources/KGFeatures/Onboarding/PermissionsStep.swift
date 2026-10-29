@@ -111,7 +111,7 @@ private struct SampleNotification: View {
         .scaleEffect(shown ? 1 : 0.96)
         .opacity(shown ? 1 : 0)
         .onAppear {
-            withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)?.delay(0.3)) { shown = true }
+            withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)?.delay(0.05)) { shown = true }
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text("Beispiel-Mitteilung: Dein Bus 9A kommt in 3 Min.", bundle: .module))
@@ -131,7 +131,7 @@ private struct RadarScene: View {
                     let elapsed = timeline.date.timeIntervalSince(start)
                     ZStack {
                         ForEach(0..<3) { index in
-                            let t = Self.ring(elapsed - 0.8 - Double(index) * 0.95)
+                            let t = Self.ring(elapsed - 0.2 - Double(index) * 0.95)
                             Circle().fill(KGColor.location)
                                 .frame(width: 56, height: 56)
                                 .scaleEffect(1 + 2.6 * t)

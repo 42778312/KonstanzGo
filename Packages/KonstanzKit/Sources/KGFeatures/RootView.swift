@@ -7,13 +7,11 @@ public struct RootView: View {
     enum Stage { case start, onboarding, home }
 
     let info: TimetableInfo?
-    @State private var stage = Stage.start
+    @State private var stage: Stage
     @State private var onboarding: OnboardingModel
     /// Opens the timetable, search and walking data while the start animation plays (S1.2).
     @State private var loader: TransitLoader
     @AppStorage("appearance") private var appearance = Appearance.automatic.rawValue
-    /// The first start plays the full animation; later starts the short one (S1.4).
-    private let shortStart: Bool
 
     public init(info: TimetableInfo?, data: BundledData?, permissions: PermissionAsking,
                 defaults: UserDefaults = .standard) {
@@ -21,14 +19,15 @@ public struct RootView: View {
         _loader = State(initialValue: TransitLoader(data: data))
         let model = OnboardingModel(defaults: defaults, permissions: permissions)
         _onboarding = State(initialValue: model)
-        shortStart = model.isFinished
+        // After onboarding the app opens straight on the map; the start screen is for the first launch only.
+        _stage = State(initialValue: model.isFinished ? .home : .start)
     }
 
     public var body: some View {
         ZStack {
             switch stage {
             case .start:
-                StartScreen(short: shortStart) {
+                StartScreen {
                     withAnimation(.easeInOut(duration: 0.35)) {
                         stage = onboarding.isFinished ? .home : .onboarding
                     }

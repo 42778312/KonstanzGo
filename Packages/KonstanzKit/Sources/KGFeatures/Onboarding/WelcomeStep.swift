@@ -46,9 +46,9 @@ struct WelcomeStep: View {
         }
         .onAppear {
             let quick = reduceMotion
-            withAnimation(quick ? .easeOut(duration: 0.2) : KGMotion.drive.delay(0.4)) { drive = true }
-            withAnimation(quick ? nil : .default.delay(1.35)) { bubble = true }
-            withAnimation(quick ? .easeOut(duration: 0.2) : KGMotion.rise.delay(1.6)) { title = true }
+            withAnimation(quick ? .easeOut(duration: 0.2) : KGMotion.drive.speed(2).delay(0.05)) { drive = true }
+            withAnimation(quick ? nil : .default.delay(0.35)) { bubble = true }
+            withAnimation(quick ? .easeOut(duration: 0.2) : KGMotion.rise.delay(0.4)) { title = true }
         }
     }
 }
@@ -76,7 +76,7 @@ struct LakeScene: View {
             }
         }
         .onAppear {
-            withAnimation(KGMotion.animation(KGMotion.rise, reduceMotion: reduceMotion)?.delay(0.2)) { shown = true }
+            withAnimation(KGMotion.animation(KGMotion.rise, reduceMotion: reduceMotion)?.delay(0)) { shown = true }
         }
         .accessibilityHidden(true)
     }

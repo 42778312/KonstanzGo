@@ -119,7 +119,7 @@ private struct PopIn: ViewModifier {
             .scaleEffect(shown || reduceMotion ? 1 : 0.3)
             .opacity(shown ? 1 : 0)
             .onAppear {
-                withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)?.delay(delay)) {
+                withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)?.delay(delay * Tempo.delays)) {
                     shown = true
                 }
             }
@@ -143,7 +143,7 @@ private struct RiseAfter: ViewModifier {
             .opacity(shown ? 1 : 0)
             .offset(y: shown || reduceMotion ? 0 : KGMotion.riseDistance)
             .onAppear {
-                withAnimation(KGMotion.animation(KGMotion.rise, reduceMotion: reduceMotion)?.delay(delay)) {
+                withAnimation(KGMotion.animation(KGMotion.rise, reduceMotion: reduceMotion)?.delay(delay * Tempo.delays)) {
                     shown = true
                 }
             }
@@ -152,3 +152,19 @@ private struct RiseAfter: ViewModifier {
 
 /// A point on an illustration's grid; keeps the design's coordinate lists short.
 func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x, y: y) }
+
+/// Onboarding's pace, set after trying it on a phone: the design's timings felt slow, so everything that
+/// waits or builds up runs faster; loops (buses driving, the countdown) keep their normal speed.
+enum Tempo {
+    /// Waits before things appear are this fraction of the design's.
+    static let delays = 0.25
+    /// How much faster the illustrations' intros play.
+    static let speed = 3.0
+
+    /// The illustration's clock: `speed` times faster until the design's intro (`intro` seconds) is over,
+    /// then normal time, so loops after the intro run at their usual pace.
+    static func clock(_ elapsed: Double, intro: Double) -> Double {
+        let fast = elapsed * speed
+        return fast < intro ? fast : intro + (elapsed - intro / speed)
+    }
+}

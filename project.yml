@@ -18,7 +18,7 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     TARGETED_DEVICE_FAMILY: "1"
     # Set your Apple Developer team here (Xcode › Settings › Accounts shows the id).
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: L869QHX9NH
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: NO
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES

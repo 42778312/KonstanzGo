@@ -38,7 +38,7 @@ private struct SearchDemo: View {
 
     var body: some View {
         TimelineView(.animation(paused: reduceMotion)) { timeline in
-            let elapsed = reduceMotion ? 4 : timeline.date.timeIntervalSince(start)
+            let elapsed = reduceMotion ? 4 : Tempo.clock(timeline.date.timeIntervalSince(start), intro: 3.2)
             VStack(spacing: KGSpace.medium) {
                 field(elapsed)
                     .riseIn(after: 0.6)

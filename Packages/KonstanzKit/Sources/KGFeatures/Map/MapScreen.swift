@@ -158,7 +158,7 @@ public struct MapScreen: View {
             ForEach(vehicles) { vehicle in
                 if let point = map.pinPoints[Self.pinID(vehicle)] {
                     KGVehicleMarker(line: vehicle.line.name, isTrain: vehicle.line.mode == .train,
-                                    isKreuzlingen: vehicle.line.isKreuzlingenBus, heading: .degrees(vehicle.heading))
+                                    isKreuzlingen: vehicle.line.isYellowBus, heading: .degrees(vehicle.heading))
                         .position(point)
                         .allowsHitTesting(false)
                 }

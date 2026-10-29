@@ -80,9 +80,11 @@ public struct Line: Sendable, Hashable, Identifiable, Codable {
         self.agency = agency
     }
 
-    /// The Swiss buses over the border to Kreuzlingen (908, 925, EV1–EV4): yellow on the map, like there.
-    public var isKreuzlingenBus: Bool {
-        mode == .bus && (agency?.hasPrefix("sbb-") ?? false)
+    /// Drawn yellow with a black number on the map: the Swiss buses over the border to Kreuzlingen (908, 925,
+    /// EV1–EV4), the RAB bus 700 and the district bus 203 (with its school runs 203S).
+    public var isYellowBus: Bool {
+        guard mode == .bus else { return false }
+        return (agency?.hasPrefix("sbb-") ?? false) || name == "700" || name.hasPrefix("203")
     }
 }
 

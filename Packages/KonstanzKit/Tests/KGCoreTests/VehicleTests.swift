@@ -223,10 +223,10 @@ struct MapVehicleTests {
         try #require(store.lines.first { $0.name == name && $0.mode == mode })
     }
 
-    @Test func onlyTheSwissBusesAreKreuzlingenYellow() throws {
-        for name in ["908", "925", "EV1"] { #expect(try line(name).isKreuzlingenBus, "\(name)") }
-        for name in ["5", "9", "13/4", "203"] { #expect(try !line(name).isKreuzlingenBus, "\(name)") }
-        #expect(try !line("S14", mode: .train).isKreuzlingenBus)
+    @Test func kreuzlingenBuses700And203AreYellow() throws {
+        for name in ["908", "925", "EV1", "700", "203", "203S"] { #expect(try line(name).isYellowBus, "\(name)") }
+        for name in ["5", "9", "13/4", "204", "7394"] { #expect(try !line(name).isYellowBus, "\(name)") }
+        #expect(try !line("S14", mode: .train).isYellowBus)
     }
 
     @Test func busesAndTrainsRunOnAWeekdayAfternoon() throws {
@@ -235,7 +235,7 @@ struct MapVehicleTests {
         let vehicles = try tracker.positions(at: now)
         #expect(vehicles.contains { $0.line.mode == .bus && $0.line.isCity })
         #expect(vehicles.contains { $0.line.mode == .train })
-        #expect(vehicles.contains { $0.line.isKreuzlingenBus }, "no yellow Kreuzlingen bus")
+        #expect(vehicles.contains { $0.line.isYellowBus }, "no yellow bus")
         // The map asks four times a second; once the day is read, an update must be quick.
         let again = ContinuousClock.now
         _ = try tracker.positions(at: now.addingTimeInterval(0.25))

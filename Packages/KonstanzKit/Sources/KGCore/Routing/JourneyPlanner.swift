@@ -251,8 +251,7 @@ public final class JourneyPlanner: Sendable {
               let last = full.stops[first...].firstIndex(where: { $0.station.id == to && $0.arrival == end })
         else { return nil }
         let stops = Array(full.stops[first...last])
-        let path = Self.slice(full.shape, from: stops[0].platform.coordinate,
-                              to: stops[stops.count - 1].platform.coordinate)
+        let path = Self.slice(full.shape, along: stops.map(\.platform.coordinate))
         return RideLeg(tripID: abs(trip), line: full.line, headsign: full.headsign, stops: stops, path: path)
     }
 

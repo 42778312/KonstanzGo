@@ -27,6 +27,24 @@ struct JourneyPlannerTests {
     var universitaet: Endpoint { get throws { try endpoint(station: 3) } }
     var bahnhof: Endpoint { get throws { try endpoint(station: 15) } }
 
+    /// Every ride's line follows the streets: line 9 from Universität loops out to Pfeiferhölzle and back, and
+    /// used to be drawn as one straight line because the loop is far longer than the way as the crow flies.
+    @Test func ridesFollowTheirShape() throws {
+        let journeys = try planner.plan(PlanRequest(from: universitaet, to: sternenplatz, time: at(20261028, 22, 0)))
+        let rides = journeys.flatMap(\.rides)
+        #expect(!rides.isEmpty)
+        for ride in rides where ride.stops.count > 2 {
+            // A shape piece has many points; the fallback is just the stops.
+            #expect(ride.path.count > ride.stops.count + 2,
+                    "line \(ride.line.name) from \(ride.boarding.station.shortName): \(ride.path.count) points")
+            // It passes every stop.
+            for stop in ride.stops {
+                let nearest = ride.path.map { $0.distance(to: stop.platform.coordinate) }.min() ?? .infinity
+                #expect(nearest < 60, "\(stop.station.shortName) is \(Int(nearest)) m off line \(ride.line.name)")
+            }
+        }
+    }
+
     @Test func sternenplatzToUniversityOnAWednesdayAfternoon() throws {
         let leave = at(20261028, 14, 0)
         let journeys = try planner.plan(PlanRequest(from: sternenplatz, to: universitaet, time: leave))

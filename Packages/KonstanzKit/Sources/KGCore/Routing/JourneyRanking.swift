@@ -36,13 +36,20 @@ extension JourneyPlanner {
         return tags
     }
 
-    /// The part of a trip's shape between two platforms, matched pass by pass (ring lines drive a street twice);
-    /// a straight line when the shape does not fit.
-    static func slice(_ shape: [Coordinate], from: Coordinate, to: Coordinate) -> [Coordinate] {
+    /// The part of a trip's shape along the platforms ridden, matched stop by stop (ring lines drive a street
+    /// twice, and lines like 9 loop out to a turning point and back). The piece is checked against the way
+    /// from stop to stop, not the straight line from first to last, which a loop is much longer than. Falls back
+    /// to the stops joined up when the shape does not fit.
+    static func slice(_ shape: [Coordinate], along stops: [Coordinate]) -> [Coordinate] {
+        guard let from = stops.first, let to = stops.last, stops.count >= 2 else { return stops }
         let dense = Shapes.densify(shape)
-        guard let matched = Shapes.match([from, to], to: dense),
-              let piece = Shapes.piece(of: dense, from: matched[0], to: matched[1], between: from, and: to)
-        else { return [from, to] }
+        let viaStops = zip(stops, stops.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
+        guard let matched = Shapes.match(stops, to: dense), let start = matched.first, let end = matched.last,
+              end > start
+        else { return stops }
+        let piece = Array(dense[start...end])
+        let length = zip(piece, piece.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
+        guard length <= 1.8 * viaStops + 200 else { return stops }
         return [from] + piece + [to]
     }
 }

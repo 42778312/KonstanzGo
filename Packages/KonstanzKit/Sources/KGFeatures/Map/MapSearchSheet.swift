@@ -35,7 +35,7 @@ struct MapSearchSheet: View {
                 Button { dismiss() } label: {
                     KGIconView(.close, size: 18).foregroundStyle(KGColor.ink)
                         .frame(width: 48, height: 48)
-                        .background(KGColor.surface, in: .circle)
+                        .background(KGColor.glassFill, in: .circle)
                 }
                 .buttonStyle(KGPressStyle())
                 .accessibilityLabel(Text("Schließen", bundle: .module))
@@ -80,9 +80,10 @@ struct MapSearchSheet: View {
             .scrollIndicators(.hidden)
             .scrollDismissesKeyboard(.immediately)
         }
-        .background(KGColor.card.ignoresSafeArea())
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
+        // See-through like the stop sheet, even pulled up to full height.
+        .presentationBackground(.thinMaterial)
         .task {
             // Focus once the sheet has settled, or the keyboard comes up without the field taking the typing.
             try? await Task.sleep(for: .milliseconds(350))
@@ -169,7 +170,7 @@ struct MapSearchSheet: View {
         .padding(.leading, KGSpace.mediumLarge)
         .padding(.trailing, KGSpace.xs)
         .frame(minHeight: 48)
-        .background(KGColor.surface, in: .capsule)
+        .background(KGColor.glassFill, in: .capsule)
     }
 
     /// Schnell hin · Haltestellen · Orte: chips on top, and one card each that swipes sideways.
@@ -240,7 +241,7 @@ struct MapSearchSheet: View {
             }
         }
         .padding(.vertical, KGSpace.xs)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
         .clipShape(.kgRounded(KGRadius.card))
     }
 
@@ -298,7 +299,7 @@ struct MapSearchSheet: View {
             }
             VStack(spacing: 0) { content() }
                 .padding(.vertical, KGSpace.xs)
-                .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+                .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
                 .clipShape(.kgRounded(KGRadius.card))
         }
     }

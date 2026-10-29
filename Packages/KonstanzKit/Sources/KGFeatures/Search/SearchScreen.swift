@@ -233,7 +233,7 @@ private struct RecentRow: View {
             KGIconView(.history, size: 20)
                 .foregroundStyle(KGColor.ink2)
                 .frame(width: 40, height: 40)
-                .background(KGColor.card, in: .circle)
+                .background(KGColor.glassFill, in: .circle)
             VStack(alignment: .leading, spacing: 1) {
                 Text(verbatim: target.name).kgFont(.bodyMedium.weighted(KGFont.regular)).foregroundStyle(KGColor.ink)
                 kind.kgFont(.footnote.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)

@@ -150,6 +150,8 @@ public enum KGColor {
     public static let chevron = Color(KGPalette.chevron)
     public static let surface = Color(KGPalette.surface)
     public static let card = Color(KGPalette.card)
+    /// Lists and cards on glass (the stop sheet's look): a light veil over whatever is behind, never solid black.
+    public static let glassFill = Color.white.opacity(0.08)
     public static let pressed = Color(KGPalette.pressed)
     public static let line = Color(KGPalette.line)
     public static let switchOff = Color(KGPalette.switchOff)

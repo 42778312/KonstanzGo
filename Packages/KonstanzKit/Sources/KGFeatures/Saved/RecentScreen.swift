@@ -78,7 +78,7 @@ struct RecentScreen: View {
     private func row(_ item: RecentItem) -> some View {
         HStack(spacing: KGSpace.mediumLarge) {
             KGIconView(icon(item.target), size: 18).foregroundStyle(KGColor.ink2)
-                .frame(width: 40, height: 40).background(KGColor.card, in: .circle)
+                .frame(width: 40, height: 40).background(KGColor.glassFill, in: .circle)
             VStack(alignment: .leading, spacing: 1) {
                 Text(verbatim: item.target.name).kgFont(.bodyMedium).foregroundStyle(KGColor.ink)
                 Text(verbatim: "\(kind(item.target)) · \(day(item.date))").kgFont(.footnote.weighted(KGFont.regular))

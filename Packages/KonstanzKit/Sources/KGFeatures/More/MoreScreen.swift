@@ -86,7 +86,7 @@ struct MoreScreen: View {
                 .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
-            .background(KGColor.card.ignoresSafeArea())
+            .background(Color.clear)
             .kgHideNavigationBar()
             .navigationDestination(for: MoreRoute.self) { route in
                 Group {
@@ -97,7 +97,6 @@ struct MoreScreen: View {
                                 BackLink(title: Text("Mehr", bundle: .module)) { path.removeLast() }
                                     .padding(.horizontal, KGSpace.screen)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(KGColor.card)
                             }
                     case .offline: OfflineDataScreen(services: services) { path.removeLast() }
                     case .privacy: PrivacyScreen(services: services) { path.removeLast() }
@@ -176,7 +175,7 @@ private struct OfflineCard: View {
                 Spacer()
             }
             .padding(KGSpace.screen)
-            .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+            .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
         }
         .buttonStyle(KGPressStyle())
         .accessibilityIdentifier("offlineCard")
@@ -269,7 +268,7 @@ struct OfflineDataScreen: View {
                     }
                 }
                 .padding(KGSpace.screen)
-                .background(KGColor.surface, in: .kgRounded(KGRadius.cardLarge))
+                .background(KGColor.glassFill, in: .kgRounded(KGRadius.cardLarge))
                 KGSectionHeader(Text("Gebiete", bundle: .module))
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
@@ -283,14 +282,14 @@ struct OfflineDataScreen: View {
                 }
                 .padding(.horizontal, KGSpace.screen)
                 .frame(minHeight: 62)
-                .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+                .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
                 Text("Neue Fahrpläne kommen mit App-Updates. Die App lädt nie selbst etwas aus dem Netz.", bundle: .module)
                     .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink3)
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .background(KGColor.card.ignoresSafeArea())
+        .background(Color.clear)
     }
 }
 
@@ -317,7 +316,7 @@ struct PrivacyScreen: View {
                     promise(.history, KGColor.lineText, KGColor.lineTint, Text("Suchverlauf bleibt lokal", bundle: .module),
                             Text("Du kannst ihn jederzeit löschen.", bundle: .module))
                 }
-                .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+                .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
                 KGButton(Text("Datenschutzerklärung lesen", bundle: .module), kind: .secondary) { showsPolicy = true }
                 KGButton(cleared ? Text("Verlauf gelöscht", bundle: .module) : Text("Verlauf löschen", bundle: .module),
                          icon: .trash, kind: .secondary) { confirming = true }
@@ -327,7 +326,7 @@ struct PrivacyScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .background(KGColor.card.ignoresSafeArea())
+        .background(Color.clear)
         .confirmationDialog(Text("Suchverlauf und Fahrten löschen?", bundle: .module), isPresented: $confirming,
                             titleVisibility: .visible) {
             Button(role: .destructive) {
@@ -422,7 +421,7 @@ struct AboutScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .background(KGColor.card.ignoresSafeArea())
+        .background(Color.clear)
     }
 
     private func source(_ title: Text, _ detail: String) -> some View {
@@ -432,7 +431,7 @@ struct AboutScreen: View {
         }
         .padding(KGSpace.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.medium))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.medium))
     }
 }
 

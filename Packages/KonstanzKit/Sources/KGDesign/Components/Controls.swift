@@ -199,7 +199,7 @@ public struct KGSettingsGroup<Content: View>: View {
                 }
             }
         }
-        .background(KGColor.surface)
+        .background(KGColor.glassFill)
         .clipShape(.kgRounded(KGRadius.large))
     }
 }

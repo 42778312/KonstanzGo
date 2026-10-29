@@ -377,7 +377,7 @@ public struct KGStopCard: View {
         .padding(.top, KGSpace.medium)
         .padding(.horizontal, KGSpace.mediumLarge)
         .padding(.bottom, KGSpace.xs)
-        .background(KGColor.card, in: .kgRounded(KGRadius.card))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
         .accessibilityElement(children: .contain)
     }
 }

@@ -77,7 +77,7 @@ struct PinScreen: View {
         .padding(.leading, KGSpace.xxs)
         .padding(.trailing, KGSpace.screen)
         .frame(minHeight: KGSize.searchBar)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.search))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.search))
         .kgShadow(.search, in: .kgRounded(KGRadius.search))
         .padding(.horizontal, KGSpace.screen)
         .padding(.top, 11)
@@ -112,7 +112,7 @@ struct PinScreen: View {
                             }
                             .padding(.horizontal, KGSpace.mediumLarge)
                             .frame(minHeight: 56)
-                            .background(KGColor.card, in: .kgRounded(KGRadius.option))
+                            .background(KGColor.glassFill, in: .kgRounded(KGRadius.option))
                         }
                         .buttonStyle(KGPressStyle())
                         .padding(.top, KGSpace.mediumLarge)

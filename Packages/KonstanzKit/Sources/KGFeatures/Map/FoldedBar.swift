@@ -25,7 +25,7 @@ struct FoldedBar: View {
             Button(action: onClose) {
                 KGIconView(.close, size: 16).foregroundStyle(KGColor.ink)
                     .frame(width: 40, height: 40)
-                    .background(KGColor.card, in: .circle)
+                    .background(KGColor.glassFill, in: .circle)
             }
             .buttonStyle(KGPressStyle())
             .accessibilityLabel(Text("Schließen", bundle: .module))

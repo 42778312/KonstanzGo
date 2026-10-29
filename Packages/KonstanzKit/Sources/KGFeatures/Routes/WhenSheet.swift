@@ -135,7 +135,7 @@ struct FindingView: View {
             }
             .padding(.leading, KGSpace.xxs)
             .frame(minHeight: KGSize.searchBar)
-            .background(KGColor.surface, in: .kgRounded(KGRadius.search))
+            .background(KGColor.glassFill, in: .kgRounded(KGRadius.search))
             .kgShadow(.floating, in: .kgRounded(KGRadius.search))
             .padding(.horizontal, KGSpace.screen)
             .padding(.top, 11)

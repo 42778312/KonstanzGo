@@ -48,7 +48,7 @@ struct RouteMapScreen: View {
                     }
                     .padding(.horizontal, KGSpace.mediumLarge)
                     .frame(minHeight: 48)
-                    .background(KGColor.card, in: .kgRounded(KGRadius.large))
+                    .background(KGColor.glassFill, in: .kgRounded(KGRadius.large))
                 }
                 .buttonStyle(KGPressStyle())
                 .padding(.top, KGSpace.medium)
@@ -139,7 +139,7 @@ struct WalkScreen: View {
             Button { services.router.back() } label: {
                 KGIconView(.back, size: 22).foregroundStyle(KGColor.ink)
                     .frame(width: 52, height: 52)
-                    .background(KGColor.surface, in: .circle)
+                    .background(KGColor.glassFill, in: .circle)
                     .kgShadow(.floating, in: Circle())
             }
             .buttonStyle(KGPressStyle())

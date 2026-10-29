@@ -250,6 +250,7 @@ public struct MapScreen: View {
             MapSearchSheet(services: services, listens: listens) { pick($0) }
         case .menu:
             MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
+                .presentationBackground(.thinMaterial)
                 .presentationDetents([.fraction(0.5), .large])
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.5)))
                 .presentationDragIndicator(.visible)
@@ -280,7 +281,11 @@ public struct MapScreen: View {
                                                            coordinate: station.coordinate)) }
             sheet = .station(station.id)
         }
-        map.onLongPress = { services.router.open(.pin($0)) }
+        // A long press drops the target: the connections there from where the user is, straight away.
+        map.onLongPress = { point in
+            let street = services.transit.whereabouts(at: point).street
+            sheet = .place(.point(name: street ?? String(localized: "Markierter Ort", bundle: .module), coordinate: point))
+        }
         map.onTapMap = {
             switch sheet {
             case .station, .place: withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded }

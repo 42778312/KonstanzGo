@@ -28,7 +28,7 @@ struct StationPanel: View {
                     .foregroundStyle(KGColor.ink)
                     .padding(.horizontal, KGSpace.medium)
                     .frame(minHeight: 36)
-                    .background(KGColor.card, in: .kgRounded(KGRadius.compact))
+                    .background(KGColor.glassFill, in: .kgRounded(KGRadius.compact))
                 }
                 .buttonStyle(KGPressStyle())
                 .accessibilityIdentifier("stationTime")

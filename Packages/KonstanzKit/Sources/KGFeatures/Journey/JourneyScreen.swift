@@ -43,7 +43,7 @@ struct JourneyScreen: View {
                     .padding(.leading, KGSpace.xs)
                     .padding(.trailing, KGSpace.medium)
                     .frame(minHeight: 34)
-                    .background(KGColor.surface, in: .capsule)
+                    .background(KGColor.glassFill, in: .capsule)
                     .kgShadow(.floating, in: Capsule())
                 }
                 Spacer()

@@ -239,7 +239,7 @@ struct FavoriteButton: View {
                 }
             }
             .frame(width: KGSize.touch, height: KGSize.touch)
-            .background(KGColor.surface, in: .circle)
+            .background(KGColor.glassFill, in: .circle)
             .kgShadow(.floating, in: Circle())
         }
         .buttonStyle(KGPressStyle())

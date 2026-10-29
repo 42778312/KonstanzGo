@@ -126,7 +126,7 @@ private struct DepartureCard: View {
         .padding(.vertical, KGSpace.screen)
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.cardLarge))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.cardLarge))
         .accessibilityElement(children: .combine)
     }
 }
@@ -148,7 +148,7 @@ struct StopsTimeline: View {
         }
         .padding(.horizontal, KGSpace.screen)
         .padding(.vertical, KGSpace.xs)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.cardLarge))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.cardLarge))
     }
 
     private func state(_ index: Int, progress: TripProgress) -> KGTimelineStop.State {

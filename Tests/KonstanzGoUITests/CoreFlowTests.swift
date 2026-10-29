@@ -138,8 +138,12 @@ final class CoreFlowTests: XCTestCase {
         let map = app.otherElements["Karte von Konstanz"].firstMatch
         let target = map.exists ? map : app.windows.firstMatch
         target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).press(forDuration: 1.0)
-        XCTAssertTrue(app.staticTexts["Pin gesetzt"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Markierter Ort"].exists)
+        // The point becomes the target at once, with the connections from here.
+        let to = app.buttons["placeTo"]
+        XCTAssertTrue(to.waitForExistence(timeout: 5), "the connections did not open")
+        XCTAssertTrue(app.buttons["placeFrom"].exists)
+        XCTAssertTrue(element(labelContains: "Markierter Ort").exists)
+        XCTAssertFalse(app.staticTexts["Pin gesetzt"].exists, "the pin screen is skipped")
     }
 }
 

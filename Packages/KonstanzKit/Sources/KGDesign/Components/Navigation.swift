@@ -61,7 +61,7 @@ public struct KGSheetSurface<Content: View>: View {
             content
         }
         .frame(maxWidth: .infinity, alignment: .top)
-        .background(KGColor.surface, in: shape)
+        .kgGlass(in: shape)
         .kgShadow(.sheet, in: shape)
     }
 }

@@ -71,7 +71,6 @@ struct SavedScreen: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(KGColor.card.ignoresSafeArea())
         .task(id: services.userVersion) { await planQuick() }
         .task {
             while !Task.isCancelled {
@@ -109,7 +108,7 @@ struct SavedScreen: View {
                     }
                 }
             }
-            .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+            .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
             .padding(.horizontal, KGSpace.screen)
         }
     }
@@ -135,7 +134,7 @@ struct SavedScreen: View {
                     .buttonStyle(KGRowPressStyle())
                 }
             }
-            .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+            .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
             .padding(.horizontal, KGSpace.screen)
         }
     }
@@ -153,7 +152,7 @@ struct SavedScreen: View {
             }
             .padding(.horizontal, KGSpace.screen)
             .frame(minHeight: KGSize.searchBar)
-            .background(KGColor.surface, in: .kgRounded(KGRadius.search))
+            .background(KGColor.glassFill, in: .kgRounded(KGRadius.search))
             .contentShape(.rect)
         }
         .buttonStyle(KGPressStyle())
@@ -242,7 +241,7 @@ private struct QuickCard: View {
         .padding(.vertical, KGSpace.medium)
         .padding(.horizontal, KGSpace.mediumLarge)
         .frame(width: 168, alignment: .leading)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
         .overlay(RoundedRectangle(cornerRadius: KGRadius.card, style: .continuous).stroke(KGColor.line, lineWidth: 1))
         .kgShadow(.card, in: .kgRounded(KGRadius.card))
         .accessibilityElement(children: .contain)
@@ -318,7 +317,7 @@ private struct FavoriteStopRow: View {
                             }
                             .padding(.horizontal, KGSpace.compact)
                             .frame(maxWidth: .infinity, minHeight: 40)
-                            .background(KGColor.card, in: .kgRounded(KGRadius.medium))
+                            .background(KGColor.glassFill, in: .kgRounded(KGRadius.medium))
                         }
                     }
                 }

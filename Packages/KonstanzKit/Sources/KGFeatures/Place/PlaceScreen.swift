@@ -101,7 +101,7 @@ struct PlacePanel: View {
                         }
                     }
                 }
-                .padding(.bottom, 100)
+                .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
         }
@@ -110,11 +110,11 @@ struct PlacePanel: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .background(KGColor.surface, in: UnevenRoundedRectangle(topLeadingRadius: KGRadius.card,
                                                                 topTrailingRadius: KGRadius.card, style: .continuous))
-        .overlay(alignment: .bottom) {
-            KGButton(Text("Route hierher", bundle: .module), icon: .swap) { routeHere() }
-                .padding(.horizontal, KGSpace.large)
-                .padding(.bottom, KGSpace.compact)
-                .accessibilityIdentifier("routeHere")
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            BottomBar(background: KGColor.surface) {
+                KGButton(Text("Route hierher", bundle: .module), icon: .swap) { routeHere() }
+                    .accessibilityIdentifier("routeHere")
+            }
         }
         .task(id: coordinate) { load() }
     }

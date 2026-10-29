@@ -27,7 +27,8 @@ final class RootViewSnapshotTests: XCTestCase {
     @MainActor
     func testRootLight() {
         let view = HomePlaceholder(info: info) {}.environment(\.locale, Locale(identifier: "de_DE"))
-        assertSnapshot(of: UIHostingController(rootView: view), as: .image(on: Self.designFrame))
+        assertSnapshot(of: UIHostingController(rootView: view),
+                       as: .image(on: Self.designFrame, traits: UITraitCollection(userInterfaceStyle: .light)))
     }
 
     @MainActor

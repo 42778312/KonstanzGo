@@ -108,3 +108,37 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Markierter Ort"].exists)
     }
 }
+
+/// Changing start and target on the connections screen (screen 10).
+final class EditEndpointsTests: XCTestCase {
+    @MainActor
+    func testChangeTargetFromConnections() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE", "-onboarding.finished", "YES"]
+        app.launch()
+        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 15))
+        app.buttons["mapSearch"].firstMatch.tap()
+        let field = app.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        field.tap()
+        field.typeText("Konzil")
+        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Konzil'")).firstMatch.tap()
+        app.buttons["routeHere"].tap()
+        let editTo = app.buttons["editTo"]
+        XCTAssertTrue(editTo.waitForExistence(timeout: 15))
+        editTo.tap()
+        XCTAssertTrue(app.staticTexts["Wohin?"].waitForExistence(timeout: 3))
+        let picker = app.textFields.firstMatch
+        picker.tap()
+        picker.typeText("Sternenpl")
+        let result = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Sternenplatz'"))
+            .firstMatch
+        XCTAssertTrue(result.waitForExistence(timeout: 5))
+        result.tap()
+        XCTAssertTrue(app.buttons["editTo"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["editTo"].label.contains("Sternenplatz"), "target did not change: \(app.buttons["editTo"].label)")
+        app.buttons["editFrom"].tap()
+        XCTAssertTrue(app.staticTexts["Von wo?"].waitForExistence(timeout: 3))
+    }
+}

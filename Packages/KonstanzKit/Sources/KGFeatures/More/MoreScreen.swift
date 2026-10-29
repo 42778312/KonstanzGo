@@ -452,5 +452,6 @@ struct BackLink: View {
         }
         .buttonStyle(.plain)
         .padding(.leading, -KGSpace.xs)
+        .accessibilityIdentifier("backLink")
     }
 }

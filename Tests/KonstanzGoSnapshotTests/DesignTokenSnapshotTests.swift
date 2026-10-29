@@ -5,17 +5,20 @@ import XCTest
 
 /// The design tokens rendered on iOS: proves Figtree loads in the app and Dynamic Type scales it.
 final class DesignTokenSnapshotTests: XCTestCase {
+    /// Pinned, so the simulator's own appearance never changes the images.
+    static let light = UITraitCollection(userInterfaceStyle: .light)
+
     @MainActor
     func testTypeScale() {
         let view = TypeSpecimen().frame(width: 390)
-        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: Self.light))
     }
 
     @MainActor
     func testTypeScaleAtAX3() {
         // The largest sizes users pick: every style grows, none is cut off.
         let view = TypeSpecimen().frame(width: 390).dynamicTypeSize(.accessibility3)
-        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: Self.light))
     }
 
     @MainActor
@@ -27,13 +30,13 @@ final class DesignTokenSnapshotTests: XCTestCase {
     @MainActor
     func testIcons() {
         let view = IconGallery().frame(width: 390)
-        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: Self.light))
     }
 
     @MainActor
     func testSeeri() {
         let view = SeeriGallery().frame(width: 390)
-        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: Self.light))
     }
 
     @MainActor
@@ -44,12 +47,12 @@ final class DesignTokenSnapshotTests: XCTestCase {
         }
         .padding(24)
         .background(KGColor.surface)
-        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: Self.light))
     }
 
     @MainActor
     func testColorSwatches() {
         let view = ColorSwatchesPreview().frame(width: 390)
-        assertSnapshot(of: view, as: .image(layout: .sizeThatFits))
+        assertSnapshot(of: view, as: .image(layout: .sizeThatFits, traits: Self.light))
     }
 }

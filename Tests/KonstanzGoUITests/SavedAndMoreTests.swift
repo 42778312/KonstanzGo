@@ -71,18 +71,27 @@ final class SavedAndMoreTests: XCTestCase {
         offline.tap()
         XCTAssertTrue(app.staticTexts["Bereit ohne Netz"].waitForExistence(timeout: 5))
         XCTAssertTrue(element(labelContains: "MB").exists)
-        app.buttons["Mehr"].firstMatch.tap()
+        app.buttons["backLink"].firstMatch.tap()
         element(labelContains: "Datenschutz").tap()
         XCTAssertTrue(app.staticTexts["Deine Daten bleiben bei dir"].waitForExistence(timeout: 5))
         XCTAssertFalse(element(labelContains: "Nutzungsstatistik").exists, "the app collects nothing (plan 0.3)")
-        app.buttons["clearHistory"].tap()
-        app.buttons.matching(identifier: "Verlauf löschen").lastMatch.tap()
+        let clear = app.buttons["clearHistory"]
+        XCTAssertTrue(clear.waitForExistence(timeout: 3))
+        if clear.isHittable { clear.tap() } else { clear.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        // The dialog's button, not the page's own (same title, identifier "clearHistory").
+        app.buttons.matching(NSPredicate(format: "label == 'Verlauf löschen' AND identifier != 'clearHistory'"))
+            .firstMatch.tap()
         XCTAssertTrue(app.buttons["Verlauf gelöscht"].waitForExistence(timeout: 3))
     }
 
     @MainActor
     func testRouteLinkWithoutHomeOpensSearch() {
         app.open(URL(string: "konstanzgo://route/work")!)
+        // iOS may ask before opening a link in an app.
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        for title in ["Open", "Öffnen"] where springboard.buttons[title].waitForExistence(timeout: 2) {
+            springboard.buttons[title].tap()
+        }
         XCTAssertTrue(app.textFields.firstMatch.waitForExistence(timeout: 5) ||
                       app.staticTexts["Verbindungen"].waitForExistence(timeout: 10))
     }

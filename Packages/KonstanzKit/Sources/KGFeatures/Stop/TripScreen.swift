@@ -27,7 +27,7 @@ struct TripScreen: View {
                         StopsTimeline(ride: ride, now: now).riseIn(after: 0.15)
                     }
                     .padding(.horizontal, KGSpace.screen)
-                    .padding(.bottom, 120)
+                    .padding(.bottom, KGSpace.large)
                 }
                 .scrollIndicators(.hidden)
             } else {
@@ -37,15 +37,16 @@ struct TripScreen: View {
             }
         }
         .background(KGColor.card.ignoresSafeArea())
-        .overlay(alignment: .bottom) {
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             if let ride {
-                KGButton(Text("Auf der Karte", bundle: .module), icon: .map, kind: .secondary) {
-                    services.router.open(.routeMap(Journey(legs: [.ride(ride)]), PlanQuery(
-                        from: Endpoint(name: ride.boarding.station.shortName, coordinate: ride.boarding.station.coordinate),
-                        to: Endpoint(name: ride.alighting.station.shortName, coordinate: ride.alighting.station.coordinate))))
+                BottomBar {
+                    KGButton(Text("Auf der Karte", bundle: .module), icon: .map, kind: .secondary) {
+                        let from = ride.boarding.station, to = ride.alighting.station
+                        services.router.open(.routeMap(Journey(legs: [.ride(ride)]), PlanQuery(
+                            from: Endpoint(name: from.shortName, coordinate: from.coordinate),
+                            to: Endpoint(name: to.shortName, coordinate: to.coordinate))))
+                    }
                 }
-                .padding(.horizontal, KGSpace.large)
-                .padding(.bottom, KGSpace.compact)
             }
         }
         .task { await load() }

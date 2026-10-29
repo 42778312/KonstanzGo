@@ -24,6 +24,8 @@ struct SearchScreen: View {
                             .padding(.horizontal, KGSpace.screen)
                             .padding(.top, KGSpace.screen)
                         recent
+                        // Part of the list, so it never covers the recent searches when the keyboard is up.
+                        TipCard().padding(.horizontal, KGSpace.screen).padding(.top, KGSpace.xl)
                     } else if results.isEmpty {
                         KGEmptyState(.focused, title: Text("Nichts gefunden für „\(query)“", bundle: .module),
                                      message: Text("Versuch es mit einer Haltestelle, einer Straße oder einem Ort.",
@@ -40,7 +42,7 @@ struct SearchScreen: View {
                         }
                     }
                 }
-                .padding(.bottom, 140)
+                .padding(.bottom, KGSpace.xl)
             }
             .scrollDismissesKeyboard(.immediately)
         }
@@ -48,8 +50,6 @@ struct SearchScreen: View {
         .overlay(alignment: .bottom) {
             if let toast {
                 KGToast(toast).padding(.bottom, KGSpace.xl)
-            } else if query.isEmpty {
-                TipCard().padding(.horizontal, KGSpace.screen).padding(.bottom, KGSpace.large)
             }
         }
         .sensoryFeedback(KGHaptic.success, trigger: toast != nil) { _, shown in shown }
@@ -152,7 +152,7 @@ private struct QuickChips: View {
 }
 
 /// One result: coloured circle by kind, name with the typed part bold, what it is, line badges for stops.
-private struct ResultRow: View {
+struct ResultRow: View {
     let result: SearchResult
     let query: String
 

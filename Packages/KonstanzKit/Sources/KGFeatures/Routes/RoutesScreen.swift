@@ -14,6 +14,13 @@ struct RoutesScreen: View {
     @State private var showsFinding = false
     @State private var choosingWhen = false
     @State private var swapTurns = 0.0
+    /// Which end is being changed in the picker.
+    @State private var editing: End?
+
+    enum End: Identifiable {
+        case from, to
+        var id: Self { self }
+    }
     @State private var now = Date.now
 
     enum LoadState { case searching, done, failed }
@@ -39,6 +46,13 @@ struct RoutesScreen: View {
             WhenSheet(query: query) { newQuery in
                 query = newQuery
                 choosingWhen = false
+            }
+        }
+        .sheet(item: $editing) { end in
+            EndpointPicker(services: services,
+                           title: end == .from ? Text("Von wo?", bundle: .module) : Text("Wohin?", bundle: .module)) {
+                endpoint in
+                if end == .from { query.from = endpoint } else { query.to = endpoint }
             }
         }
         .task(id: query) { await plan() }
@@ -86,18 +100,19 @@ struct RoutesScreen: View {
                 }
                 .padding(.horizontal, KGSpace.screen)
                 .padding(.top, KGSpace.small)
-                .padding(.bottom, 110)
+                .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
-        }
-        .overlay(alignment: .bottom) {
-            if let journey = journeys.first(where: { $0.id == selected }) {
-                KGButton(Text("Los geht's", bundle: .module)) {
-                    services.router.open(.routeMap(journey, query))
+            // The button sits in its own bar under the list, so it never covers a card or "Spätere Verbindungen".
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if let journey = journeys.first(where: { $0.id == selected }) {
+                    BottomBar {
+                        KGButton(Text("Los geht's", bundle: .module)) {
+                            services.router.open(.routeMap(journey, query))
+                        }
+                        .accessibilityIdentifier("startJourney")
+                    }
                 }
-                .padding(.horizontal, KGSpace.large)
-                .padding(.bottom, KGSpace.compact)
-                .accessibilityIdentifier("startJourney")
             }
         }
     }
@@ -114,9 +129,13 @@ struct RoutesScreen: View {
             }
             .accessibilityHidden(true)
             VStack(spacing: 0) {
-                endpointField(Text("Von", bundle: .module), query.from, isHere: query.from.coordinate == services.here?.coordinate)
+                endpointField(Text("Von", bundle: .module), query.from,
+                              isHere: query.from.coordinate == services.here?.coordinate) { editing = .from }
+                    .accessibilityIdentifier("editFrom")
                 Rectangle().fill(KGColor.line).frame(height: 1)
-                endpointField(Text("Nach", bundle: .module), query.to, isHere: query.to.coordinate == services.here?.coordinate)
+                endpointField(Text("Nach", bundle: .module), query.to,
+                              isHere: query.to.coordinate == services.here?.coordinate) { editing = .to }
+                    .accessibilityIdentifier("editTo")
             }
             Button {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) { swapTurns += 180 }
@@ -136,14 +155,21 @@ struct RoutesScreen: View {
         .background(KGColor.surface, in: .kgRounded(KGRadius.card))
     }
 
-    private func endpointField(_ label: Text, _ endpoint: Endpoint, isHere: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            label.kgFont(.overline.sized(12)).textCase(nil).foregroundStyle(KGColor.ink2)
-            Text(verbatim: endpoint.name).kgFont(.bodyMedium).lineLimit(1)
-                .foregroundStyle(isHere ? KGColor.location : KGColor.ink)
+    /// Tapping a field opens the picker to change that end.
+    private func endpointField(_ label: Text, _ endpoint: Endpoint, isHere: Bool,
+                               action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 0) {
+                label.kgFont(.overline.sized(12)).textCase(nil).foregroundStyle(KGColor.ink2)
+                Text(verbatim: endpoint.name).kgFont(.bodyMedium).lineLimit(1)
+                    .foregroundStyle(isHere ? KGColor.location : KGColor.ink)
+            }
+            .frame(maxWidth: .infinity, minHeight: 50, alignment: .leading)
+            .contentShape(.rect)
         }
-        .frame(maxWidth: .infinity, minHeight: 50, alignment: .leading)
+        .buttonStyle(KGPressStyle())
         .accessibilityElement(children: .combine)
+        .accessibilityHint(Text("Tippen zum Ändern", bundle: .module))
     }
 
     /// "Jetzt" (→ 19) and "Später" (S11.2). "Barrierefrei" stays hidden: there is no wheelchair data (0.3).

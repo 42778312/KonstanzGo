@@ -1,26 +1,406 @@
 {
-  "sourceLanguage" : "de",
-  "strings" : {
-    "Fahrplan bis %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Timetable until %@"
+  "sourceLanguage": "de",
+  "strings": {
+    "%lld Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min"
           }
         }
       }
     },
-    "Offline-Daten fehlen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Offline data is missing"
+    "Abfahrten auf einen Blick": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departures at a glance"
+          }
+        }
+      }
+    },
+    "Abfahrtsalarme": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departure alarms"
+          }
+        }
+      }
+    },
+    "Alarme an": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarms on"
+          }
+        }
+      }
+    },
+    "Alle Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every stop"
+          }
+        }
+      }
+    },
+    "Alles bereit!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All set!"
+          }
+        }
+      }
+    },
+    "Beispiel-Mitteilung: Dein Bus 9A kommt in 3 Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample notification: Your bus 9A comes in 3 min"
+          }
+        }
+      }
+    },
+    "Beispiel: Suche nach Universität, Linie 9A": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Example: searching for Universität, line 9A"
+          }
+        }
+      }
+    },
+    "Bodensee": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lake Constance"
+          }
+        }
+      }
+    },
+    "Dein Bus 9A kommt in 3 Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus 9A comes in 3 min"
+          }
+        }
+      }
+    },
+    "Dein Bus durch Konstanz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus through Konstanz"
+          }
+        }
+      }
+    },
+    "Einführung noch einmal ansehen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Watch the introduction again"
+          }
+        }
+      }
+    },
+    "Erlauben": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow"
+          }
+        }
+      }
+    },
+    "Fahrplan bis %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable until %@"
+          }
+        }
+      }
+    },
+    "Ganz Konstanz, auch ohne Internet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All of Konstanz, even without internet"
+          }
+        }
+      }
+    },
+    "Gute Fahrt durch Konstanz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Have a good ride through Konstanz."
+          }
+        }
+      }
+    },
+    "Hallo! Ich bin Seeri und bring dich durch ganz Konstanz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi! I'm Seeri and I'll take you all over Konstanz."
+          }
+        }
+      }
+    },
+    "Haltestelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        }
+      }
+    },
+    "Haltestellen in deiner Nähe": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops near you"
+          }
+        }
+      }
+    },
+    "Haltestellen, Straßen und Orte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops, streets and places"
+          }
+        }
+      }
+    },
+    "Jede Linie, jeder Fahrplan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every line, every timetable"
+          }
+        }
+      }
+    },
+    "Kein Netz? Kein Problem!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No signal? No problem!"
+          }
+        }
+      }
+    },
+    "KonstanzGo. Dein Bus durch Konstanz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KonstanzGo. Your bus through Konstanz"
+          }
+        }
+      }
+    },
+    "Los geht's": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's go"
+          }
+        }
+      }
+    },
+    "Losfahren": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start riding"
+          }
+        }
+      }
+    },
+    "Mitteilungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications"
+          }
+        }
+      }
+    },
+    "Offline gespeichert": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved offline"
+          }
+        }
+      }
+    },
+    "Offline-Daten fehlen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline data is missing"
+          }
+        }
+      }
+    },
+    "Offline-Karte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline map"
+          }
+        }
+      }
+    },
+    "Sag mir, wohin du willst.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tell me where you want to go."
+          }
+        }
+      }
+    },
+    "Schnell finden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find it fast"
+          }
+        }
+      }
+    },
+    "Sieh, wann dein Bus kommt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See when your bus comes"
+          }
+        }
+      }
+    },
+    "Soll ich dir sagen, wann ich komme?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shall I tell you when I'm coming?"
+          }
+        }
+      }
+    },
+    "Später": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        }
+      }
+    },
+    "Standort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location"
+          }
+        }
+      }
+    },
+    "Tippen zum Überspringen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to skip"
+          }
+        }
+      }
+    },
+    "Weiter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        }
+      }
+    },
+    "Willkommen bei KonstanzGo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to KonstanzGo"
+          }
+        }
+      }
+    },
+    "Zurück": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        }
+      }
+    },
+    "jetzt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "now"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

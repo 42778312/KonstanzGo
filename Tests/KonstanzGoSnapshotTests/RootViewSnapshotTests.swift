@@ -8,7 +8,7 @@ import XCTest
 /// Screen snapshots at the design's frame size (390×844 pt). Reference images live in
 /// __Snapshots__/ next to this file. To re-record after an intended change, set `record: .all`.
 ///
-/// Milestone 0: only the placeholder root view, to prove the snapshot pipeline works.
+/// The home placeholder (until the map arrives); onboarding is covered by the UI tests.
 final class RootViewSnapshotTests: XCTestCase {
     static let designFrame = ViewImageConfig(
         safeArea: UIEdgeInsets(top: 47, left: 0, bottom: 34, right: 0),
@@ -26,13 +26,13 @@ final class RootViewSnapshotTests: XCTestCase {
 
     @MainActor
     func testRootLight() {
-        let view = RootView(info: info).environment(\.locale, Locale(identifier: "de_DE"))
+        let view = HomePlaceholder(info: info) {}.environment(\.locale, Locale(identifier: "de_DE"))
         assertSnapshot(of: UIHostingController(rootView: view), as: .image(on: Self.designFrame))
     }
 
     @MainActor
     func testRootDark() {
-        let view = RootView(info: info).environment(\.locale, Locale(identifier: "de_DE"))
+        let view = HomePlaceholder(info: info) {}.environment(\.locale, Locale(identifier: "de_DE"))
         let dark = UITraitCollection(userInterfaceStyle: .dark)
         assertSnapshot(of: UIHostingController(rootView: view), as: .image(on: Self.designFrame, traits: dark))
     }

@@ -253,7 +253,7 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 ### A8. Theme screen
 
-- [ ] A8.1 Hidden "Design system" screen (debug builds only) = the brand board: logo, Seeri, icons, type, colours, every component in every state. Snapshot-tested against `brand.png`.
+- [x] A8.1 Hidden "Design system" screen (`DesignSystemScreen`; debug builds open it with the launch argument `-KGDesignSystem YES`; every component from Part B in `ComponentGallery`, snapshot-tested light/dark/AX3; comparing with `brand.png` waits for 0.5.1) (debug builds only) = the brand board: logo, Seeri, icons, type, colours, every component in every state. Snapshot-tested against `brand.png`.
 
 ---
 
@@ -261,37 +261,37 @@ Each item: Swift code + Swift Testing tests. Golden tests compare results with t
 
 Each component: one file, previews (light, dark, AX3), a snapshot test, VoiceOver label, 44 pt hit area.
 
-- [ ] B1. `KGPrimaryButton`: black fill, white 16 Medium, 56 high, radius 14; pressed: 0.85 opacity + scale 0.98; disabled; loading (spinner, same width).
-- [ ] B2. `KGSecondaryButton` (card fill, black text), `KGTextButton` (blue).
-- [ ] B3. `KGRoundIconButton`: white + shadow over maps, card fill on surfaces; required `accessibilityLabel`.
-- [ ] B4. `KGMapSearchBar`: 56 high, radius 18, magnifier, placeholder "Wohin möchtest du?", Seeri tile right; the whole bar is one button.
-- [ ] B5. `KGSearchField`: text field, clear button, "Abbrechen"; focus on appear.
-- [ ] B6. `KGLineBadge`: yellow capsule, 26 high, min 36 wide, 14 ExtraBold dark text; S / M / L; VoiceOver "Linie 9A".
-- [ ] B7. `KGMinutes`: "3 Min.", "jetzt", or "14:35" after 60 min; monospaced digits; changes with `.contentTransition(.numericText())`; live style only with live data.
-- [ ] B8. `KGLiveDot`: 8 pt dot + pulse ring (hidden from VoiceOver).
-- [ ] B9. `KGWalkChip`: walking person + "2 Min." in a white capsule.
-- [ ] B10. `KGStatusPill` ("Offline bereit"): green check + text, white capsule with shadow.
-- [ ] B11. `KGDepartureRow`: badge, destination, optional platform, minutes; 44 high; dividers between rows only. VoiceOver reads one sentence: "Linie 9A nach Universität, Steig A, in 3 Minuten, laut Fahrplan".
-- [ ] B12. `KGStopCard`: card fill, radius 20, stop name 17 Bold, walk chip, up to 3 rows.
-- [ ] B13. `KGSegmentedControl` ("Abfahrten | Linien", "Jetzt | Abfahrt | Ankunft"): card track, white thumb with shadow that slides (`matchedGeometryEffect`, spring).
-- [ ] B14. `KGToggleRow`: label + toggle as one control; toggle tinted `live` green (design `#05944F` on, `#E9E9EB` off).
-- [ ] B15. `KGSettingsRow` + `KGSettingsGroup`: coloured icon tile 30 pt (radius 8), title, value, chevron; white rounded group with inset dividers.
-- [ ] B16. `KGSectionHeader`: overline style, `ink2`, marked as a header for VoiceOver.
-- [ ] B17. Map sheet: native `.sheet` with `presentationDetents` (peek / medium / large), `presentationBackgroundInteraction(.enabled)` so the map stays usable, radius 20, handle 36×5. Check it matches the design's sheet; if the native sheet's look differs too much, a custom sheet with the same three stops.
-- [ ] B18. `KGFloatingTabBar`, our own, built from screen 07: pill centred 26 pt above the bottom safe area, 5 pt padding, 3 items of 96×54 "Karte · Favoriten · Mehr", selected item on an `#EEEEEE` capsule with the coral-filled icon, shadow 0/10/30 at 14 % + 0.5 pt inner line. Background via `.kgGlass` (Liquid Glass on 26+, material on 18–25). The system tab bar is hidden; tabs keep their own navigation stacks. Selected capsule slides between items (`matchedGeometryEffect`). VoiceOver: tab trait + "Tab 1 von 3". Hides when the keyboard is up or a sheet is full height.
-- [ ] B19. `KGStepDots` ("Schritt 1 von 4"): active dot is a wider black capsule; animated width.
-- [ ] B20. `KGTimelineStop`: line, dot, name, time; past (grey), current (coral, pulsing, "jetzt"), coming, last.
-- [ ] B21. `KGRouteCard` (screen 10): "14:21 – 14:35", tag ("Schnellste"), "14 Min.", leg strip, note ("Fährt in 3 Min. ab Sternenplatz"); selected = black 2 pt outline.
-- [ ] B22. `KGLegStrip`: walk + minutes › line badge › walk; wraps at large text sizes (`ViewThatFits` / flow layout).
-- [ ] B23. `KGEmptyState`: Seeri (expression), title, text, buttons.
-- [ ] B24. `KGSpeechBubble` ("Ich warte an Steig D!"): white bubble with tail, pops in.
-- [ ] B25. `KGToast` (black capsule, white text, optional "Rückgängig").
-- [ ] B26. Swipe to delete (screen 18): native `swipeActions` with the red "Löschen", plus the VoiceOver action.
-- [ ] B27. `KGMapControls`: layers + location buttons 48×48, radius 14.
-- [ ] B28. `KGBusMarker`: coralDeep capsule with 2.5 pt white border, white circle with bus icon, line number, heading arrow behind it, pulse ring, bob. On the map drawn as a MapLibre symbol layer (images cached per line) so 50 buses stay smooth; the SwiftUI version is for previews and the design-system screen.
-- [ ] B29. `KGUserDot`: blue 24 pt, 4 pt white border, pulse ring, heading cone.
-- [ ] B30. `KGStopMarker`: white circle with 3.5 pt coral ring; bigger and labelled when selected.
-- [ ] B31. `KGDayStrip` + `KGTimeWheel` (screen 19): day chips that snap; hour and 5-minute wheels (`Picker(.wheel)` styled, or a custom wheel if the native one can't match).
+- [x] B1. `KGButton` / `KGButtonStyle`. *Built as the design draws it, not as first written here:* primary = **coral, 52 high, radius 8, 19 Bold white** (white on coral 3.3:1 passes for 19 pt Bold, large text); secondary = white + 1 pt line + card shadow, 16 SemiBold; outline = 1.5 pt black border, 46 high, radius 14, 15 ExtraBold. Was: black fill, white 16 Medium, 56 high, radius 14; pressed: 0.85 opacity + scale 0.98; disabled; loading (spinner, same width).
+- [x] B2. `KGSecondaryButton` (card fill, black text), `KGTextButton` (blue).
+- [x] B3. `KGRoundIconButton`: white + shadow over maps, card fill on surfaces; required `accessibilityLabel`.
+- [x] B4. `KGMapSearchBar`: 56 high, radius 18, magnifier, placeholder "Wohin möchtest du?", Seeri tile right; the whole bar is one button.
+- [x] B5. `KGSearchField`: text field, clear button, "Abbrechen"; focus on appear.
+- [x] B6. `KGLineBadge`: yellow capsule, 26 high, min 36 wide, 14 ExtraBold dark text; S / M / L; VoiceOver "Linie 9A".
+- [x] B7. `KGMinutes`: "3 Min.", "jetzt", or "14:35" after 60 min; monospaced digits; changes with `.contentTransition(.numericText())`; live style only with live data.
+- [x] B8. `KGLiveDot`: 8 pt dot + pulse ring (hidden from VoiceOver).
+- [x] B9. `KGWalkChip`: walking person + "2 Min." in a white capsule.
+- [x] B10. `KGStatusPill` ("Offline bereit"): green check + text, white capsule with shadow.
+- [x] B11. `KGDepartureRow`: badge, destination, optional platform, minutes; 44 high; dividers between rows only. VoiceOver reads one sentence: "Linie 9A nach Universität, Steig A, in 3 Minuten, laut Fahrplan".
+- [x] B12. `KGStopCard`: card fill, radius 20, stop name 17 Bold, walk chip, up to 3 rows.
+- [x] B13. `KGSegmentedControl` ("Abfahrten | Linien", "Jetzt | Abfahrt | Ankunft"): card track, white thumb with shadow that slides (`matchedGeometryEffect`, spring).
+- [x] B14. `KGToggleRow`: label + toggle as one control; toggle tinted `live` green (design `#05944F` on, `#E9E9EB` off).
+- [x] B15. `KGSettingsRow` + `KGSettingsGroup`: coloured icon tile 30 pt (radius **7**, measured), rows 52 high, group radius 14, title, value, chevron; white rounded group with inset dividers.
+- [x] B16. `KGSectionHeader`: overline style, `ink2`, marked as a header for VoiceOver.
+- [x] B17. Map sheet: native `.sheet` with `presentationDetents` (peek / medium / large), `presentationBackgroundInteraction(.enabled)` so the map stays usable, radius 20, handle 36×5. Check it matches the design's sheet; if the native sheet's look differs too much, a custom sheet with the same three stops.
+- [x] B18. `KGFloatingTabBar`, our own, built from screen 07: pill centred 26 pt above the bottom safe area, 5 pt padding, 3 items of 96×54 "Karte · Favoriten · Mehr", selected item on an `#EEEEEE` capsule with the coral-filled icon, shadow 0/10/30 at 14 % + 0.5 pt inner line. Background via `.kgGlass` (Liquid Glass on 26+, material on 18–25). The system tab bar is hidden; tabs keep their own navigation stacks. Selected capsule slides between items (`matchedGeometryEffect`). VoiceOver: tab trait + "Tab 1 von 3". Hides when the keyboard is up or a sheet is full height.
+- [x] B19. `KGStepProgress` ("Schritt 2 von 4"): the design draws a **16 pt progress bar** (grey track, coral fill with a light stripe, springy fill), not dots.
+- [x] B20. `KGTimelineStop`: line, dot, name, time; past (grey), current (coral, pulsing, "jetzt"), coming, last.
+- [x] B21. `KGRouteCard` (screen 10): "14:21 – 14:35", tag ("Schnellste"), "14 Min.", leg strip, note ("Fährt in 3 Min. ab Sternenplatz"); selected = black 2 pt outline.
+- [x] B22. `KGLegStrip`: walk + minutes › line badge › walk; wraps at large text sizes (`ViewThatFits` / flow layout).
+- [x] B23. `KGEmptyState`: Seeri (expression), title, text, buttons.
+- [x] B24. `KGSpeechBubble` ("Ich warte an Steig D!"): white bubble with tail, pops in.
+- [x] B25. `KGToast` (black capsule, white text, optional "Rückgängig").
+- [x] B26. Swipe to delete (screen 18): native `swipeActions` with the red "Löschen", plus the VoiceOver action.
+- [x] B27. `KGMapControls`: layers + location buttons 48×48, radius 14.
+- [x] B28. `KGBusMarker`: coralDeep capsule with 2.5 pt white border, white circle with bus icon, line number, heading arrow behind it, pulse ring, bob. On the map drawn as a MapLibre symbol layer (images cached per line) so 50 buses stay smooth; the SwiftUI version is for previews and the design-system screen.
+- [x] B29. `KGUserDot`: blue 24 pt, 4 pt white border, pulse ring, heading cone.
+- [x] B30. `KGStopMarker`: white circle with 3.5 pt coral ring; bigger and labelled when selected.
+- [x] B31. `KGDayStrip` + `KGTimeWheel` (screen 19): day chips that snap; hour and 5-minute wheels (`Picker(.wheel)` styled, or a custom wheel if the native one can't match).
 
 ---
 
@@ -316,11 +316,11 @@ For every screen: (1) write its spec sheet (0.5.3), (2) build with mock data, (3
 
 ### S1. Start (01)
 
-- [ ] S1.1 Background, scenery, Seeri drives in (`drive`), wordmark "Konstanz" + coral "Go" tag rises in, tagline "Dein Bus durch Konstanz". Exact timings from `SeerotLaunch.dc.html`.
-- [ ] S1.2 Meanwhile: open the timetable, warm the map. Leave when both the animation minimum (~1.6 s) and loading are done.
-- [ ] S1.3 Tap skips ahead.
-- [ ] S1.4 Later launches: short version (~0.7 s) or straight to the map (decide by trying both).
-- [ ] S1.5 Reduce Motion: still image + fade.
+- [x] S1.1 Background, scenery, Seeri drives in (`drive`), wordmark "Konstanz" + coral "Go" tag rises in, tagline "Dein Bus durch Konstanz". Exact timings from `SeerotLaunch.dc.html`.
+- [ ] S1.2 *(timetable part done: it is read before the first frame; warming the map waits for Part M)* Meanwhile: open the timetable, warm the map. Leave when both the animation minimum (~1.6 s) and loading are done.
+- [x] S1.3 Tap skips ahead.
+- [x] S1.4 Later launches: short version (0.9 s, tap skips) — *straight to the map can be tried once the map exists.*
+- [x] S1.5 Reduce Motion: still image + fade.
 
 ### S2. Seasonal start (29)
 
@@ -331,16 +331,16 @@ For every screen: (1) write its spec sheet (0.5.3), (2) build with mock data, (3
 
 ### S3. Onboarding (02–06)
 
-- [ ] S3.1 Shared scaffold: back button, `KGStepDots`, illustration area, title, feature rows, bottom buttons; swipe between steps; content rises in with `stagger`.
-- [ ] S3.2 **02 Willkommen:** Seeri with speech bubble "Hallo! Ich bin Seeri und bring dich durch ganz Konstanz.", "Willkommen bei KonstanzGo", "Los geht's".
-- [ ] S3.3 **03 Offline:** "Kein Netz? Kein Problem!", animated illustration, rows "Offline-Karte · Ganz Konstanz, auch ohne Internet" and "Alle Haltestellen · Jede Linie, jeder Fahrplan", "Weiter".
-- [ ] S3.4 **04 Suchen:** "Sag mir, wohin du willst.", search field typing "Universität", result row, departure with ticking minutes; rows "Schnell finden · Haltestellen, Straßen und Orte" and the departures row (reworded to "Abfahrten auf einen Blick" while there is no live data, 0.3).
-- [ ] S3.5 **05 Standort & Mitteilungen:** "Soll ich dir sagen, wann ich komme?", sample notification "Dein Bus 9A kommt in 3 Min.", two toggles, "Später" / "Erlauben".
+- [x] S3.1 Shared scaffold: back button, `KGStepProgress` (the design's bar), illustration area, title, feature rows, bottom buttons; swipe between steps; content rises in with `stagger`.
+- [x] S3.2 **02 Willkommen:** Seeri with speech bubble "Hallo! Ich bin Seeri und bring dich durch ganz Konstanz.", "Willkommen bei KonstanzGo", "Los geht's".
+- [x] S3.3 **03 Offline:** "Kein Netz? Kein Problem!", animated illustration, rows "Offline-Karte · Ganz Konstanz, auch ohne Internet" and "Alle Haltestellen · Jede Linie, jeder Fahrplan", "Weiter".
+- [x] S3.4 **04 Suchen:** "Sag mir, wohin du willst.", search field typing "Universität", result row, departure with ticking minutes; rows "Schnell finden · Haltestellen, Straßen und Orte" and the departures row (reworded to "Abfahrten auf einen Blick" while there is no live data, 0.3).
+- [x] S3.5 **05 Standort & Mitteilungen:** "Soll ich dir sagen, wann ich komme?", sample notification "Dein Bus 9A kommt in 3 Min.", two toggles, "Später" / "Erlauben".
   - "Erlauben" asks for location (When In Use) and then notifications, only for the toggles that are on.
   - Refused → toggle off, carry on. Approximate location must also work.
-- [ ] S3.6 **06 Alles bereit:** Seeri happy, "Alles bereit!", "Gute Fahrt durch Konstanz.", checks "Offline gespeichert" and "Alarme an" (only if allowed), "Losfahren" → map.
-- [ ] S3.7 Shown once (saved in `UserDefaults`); progress kept if the app is closed in the middle.
-- [ ] S3.8 UI test: allow both / refuse both.
+- [x] S3.6 **06 Alles bereit:** Seeri happy, "Alles bereit!", "Gute Fahrt durch Konstanz.", checks "Offline gespeichert" and "Alarme an" (only if allowed), "Losfahren" → map.
+- [x] S3.7 Shown once (saved in `UserDefaults`); progress kept if the app is closed in the middle.
+- [x] S3.8 UI test: allow both / refuse both.
 
 ### S4. Karte (07) and Dunkelmodus (28)
 

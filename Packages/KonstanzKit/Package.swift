@@ -26,6 +26,7 @@ let package = Package(
         .target(name: "KGFeatures", dependencies: ["KGCore", "KGDesign"], resources: [.process("Resources")]),
         .testTarget(name: "KGCoreTests", dependencies: ["KGCore"]),
         .testTarget(name: "KGDesignTests", dependencies: ["KGDesign"]),
+        .testTarget(name: "KGFeaturesTests", dependencies: ["KGFeatures"]),
     ],
     swiftLanguageModes: [.v6]
 )

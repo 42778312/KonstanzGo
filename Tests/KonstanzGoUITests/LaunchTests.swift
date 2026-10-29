@@ -5,12 +5,18 @@ final class LaunchTests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// Skips onboarding (already finished) so the home screen shows after the short start.
+    private func launch(language: String, locale: String) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(\(language))", "-AppleLocale", locale,
+                                "-onboarding.finished", "YES"]
+        app.launch()
+        return app
+    }
+
     @MainActor
     func testAppStartsAndLoadsTheTimetable() {
-        let app = XCUIApplication()
-        app.launchArguments += ["-AppleLanguages", "(de)", "-AppleLocale", "de_DE"]
-        app.launch()
-
+        let app = launch(language: "de", locale: "de_DE")
         XCTAssertTrue(app.staticTexts["appTitle"].waitForExistence(timeout: 5))
         let status = app.staticTexts["timetableStatus"]
         XCTAssertTrue(status.exists)
@@ -19,10 +25,7 @@ final class LaunchTests: XCTestCase {
 
     @MainActor
     func testEnglish() {
-        let app = XCUIApplication()
-        app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_GB"]
-        app.launch()
-
+        let app = launch(language: "en", locale: "en_GB")
         let status = app.staticTexts["timetableStatus"]
         XCTAssertTrue(status.waitForExistence(timeout: 5))
         XCTAssertTrue(status.label.hasPrefix("Timetable until"), "got: \(status.label)")

@@ -103,8 +103,11 @@ final class CoreFlowTests: XCTestCase {
         bar.tap()
         XCTAssertTrue(app.otherElements["Fahrtfortschritt"].waitForExistence(timeout: 3) ||
                       element(labelContains: "Fahrtfortschritt").waitForExistence(timeout: 1), "the stops did not come back")
+        XCTAssertTrue(app.descendants(matching: .any)["journeyLegs"].exists, "the whole trip should be listed")
+        // ✕ goes back to the connections, to pick another one.
         end.tap()
-        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["placeFrom"].waitForExistence(timeout: 5), "did not return to the connections")
+        XCTAssertTrue(app.buttons["routeCard"].firstMatch.exists)
     }
 
     @MainActor

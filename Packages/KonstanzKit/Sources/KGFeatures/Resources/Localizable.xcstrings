@@ -2694,6 +2694,26 @@
         }
       }
     },
+    "Umsteigen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change"
+          }
+        }
+      }
+    },
+    "Umsteigen an %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change at %@"
+          }
+        }
+      }
+    },
     "Uni": {
       "localizations": {
         "en": {
@@ -3000,6 +3020,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Back"
+          }
+        }
+      }
+    },
+    "Zurück zu den Verbindungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to connections"
           }
         }
       }

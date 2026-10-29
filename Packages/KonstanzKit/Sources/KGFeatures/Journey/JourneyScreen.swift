@@ -2,7 +2,7 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// Screen 11 (Unterwegs): the map with the bus, "Fahrt beenden", where the trip goes; in the sheet Seeri
+/// Screen 11 (Unterwegs): the map with the whole trip, ✕ back to the connections, every bus of it; in the sheet Seeri
 /// counting the stops, minutes to arrival, a progress bar and the stops timeline. A tap on the map folds the
 /// sheet into a bar so the whole map shows; tapping the bar (or pulling it up) brings the stops back. It moves
 /// through the journey's phases (walk, wait, ride, change, arrive) by the clock and, when known, the user's
@@ -19,18 +19,25 @@ struct JourneyScreen: View {
 
     var body: some View {
         ZStack(alignment: .top) {
+            // The whole trip in view: walks and every bus.
             JourneyMap(services: services, journey: journey,
-                       bottomInset: expanded ? Self.sheetHeight : Self.barHeight,
-                       focus: currentRide.map { $0.stops.map(\.platform.coordinate) }) {
+                       bottomInset: expanded ? Self.sheetHeight : Self.barHeight) {
                 if expanded { withAnimation(KGMotion.sheet) { expanded = false } }
             }
             HStack(spacing: KGSpace.small) {
-                KGRoundIconButton(.close, label: Text("Fahrt beenden", bundle: .module), action: endTrip)
+                KGRoundIconButton(.close, label: Text("Zurück zu den Verbindungen", bundle: .module), action: endTrip)
                 .accessibilityIdentifier("endJourney")
-                if let ride = currentRide ?? journey.rides.last {
-                    HStack(spacing: KGSpace.xs) {
-                        KGLineBadge(ride.line.name, size: .small)
-                        Text(verbatim: ride.headsign).kgFont(.callout.weighted(KGFont.bold)).lineLimit(1)
+                if !journey.rides.isEmpty {
+                    // Every bus of the trip, then where it ends: "5 › 12/3  combit GmbH".
+                    HStack(spacing: KGSpace.xxs) {
+                        ForEach(Array(journey.rides.enumerated()), id: \.offset) { index, ride in
+                            if index > 0 {
+                                KGIconView(.chevronRight, size: 10).foregroundStyle(KGColor.chevron)
+                            }
+                            KGLineBadge(ride.line.name, size: .small)
+                        }
+                        Text(verbatim: destination).kgFont(.callout.weighted(KGFont.bold)).lineLimit(1)
+                            .padding(.leading, KGSpace.xxs)
                     }
                     .foregroundStyle(KGColor.ink)
                     .padding(.leading, KGSpace.xs)
@@ -116,10 +123,9 @@ struct JourneyScreen: View {
                 .accessibilityLabel(Text("Fahrtfortschritt", bundle: .module))
                 .accessibilityValue(progressValue)
             ScrollView {
-                if let ride = currentRide {
-                    StopsTimeline(ride: ride, now: now)
-                        .padding(.top, KGSpace.mediumLarge)
-                }
+                JourneyLegs(journey: journey, now: now)
+                    .padding(.top, KGSpace.mediumLarge)
+                    .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
         }
@@ -142,18 +148,20 @@ struct JourneyScreen: View {
 
     /// "Konzilstr./Theater → combit GmbH": where the first bus leaves and where the trip ends.
     private var routeTitle: String {
-        let from = journey.firstRide?.boarding.station.shortName
-        let to: String? = if case let .walk(walk) = journey.legs.last {
-            walk.destinationName
-        } else {
-            journey.rides.last?.alighting.station.shortName
-        }
-        return [from, to].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " → ")
+        [journey.firstRide?.boarding.station.shortName, destination]
+            .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " → ")
     }
 
+    /// Where the trip ends: the last walk's target, or the last bus's stop.
+    private var destination: String {
+        if case let .walk(walk) = journey.legs.last { return walk.destinationName }
+        return journey.rides.last?.alighting.station.shortName ?? ""
+    }
+
+    /// ✕ goes back to the connections, so another one can be picked.
     private func endTrip() {
         TripActivity.end()
-        services.router.home()
+        services.router.back()
     }
 
     /// What Seeri says in each phase ("Noch 4 Haltestellen!").
@@ -221,5 +229,73 @@ struct ProgressBar: View {
         }
         .frame(height: 16)
         .animation(KGMotion.progress, value: fraction)
+    }
+}
+
+/// The whole trip in order: each walk as one row, each bus with its line, direction and stops, and
+/// "Umsteigen" where one bus follows another.
+private struct JourneyLegs: View {
+    let journey: Journey
+    let now: Date
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: KGSpace.medium) {
+            ForEach(Array(journey.legs.enumerated()), id: \.offset) { index, leg in
+                switch leg {
+                case let .walk(walk):
+                    walkRow(walk, isChange: index > 0 && index < journey.legs.count - 1)
+                case let .ride(ride):
+                    if index > 0, case .ride = journey.legs[index - 1] {
+                        changeRow(at: ride.boarding.station.shortName)
+                    }
+                    rideBlock(ride, minutes: leg.minutes)
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("journeyLegs")
+    }
+
+    private func rideBlock(_ ride: RideLeg, minutes: Int) -> some View {
+        VStack(alignment: .leading, spacing: KGSpace.small) {
+            HStack(spacing: KGSpace.small) {
+                KGLineBadge(ride.line.name, size: .small)
+                Text(verbatim: ride.headsign).kgFont(.callout.weighted(KGFont.bold)).foregroundStyle(KGColor.ink)
+                    .lineLimit(1)
+                Spacer()
+                Text("\(minutes) Min.", bundle: .module).kgFont(.caption.weighted(KGFont.semiBold))
+                    .foregroundStyle(KGColor.ink2)
+            }
+            StopsTimeline(ride: ride, now: now)
+        }
+    }
+
+    private func walkRow(_ walk: WalkLeg, isChange: Bool) -> some View {
+        HStack(spacing: KGSpace.medium) {
+            KGIconView(.walk, size: 18).foregroundStyle(KGColor.location)
+                .frame(width: 36, height: 36)
+                .background(KGColor.locationTint, in: .circle)
+            VStack(alignment: .leading, spacing: 1) {
+                if isChange {
+                    Text("Umsteigen", bundle: .module).kgFont(.caption.weighted(KGFont.bold))
+                        .foregroundStyle(KGColor.warn)
+                }
+                Text("Fußweg zu \(walk.destinationName)", bundle: .module)
+                    .kgFont(.callout.weighted(KGFont.bold)).foregroundStyle(KGColor.ink).lineLimit(2)
+                Text("\(max(1, Leg.walk(walk).minutes)) Min. zu Fuß", bundle: .module)
+                    .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+            }
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func changeRow(at stop: String) -> some View {
+        HStack(spacing: KGSpace.small) {
+            KGIconView(.swap, size: 16).foregroundStyle(KGColor.warn)
+            Text("Umsteigen an \(stop)", bundle: .module).kgFont(.caption.weighted(KGFont.bold))
+                .foregroundStyle(KGColor.warn)
+        }
+        .padding(.leading, KGSpace.xs)
     }
 }

@@ -86,6 +86,63 @@ public struct KGBusMarker: View {
     }
 }
 
+/// A bus or train on the main map, placed by the timetable: a small capsule with the vehicle and its number
+/// (red with white; the Swiss buses to Kreuzlingen yellow with black) and a nose pointing where it heads.
+public struct KGVehicleMarker: View {
+    let line: String
+    let isTrain: Bool
+    let isKreuzlingen: Bool
+    let heading: Angle?
+
+    public init(line: String, isTrain: Bool = false, isKreuzlingen: Bool = false, heading: Angle? = nil) {
+        self.line = line
+        self.isTrain = isTrain
+        self.isKreuzlingen = isKreuzlingen
+        self.heading = heading
+    }
+
+    private var fill: Color { isKreuzlingen ? KGColor.kreuzlingen : KGColor.coralDeep }
+    private var text: Color { isKreuzlingen ? .black : .white }
+
+    public var body: some View {
+        ZStack {
+            if let heading {
+                Nose().fill(fill)
+                    .frame(width: 9, height: 6)
+                    .offset(y: -15)
+                    .rotationEffect(heading)
+            }
+            HStack(spacing: 2) {
+                KGIconView(isTrain ? .train : .bus, size: 11)
+                if !line.isEmpty {
+                    Text(verbatim: line).font(.system(size: 12, weight: .heavy, design: .rounded)).fixedSize()
+                }
+            }
+            .foregroundStyle(text)
+            .padding(.horizontal, 6)
+            .frame(minWidth: 24, minHeight: 22)
+            .background(fill, in: .capsule)
+            .overlay(Capsule().strokeBorder(KGColor.white, lineWidth: 1.5))
+            .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+        }
+        .environment(\.colorScheme, .light)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(isTrain ? Text("Zug \(line), geschätzte Position", bundle: .kgDesign)
+                                    : Text("Bus \(line), geschätzte Position", bundle: .kgDesign))
+    }
+
+    private struct Nose: Shape {
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+                path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+                path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+                path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+                path.closeSubpath()
+            }
+        }
+    }
+}
+
 /// The user's position (B29): blue 24 pt dot with a 4 pt white border and soft blue shadow, a ring that grows
 /// to 3.4× (2.4 s), and a cone when the heading is known.
 public struct KGUserDot: View {

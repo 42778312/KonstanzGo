@@ -601,6 +601,16 @@
         }
       }
     },
+    "Busse & Züge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buses & trains"
+          }
+        }
+      }
+    },
     "Darstellung": {
       "localizations": {
         "en": {

@@ -37,6 +37,8 @@ public enum KGPalette {
     public static let coral = KGColorValue(0xF05A62, dark: 0xFF5A62)
     /// Fills that carry white text: bus pills on the map (4.9:1).
     public static let coralDeep = KGColorValue(0xD1343E)
+    /// The Swiss buses to Kreuzlingen on the map: yellow like the buses there.
+    public static let kreuzlingen = KGColorValue(0xFFCC00)
     public static let coralPressed = KGColorValue(0xC93D45)
     /// Fill of the active tab icon.
     public static let coralTint = KGColorValue(0xFFCDD0, dark: 0x5A2A2E)
@@ -138,6 +140,7 @@ public enum KGPalette {
 public enum KGColor {
     public static let coral = Color(KGPalette.coral)
     public static let coralDeep = Color(KGPalette.coralDeep)
+    public static let kreuzlingen = Color(KGPalette.kreuzlingen)
     public static let coralPressed = Color(KGPalette.coralPressed)
     public static let coralTint = Color(KGPalette.coralTint)
     public static let ink = Color(KGPalette.ink)

@@ -20,6 +20,9 @@ public struct MapScreen: View {
     @State private var showsLayers = false
     @State private var toast: Text?
     @AppStorage("map.showsStops") private var showsStops = true
+    @AppStorage("map.showsVehicles") private var showsVehicles = true
+    /// Buses and trains where the timetable puts them now (offline, no live feed).
+    @State private var vehicles: [VehiclePosition] = []
 
     /// What the sheet over the map shows.
     enum MapSheet: Identifiable, Hashable {
@@ -91,7 +94,8 @@ public struct MapScreen: View {
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
         .sheet(item: presented) { sheet in sheetContent(sheet) }
-        .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops) }
+        .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles) }
+        .task { await moveVehicles() }
         .onAppear(perform: appear)
         .onDisappear { location.stop() }
         .onChange(of: location.coordinate) { old, point in
@@ -136,6 +140,14 @@ public struct MapScreen: View {
             #else
             KGColor.mapLand
             #endif
+            ForEach(vehicles) { vehicle in
+                if let point = map.pinPoints[Self.pinID(vehicle)] {
+                    KGVehicleMarker(line: vehicle.line.name, isTrain: vehicle.line.mode == .train,
+                                    isKreuzlingen: vehicle.line.isKreuzlingenBus, heading: .degrees(vehicle.heading))
+                        .position(point)
+                        .allowsHitTesting(false)
+                }
+            }
             if let point = map.userPoint {
                 KGUserDot(heading: location.heading.map { .degrees($0) })
                     .position(point)
@@ -315,6 +327,26 @@ public struct MapScreen: View {
         }
     }
 
+    private static func pinID(_ vehicle: VehiclePosition) -> String { "vehicle-\(vehicle.tripID)" }
+
+    /// Four times a second: where every bus and train is by the timetable, so they glide along their routes.
+    /// Paused while a screen is open over the map.
+    private func moveVehicles() async {
+        let tracker = services.transit.tracker
+        while !Task.isCancelled {
+            if showsVehicles, services.router.path.isEmpty {
+                let now = Date.now
+                let found = await Task.detached(priority: .utility) { (try? tracker.positions(at: now)) ?? [] }.value
+                vehicles = found.filter { MapRegion.contains($0.coordinate) }
+            } else if !showsVehicles, !vehicles.isEmpty {
+                vehicles = []
+            }
+            map.pins = map.pins.filter { !$0.id.hasPrefix("vehicle-") }
+                + vehicles.map { MapPin(id: Self.pinID($0), coordinate: $0.coordinate) }
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+    }
+
     private func locate() {
         switch location.access {
         case .allowed:
@@ -355,9 +387,10 @@ private struct OfflinePill: View {
     }
 }
 
-/// The layers menu (S4.4): stops on or off, and the map's look.
+/// The layers menu (S4.4): stops and vehicles on or off, and the map's look.
 private struct LayersSheet: View {
     @Binding var showsStops: Bool
+    @Binding var showsVehicles: Bool
     @AppStorage("appearance") private var appearance = Appearance.automatic.rawValue
     @Environment(\.dismiss) private var dismiss
 
@@ -370,6 +403,7 @@ private struct LayersSheet: View {
                 KGRoundIconButton(.close, label: Text("Schließen", bundle: .module), surface: .plain) { dismiss() }
             }
             KGToggleRow(Text("Haltestellen", bundle: .module), isOn: $showsStops)
+            KGToggleRow(Text("Busse & Züge", bundle: .module), isOn: $showsVehicles)
             VStack(alignment: .leading, spacing: KGSpace.small) {
                 KGSectionHeader(Text("Darstellung", bundle: .module))
                 KGSegmentedControl(selection: $appearance, options: Appearance.allCases.map { ($0.rawValue, $0.title) })
@@ -377,7 +411,7 @@ private struct LayersSheet: View {
             Spacer(minLength: 0)
         }
         .padding(KGSpace.large)
-        .presentationDetents([.height(300)])
+        .presentationDetents([.height(360)])
         .presentationCornerRadius(KGRadius.card)
     }
 }

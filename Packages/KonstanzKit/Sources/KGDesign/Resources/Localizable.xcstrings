@@ -301,6 +301,16 @@
         }
       }
     },
+    "Zug %@, geschätzte Position": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Train %@, estimated position"
+          }
+        }
+      }
+    },
     "in %lld Minuten": {
       "localizations": {
         "en": {

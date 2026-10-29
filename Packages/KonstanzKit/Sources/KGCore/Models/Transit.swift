@@ -67,13 +67,22 @@ public struct Line: Sendable, Hashable, Identifiable, Codable {
     /// One of the Konstanz city lines (others are regional buses passing through).
     public var isCity: Bool
     public var mode: VehicleMode
+    /// Who runs it, the feed's agency ("vhb-SW-KN" Stadtwerke Konstanz, "sbb-801" a Swiss operator).
+    public var agency: String?
 
-    public init(id: Int, name: String, longName: String, isCity: Bool, mode: VehicleMode = .bus) {
+    public init(id: Int, name: String, longName: String, isCity: Bool, mode: VehicleMode = .bus,
+                agency: String? = nil) {
         self.id = id
         self.name = name
         self.longName = longName
         self.isCity = isCity
         self.mode = mode
+        self.agency = agency
+    }
+
+    /// The Swiss buses over the border to Kreuzlingen (908, 925, EV1–EV4): yellow on the map, like there.
+    public var isKreuzlingenBus: Bool {
+        mode == .bus && (agency?.hasPrefix("sbb-") ?? false)
     }
 }
 

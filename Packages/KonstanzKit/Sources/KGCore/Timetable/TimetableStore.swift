@@ -33,9 +33,9 @@ public final class TimetableStore: Sendable {
                          coordinate: Coordinate(latitude: row["lat"], longitude: row["lon"]),
                          direction: Self.nonEmpty(row["direction"]))
             }
-            let lines = try Row.fetchAll(db, sql: "SELECT id, short_name, long_name, is_city, type FROM route").map {
+            let lines = try Row.fetchAll(db, sql: "SELECT id, short_name, long_name, is_city, type, agency FROM route").map {
                 Line(id: $0["id"], name: $0["short_name"], longName: $0["long_name"], isCity: $0["is_city"],
-                     mode: VehicleMode(routeType: $0["type"]))
+                     mode: VehicleMode(routeType: $0["type"]), agency: $0["agency"])
             }
             return (stations, platforms, lines)
         }

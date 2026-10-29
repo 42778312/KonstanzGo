@@ -206,3 +206,39 @@ struct TripProgressTests {
         #expect(away.currentStop == 3)
     }
 }
+
+/// The main map's moving buses and trains, from the real bundled timetable.
+@Suite("Map vehicles")
+struct MapVehicleTests {
+    let store: TimetableStore
+    let tracker: VehicleTracker
+    let clock = ServiceClock()
+
+    init() throws {
+        store = try TimetableStore(url: repoData.timetable)
+        tracker = try VehicleTracker(store: store, url: repoData.timetable)
+    }
+
+    private func line(_ name: String, mode: VehicleMode = .bus) throws -> Line {
+        try #require(store.lines.first { $0.name == name && $0.mode == mode })
+    }
+
+    @Test func onlyTheSwissBusesAreKreuzlingenYellow() throws {
+        for name in ["908", "925", "EV1"] { #expect(try line(name).isKreuzlingenBus, "\(name)") }
+        for name in ["5", "9", "13/4", "203"] { #expect(try !line(name).isKreuzlingenBus, "\(name)") }
+        #expect(try !line("S14", mode: .train).isKreuzlingenBus)
+    }
+
+    @Test func busesAndTrainsRunOnAWeekdayAfternoon() throws {
+        let now = clock.date(ServiceDay(yyyymmdd: 20261028), minutes: 16 * 60 + 30)
+        let started = ContinuousClock.now
+        let vehicles = try tracker.positions(at: now)
+        #expect(vehicles.contains { $0.line.mode == .bus && $0.line.isCity })
+        #expect(vehicles.contains { $0.line.mode == .train })
+        #expect(vehicles.contains { $0.line.isKreuzlingenBus }, "no yellow Kreuzlingen bus")
+        // The map asks four times a second; once the day is read, an update must be quick.
+        let again = ContinuousClock.now
+        _ = try tracker.positions(at: now.addingTimeInterval(0.25))
+        #expect(ContinuousClock.now - again < .milliseconds(60), "first \(again - started)")
+    }
+}

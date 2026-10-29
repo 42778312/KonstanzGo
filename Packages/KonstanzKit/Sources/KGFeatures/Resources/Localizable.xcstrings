@@ -2954,6 +2954,16 @@
         }
       }
     },
+    "Öffnet die Liste wieder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the list again"
+          }
+        }
+      }
+    },
     "Öffnet die Suche": {
       "localizations": {
         "en": {

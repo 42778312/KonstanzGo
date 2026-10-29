@@ -15,7 +15,7 @@ struct JourneyScreen: View {
     @State private var expanded = true
 
     private static let sheetHeight: CGFloat = 472
-    private static let barHeight: CGFloat = 132
+    private static let barHeight: CGFloat = 110
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -25,10 +25,7 @@ struct JourneyScreen: View {
                 if expanded { withAnimation(KGMotion.sheet) { expanded = false } }
             }
             HStack(spacing: KGSpace.small) {
-                KGRoundIconButton(.close, label: Text("Fahrt beenden", bundle: .module)) {
-                    TripActivity.end()
-                    services.router.home()
-                }
+                KGRoundIconButton(.close, label: Text("Fahrt beenden", bundle: .module), action: endTrip)
                 .accessibilityIdentifier("endJourney")
                 if let ride = currentRide ?? journey.rides.last {
                     HStack(spacing: KGSpace.xs) {
@@ -48,17 +45,20 @@ struct JourneyScreen: View {
             .padding(.top, 11)
             VStack {
                 Spacer()
-                KGSheetSurface {
-                    if expanded { sheet } else { bar }
+                Group {
+                    if expanded {
+                        KGSheetSurface { sheet }.frame(height: Self.sheetHeight)
+                    } else {
+                        bar
+                    }
                 }
-                .frame(height: expanded ? Self.sheetHeight : Self.barHeight)
                 .gesture(DragGesture(minimumDistance: 16).onEnded { drag in
                     let down = drag.translation.height > 40
                     let up = drag.translation.height < -40
                     if down || up { withAnimation(KGMotion.sheet) { expanded = up } }
                 })
             }
-            .ignoresSafeArea(edges: .bottom)
+            .ignoresSafeArea(edges: expanded ? .bottom : [])
         }
         .task {
             while !Task.isCancelled {
@@ -126,27 +126,34 @@ struct JourneyScreen: View {
         .padding(.horizontal, KGSpace.large)
     }
 
-    /// The folded sheet: Seeri, what's next, minutes and arrival; tap to see the stops again.
+    /// The folded sheet: a glass bar with the route and ✕ (ends the trip); tap it to see the stops again.
     private var bar: some View {
-        Button { withAnimation(KGMotion.sheet) { expanded = true } } label: {
-            HStack(spacing: KGSpace.compact) {
-                SeeriAlive(phase == .arrived ? .joyful : .excited, detail: .compact).frame(width: 40, height: 43)
-                VStack(alignment: .leading, spacing: 2) {
-                    cheer.kgFont(.callout.weighted(KGFont.bold)).foregroundStyle(KGColor.ink).lineLimit(1)
-                    (KGMinutesValue(departure: journey.end, now: now).text + Text(verbatim: " · ")
-                        + Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end)))
-                        .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2).lineLimit(1)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                KGIconView(.chevronRight, size: 14).foregroundStyle(KGColor.chevron).rotationEffect(.degrees(-90))
-            }
-            .padding(.horizontal, KGSpace.large)
-            .frame(minHeight: 60)
-            .contentShape(.rect)
+        FoldedBar(title: routeTitle,
+                  subtitle: KGMinutesValue(departure: journey.end, now: now).text + Text(verbatim: " · ")
+                      + Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end)),
+                  onOpen: { withAnimation(KGMotion.sheet) { expanded = true } },
+                  onClose: endTrip)
+            .padding(.vertical, KGSpace.small)
+            .kgGlass(in: .kgRounded(KGRadius.cardLarge))
+            .kgShadow(.floating, in: .kgRounded(KGRadius.cardLarge))
+            .padding(.horizontal, KGSpace.screen)
+            .padding(.bottom, KGSpace.xs)
+    }
+
+    /// "Konzilstr./Theater → combit GmbH": where the first bus leaves and where the trip ends.
+    private var routeTitle: String {
+        let from = journey.firstRide?.boarding.station.shortName
+        let to: String? = if case let .walk(walk) = journey.legs.last {
+            walk.destinationName
+        } else {
+            journey.rides.last?.alighting.station.shortName
         }
-        .buttonStyle(KGPressStyle())
-        .accessibilityHint(Text("Zeigt die Haltestellen", bundle: .module))
-        .accessibilityIdentifier("expandStops")
+        return [from, to].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " → ")
+    }
+
+    private func endTrip() {
+        TripActivity.end()
+        services.router.home()
     }
 
     /// What Seeri says in each phase ("Noch 4 Haltestellen!").

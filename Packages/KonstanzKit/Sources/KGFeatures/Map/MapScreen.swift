@@ -11,6 +11,8 @@ public struct MapScreen: View {
     let bottomBar: CGFloat
     @State private var map = MapModel()
     @State private var sheet: MapSheet?
+    /// How far the stop or place sheet is open; a tap on the map folds it to a bar.
+    @State private var detent = FoldingSheet<EmptyView>.half
     @State private var height: CGFloat = 800
     @State private var showsLayers = false
     @State private var toast: Text?
@@ -38,6 +40,8 @@ public struct MapScreen: View {
 
     private var transit: TransitService { services.transit }
     private var location: LocationModel { services.location }
+    /// The folded stop or place bar, from the screen's bottom edge.
+    private static let foldedSpace: CGFloat = 100
     /// The search bar and the tab bar under it.
     private var barSpace: CGFloat { bottomBar + KGSize.searchBar + KGSpace.medium }
 
@@ -59,13 +63,16 @@ public struct MapScreen: View {
             controls
                 .padding(.trailing, KGSpace.screen)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                .padding(.bottom, barSpace + KGSpace.medium)
+                .padding(.bottom, (sheet == nil ? barSpace : Self.foldedSpace) + KGSpace.medium)
                 .ignoresSafeArea(edges: .bottom)
-            searchBar
-                .padding(.horizontal, KGSpace.screen)
-                .padding(.bottom, bottomBar + KGSpace.small)
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .ignoresSafeArea(edges: .bottom)
+            // While a stop or place is open its sheet (or folded bar) takes the bottom.
+            if sheet == nil {
+                searchBar
+                    .padding(.horizontal, KGSpace.screen)
+                    .padding(.bottom, bottomBar + KGSpace.small)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    .ignoresSafeArea(edges: .bottom)
+            }
             if let toast {
                 KGToast(toast)
                     .frame(maxHeight: .infinity, alignment: .bottom)
@@ -87,6 +94,12 @@ public struct MapScreen: View {
         }
         .onChange(of: showsStops) { _, show in map.stations = show ? transit.stations : [] }
         .onChange(of: sheet, initial: true) { _, new in sheetChanged(new) }
+        .onChange(of: detent) { _, new in
+            if sheet != nil, sheet != .search {
+                map.insets.bottom = new == FoldingSheet<EmptyView>.folded ? Self.foldedSpace : height * 0.5
+            }
+        }
+        .onChange(of: services.router.homeCount) { _, _ in sheet = nil }
         .onChange(of: services.wantsSearch) { _, wants in
             if wants {
                 services.wantsSearch = false
@@ -186,13 +199,15 @@ public struct MapScreen: View {
             MapSearchSheet(services: services) { pick($0) }
         case let .station(id):
             if let station = transit.station(id: id) {
-                StationPanel(services: services, station: station) { self.sheet = nil }
-                    .padding(.top, KGSpace.large)
-                    .halfSheet()
+                FoldingSheet(detent: $detent, title: station.shortName, onClose: { self.sheet = nil }) {
+                    StationPanel(services: services, station: station) { self.sheet = nil }
+                        .padding(.top, KGSpace.large)
+                }
             }
         case let .place(target):
-            PlaceSheet(services: services, target: target) { self.sheet = nil }
-                .halfSheet()
+            FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
+                PlaceSheet(services: services, target: target) { self.sheet = nil }
+            }
         }
     }
 
@@ -210,6 +225,12 @@ public struct MapScreen: View {
             sheet = .station(station.id)
         }
         map.onLongPress = { services.router.open(.pin($0)) }
+        map.onTapMap = {
+            switch sheet {
+            case .station, .place: withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded }
+            default: break
+            }
+        }
         location.start()
         if let point = location.coordinate, MapRegion.contains(point), sheet == nil {
             map.move(CameraMove(center: point, zoom: MapRegion.userZoom, animated: false))
@@ -229,6 +250,7 @@ public struct MapScreen: View {
     /// Marks what the sheet is about on the map and keeps it in view above the sheet.
     private func sheetChanged(_ new: MapSheet?) {
         let half = height * 0.5
+        detent = FoldingSheet<EmptyView>.half
         switch new {
         case let .station(id):
             map.pins = []
@@ -276,14 +298,6 @@ public struct MapScreen: View {
     }
 }
 
-private extension View {
-    /// Half the screen with the map still usable above it, or pulled up to full height (Apple Maps).
-    func halfSheet() -> some View {
-        presentationDetents([.fraction(0.5), .large])
-            .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.5)))
-            .presentationDragIndicator(.visible)
-    }
-}
 
 /// "Offline bereit", orange "Fahrplan endet bald" in the last 14 days of the timetable (S4.2).
 private struct OfflinePill: View {

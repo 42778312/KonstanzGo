@@ -4,7 +4,7 @@ import SwiftUI
 
 /// Screen 17 (Abfahrtsdetails): the bus from the stop it was picked at: line and direction, the departure
 /// card ("Abfahrt Sternenplatz 14:35 · Steig D · laut Fahrplan · in 4 Min. · 17 Min. Fahrt"), the stops
-/// ahead on a timeline with the estimated position, "Auf der Karte" and sharing (plan S8).
+/// ahead on a timeline with the estimated position (plan S8).
 struct TripScreen: View {
     let services: AppServices
     let tripID: Int
@@ -37,18 +37,6 @@ struct TripScreen: View {
             }
         }
         .background(KGColor.card.ignoresSafeArea())
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if let ride {
-                BottomBar {
-                    KGButton(Text("Auf der Karte", bundle: .module), icon: .map, kind: .secondary) {
-                        let from = ride.boarding.station, to = ride.alighting.station
-                        services.router.open(.routeMap(Journey(legs: [.ride(ride)]), PlanQuery(
-                            from: Endpoint(name: from.shortName, coordinate: from.coordinate),
-                            to: Endpoint(name: to.shortName, coordinate: to.coordinate))))
-                    }
-                }
-            }
-        }
         .task { await load() }
     }
 
@@ -68,24 +56,9 @@ struct TripScreen: View {
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Zurück", bundle: .module))
             Spacer()
-            if let ride {
-                ShareLink(item: shareText(ride)) {
-                    KGIconView(.share, size: 22).foregroundStyle(KGColor.location)
-                        .frame(width: KGSize.touch, height: KGSize.touch)
-                }
-                .accessibilityLabel(Text("Abfahrt teilen", bundle: .module))
-            }
         }
         .padding(.horizontal, KGSpace.small)
         .padding(.top, KGSpace.xxs)
-    }
-
-    /// Plain text for sharing (S8.4).
-    private func shareText(_ ride: RideLeg) -> String {
-        String(localized: """
-            Bus \(ride.line.name) nach \(ride.headsign): ab \(ride.boarding.station.shortName) \
-            um \(KGStrings.clock(ride.start)), an \(ride.alighting.station.shortName) um \(KGStrings.clock(ride.end)).
-            """, bundle: .module)
     }
 
     /// The trip from the chosen stop to its end. Trips after midnight belong to the day before, so that day is

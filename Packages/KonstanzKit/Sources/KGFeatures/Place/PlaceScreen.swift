@@ -2,7 +2,7 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// Screen 15 (Ort): map with the place, its name and address, walk and area; "Merken", "Teilen"; stops
+/// Screen 15 (Ort): map with the place, its name and address, walk and area; "Merken"; stops
 /// nearby with their next bus; "Route hierher" (plan S7.1).
 struct PlaceScreen: View {
     let services: AppServices
@@ -79,13 +79,6 @@ struct PlacePanel: View {
                             withAnimation(KGMotion.pop) { services.toggleFavorite(target) }
                         }
                         .accessibilityAddTraits(saved ? .isSelected : [])
-                        ShareLink(item: shareText) {
-                            HStack(spacing: KGSpace.xs) {
-                                KGIconView(.share, size: 18)
-                                Text("Teilen", bundle: .module)
-                            }
-                        }
-                        .buttonStyle(KGButtonStyle(.outline))
                         if let extraActions { extraActions }
                     }
                     .padding(.top, KGSpace.screen)
@@ -117,12 +110,6 @@ struct PlacePanel: View {
             }
         }
         .task(id: coordinate) { load() }
-    }
-
-    private var shareText: String {
-        let name = target.name
-        return String(localized: "\(name) in Konstanz: https://www.openstreetmap.org/?mlat=\(coordinate.latitude)&mlon=\(coordinate.longitude)",
-                      bundle: .module)
     }
 
     private func walkMinutes(_ metres: Double) -> Int { max(1, Int((metres * 1.25 / 80).rounded(.up))) }

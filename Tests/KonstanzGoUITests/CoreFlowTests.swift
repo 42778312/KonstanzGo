@@ -40,12 +40,19 @@ final class CoreFlowTests: XCTestCase {
         // The stop opens in the map's sheet with its lines and departures.
         XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "stop sheet did not open")
         XCTAssertTrue(app.buttons["Alle Linien"].exists)
+        // A tap on the map folds the sheet to a bar with the stop's name; the bar opens it again.
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.2)).tap()
+        let folded = app.buttons["foldedBar"]
+        XCTAssertTrue(folded.waitForExistence(timeout: 3), "the stop sheet did not fold")
+        XCTAssertTrue(folded.label.contains("Sternenplatz"), "folded bar should name the stop: \(folded.label)")
+        folded.tap()
+        XCTAssertTrue(app.buttons["Alle Linien"].waitForExistence(timeout: 3), "the stop sheet did not open again")
         let departure = element(labelContains: "laut Fahrplan")
         guard departure.waitForExistence(timeout: 3) else { return } // nothing runs at this hour
         departure.tap()
         XCTAssertTrue(app.staticTexts["HALTESTELLEN"].waitForExistence(timeout: 5) ||
                       app.staticTexts["Haltestellen"].exists, "departure details did not open")
-        XCTAssertTrue(app.buttons["Auf der Karte"].exists)
+        XCTAssertFalse(app.buttons["Auf der Karte"].exists, "the map button was removed")
         app.buttons["Zurück"].firstMatch.tap()
         XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "the stop's sheet should come back")
     }
@@ -89,7 +96,7 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertFalse(element(labelContains: "Sperrbildschirm").exists, "the lock screen button was removed")
         // A tap on the map folds the stops into a bar; the bar brings them back.
         app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
-        let bar = app.buttons["expandStops"]
+        let bar = app.buttons["foldedBar"]
         XCTAssertTrue(bar.waitForExistence(timeout: 3), "the sheet did not fold")
         bar.tap()
         XCTAssertTrue(app.otherElements["Fahrtfortschritt"].waitForExistence(timeout: 3) ||

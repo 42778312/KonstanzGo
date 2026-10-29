@@ -166,7 +166,11 @@ public final class Router {
         if !path.isEmpty { path.removeLast() }
     }
 
+    /// Bumped by `home()`, so the map closes its stop or place sheet too (ending a trip, links).
+    public private(set) var homeCount = 0
+
     public func home() {
         path.removeAll()
+        homeCount += 1
     }
 }

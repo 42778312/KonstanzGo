@@ -14,6 +14,7 @@ public struct MapScreen: View {
     @State private var sheet: MapSheet?
     /// Counts long presses, for the haptic tap when a pin drops.
     @State private var drops = 0
+    @State private var touring = false
     /// The search was opened with the microphone: listen instead of typing.
     @State private var listens = false
     /// How far the stop or place sheet is open; a tap on the map folds it to a bar.
@@ -93,6 +94,17 @@ public struct MapScreen: View {
                     .padding(.bottom, barSpace + KGSpace.large)
                     .ignoresSafeArea(edges: .bottom)
             }
+        }
+        .overlayPreferenceValue(TourAnchors.self) { anchors in
+            if touring {
+                SeeriTour(anchors: anchors) { withAnimation(.easeOut(duration: 0.3)) { touring = false } }
+            }
+        }
+        .onChange(of: services.wantsTour, initial: true) { _, wants in
+            guard wants else { return }
+            services.wantsTour = false
+            sheet = nil
+            withAnimation(.easeOut(duration: 0.3)) { touring = true }
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
         .sensoryFeedback(.impact(weight: .medium), trigger: drops)
@@ -194,6 +206,7 @@ public struct MapScreen: View {
             .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
             .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
             .accessibilityIdentifier("mapSearch")
+            .tourSpot(.search)
             Button {
                 listens = true
                 sheet = .search
@@ -205,6 +218,7 @@ public struct MapScreen: View {
             .buttonStyle(KGPressStyle())
             .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
             .accessibilityIdentifier("mapVoiceSearch")
+            .tourSpot(.mic)
             Button { sheet = .menu } label: {
                 SeeriAlive(.happy, detail: .compact)
                     .frame(width: 46, height: 50)
@@ -215,6 +229,7 @@ public struct MapScreen: View {
             .accessibilityLabel(Text("Mehr", bundle: .module))
             .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
             .accessibilityIdentifier("seeriMenu")
+            .tourSpot(.seeri)
             .padding(.trailing, KGSpace.xs)
         }
         .frame(height: Self.searchBarHeight)
@@ -235,6 +250,7 @@ public struct MapScreen: View {
         }
         .kgGlass(in: Capsule())
         .kgShadow(.floating, in: Capsule())
+        .tourSpot(.controls)
     }
 
     private func controlButton(_ icon: KGIcon, label: Text, tint: Color, action: @escaping () -> Void) -> some View {

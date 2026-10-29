@@ -7,6 +7,8 @@ import SwiftUI
 public struct HomeView: View {
 
     let loader: TransitLoader
+    /// Right after onboarding: Seeri's tour starts on the map.
+    let startsTour: Bool
     let onReplayOnboarding: () -> Void
     @State private var services: AppServices?
     @State private var notifications: AlarmNotificationRouter?
@@ -17,8 +19,9 @@ public struct HomeView: View {
     /// How far the map's search bar sits above the screen's bottom edge.
     static let searchBottom: CGFloat = 26
 
-    public init(loader: TransitLoader, onReplayOnboarding: @escaping () -> Void) {
+    public init(loader: TransitLoader, startsTour: Bool = false, onReplayOnboarding: @escaping () -> Void) {
         self.loader = loader
+        self.startsTour = startsTour
         self.onReplayOnboarding = onReplayOnboarding
     }
 
@@ -33,6 +36,7 @@ public struct HomeView: View {
                 let new = AppServices(data: data, transit: transit, location: location)
                 // Screens in the menu that open something on the map close the menu first.
                 new.selectTab = { _ in new.showsMenu = false }
+                new.wantsTour = startsTour
                 services = new
                 notifications = AlarmNotificationRouter(services: new)
                 if let url = pendingURL {

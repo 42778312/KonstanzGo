@@ -11,6 +11,8 @@ public struct RootView: View {
     @State private var onboarding: OnboardingModel
     /// Opens the timetable, search and walking data while the start animation plays (S1.2).
     @State private var loader: TransitLoader
+    /// Onboarding just ended: Seeri shows the map.
+    @State private var tourNext = false
 
     public init(info: TimetableInfo?, data: BundledData?, permissions: PermissionAsking,
                 defaults: UserDefaults = .standard) {
@@ -34,11 +36,12 @@ public struct RootView: View {
                 .transition(.opacity)
             case .onboarding:
                 OnboardingFlow(model: onboarding) {
+                    tourNext = true
                     withAnimation(.easeInOut(duration: 0.35)) { stage = .home }
                 }
                 .transition(.opacity)
             case .home:
-                HomeView(loader: loader) {
+                HomeView(loader: loader, startsTour: tourNext) {
                     onboarding.reset()
                     withAnimation(.easeInOut(duration: 0.35)) { stage = .start }
                 }

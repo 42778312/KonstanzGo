@@ -762,6 +762,16 @@
         }
       }
     },
+    "Die roten Busse fahren nach Fahrplan mit. Die gelben fahren nach Kreuzlingen!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The red buses move along with the timetable. The yellow ones go to Kreuzlingen!"
+          }
+        }
+      }
+    },
     "Du bist da!": {
       "localizations": {
         "en": {
@@ -1073,6 +1083,16 @@
         }
       }
     },
+    "Fertig! Gute Fahrt durch Konstanz!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done! Have a good ride through Konstanz!"
+          }
+        }
+      }
+    },
     "Festlegen": {
       "localizations": {
         "en": {
@@ -1243,6 +1263,26 @@
         }
       }
     },
+    "Hallo! Ich bin Seeri, dein Bus. Komm, ich zeig dir schnell, wie alles geht!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi! I'm Seeri, your bus. Come on, I'll quickly show you how everything works!"
+          }
+        }
+      }
+    },
+    "Halte die Karte gedrückt – zack, da ist dein Ziel!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press and hold the map – boom, there's your destination!"
+          }
+        }
+      }
+    },
     "Halte eine Haltestelle gedrückt, um sie zu merken.": {
       "localizations": {
         "en": {
@@ -1389,6 +1429,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Today · from %@"
+          }
+        }
+      }
+    },
+    "Hier findest du dich selbst und schaltest Busse und Haltestellen an und aus.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find yourself here, and switch buses and stops on and off."
           }
         }
       }
@@ -1590,6 +1640,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No stop nearby"
+          }
+        }
+      }
+    },
+    "Keine Lust zu tippen? Sag's mir einfach. Klappt sogar ohne Internet!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't feel like typing? Just tell me. Works even without internet!"
           }
         }
       }
@@ -2354,6 +2414,16 @@
         }
       }
     },
+    "Schritt %lld von %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "Seeri sucht deine Verbindung": {
       "localizations": {
         "en": {
@@ -2614,6 +2684,16 @@
         }
       }
     },
+    "Tipp auf eine Haltestelle, dann siehst du, wann welcher Bus fährt.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap a stop to see when each bus leaves."
+          }
+        }
+      }
+    },
     "Tipp: ": {
       "localizations": {
         "en": {
@@ -2644,6 +2724,16 @@
         }
       }
     },
+    "Tippe hier und such dein Ziel: Haltestelle, Straße oder Ort.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap here and search where you want to go: a stop, street or place."
+          }
+        }
+      }
+    },
     "Tippen nimmt den Alarm zurück": {
       "localizations": {
         "en": {
@@ -2670,6 +2760,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tap to skip"
+          }
+        }
+      }
+    },
+    "Tour mit Seeri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tour with Seeri"
           }
         }
       }
@@ -2720,6 +2820,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Change at %@"
+          }
+        }
+      }
+    },
+    "Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "And this is where I live: favourites and settings. Go on, tap me!"
           }
         }
       }
@@ -3150,6 +3260,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apply"
+          }
+        }
+      }
+    },
+    "Überspringen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
           }
         }
       }

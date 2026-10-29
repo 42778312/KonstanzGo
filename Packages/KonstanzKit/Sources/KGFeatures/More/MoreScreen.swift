@@ -68,6 +68,11 @@ struct MoreScreen: View {
                         KGSettingsRow(Text("Über KonstanzGo", bundle: .module), icon: .live, tile: KGColor.tileBlack) {
                             path.append(.about)
                         }
+                        KGSettingsRow(Text("Tour mit Seeri", bundle: .module), icon: .map, tile: KGColor.coral) {
+                            services.showsMenu = false
+                            services.wantsTour = true
+                        }
+                        .accessibilityIdentifier("startTour")
                         KGSettingsRow(Text("Einführung ansehen", bundle: .module), icon: .history, tile: KGColor.location,
                                       action: onReplayOnboarding)
                             .accessibilityIdentifier("replayOnboarding")

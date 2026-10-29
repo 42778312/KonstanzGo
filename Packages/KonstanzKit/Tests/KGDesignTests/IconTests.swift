@@ -58,7 +58,7 @@ struct IconTests {
     }
 
     @Test func designIconsArePresent() {
-        #expect(KGIcon.allCases.count == 44)
+        #expect(KGIcon.allCases.count == 45)
         for icon in [KGIcon.bus, .search, .map, .star, .more, .back, .walk, .locate, .layers, .swap] {
             #expect(KGIcon.allCases.contains(icon))
         }

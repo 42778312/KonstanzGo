@@ -12,6 +12,8 @@ public struct MapScreen: View {
     let onReplayOnboarding: () -> Void
     @State private var map = MapModel()
     @State private var sheet: MapSheet?
+    /// The search was opened with the microphone: listen instead of typing.
+    @State private var listens = false
     /// How far the stop or place sheet is open; a tap on the map folds it to a bar.
     @State private var detent = FoldingSheet<EmptyView>.half
     @State private var height: CGFloat = 800
@@ -48,7 +50,9 @@ public struct MapScreen: View {
     /// The folded stop or place bar, from the screen's bottom edge.
     private static let foldedSpace: CGFloat = 100
     /// The search bar, from the screen's bottom edge.
-    private var barSpace: CGFloat { bottomBar + KGSize.searchBar }
+    private var barSpace: CGFloat { bottomBar + Self.searchBarHeight }
+    /// A bit taller than the design's 56 after testing on a phone.
+    private static let searchBarHeight: CGFloat = 66
 
     public var body: some View {
         ZStack(alignment: .top) {
@@ -152,17 +156,22 @@ public struct MapScreen: View {
         .ignoresSafeArea()
     }
 
-    /// One glass bar: magnifier and "Wohin möchtest du?" open the search; Seeri at the end opens the menu.
+    /// One glass bar: magnifier and "Wohin möchtest du?" open the search, the microphone opens it listening,
+    /// Seeri at the end opens the menu.
     private var searchBar: some View {
-        HStack(spacing: KGSpace.small) {
-            Button { sheet = .search } label: {
+        HStack(spacing: KGSpace.xs) {
+            Button {
+                listens = false
+                sheet = .search
+            } label: {
                 HStack(spacing: KGSpace.medium) {
-                    KGIconView(.search, size: 21).foregroundStyle(KGColor.ink)
-                    Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium).foregroundStyle(KGColor.ink2)
+                    KGIconView(.search, size: 24).foregroundStyle(KGColor.ink)
+                    Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium.sized(19)).foregroundStyle(KGColor.ink2)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.leading, KGSpace.mediumLarge)
+                .padding(.leading, KGSpace.large)
                 .frame(maxHeight: .infinity)
                 .contentShape(.rect)
             }
@@ -170,10 +179,21 @@ public struct MapScreen: View {
             .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
             .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
             .accessibilityIdentifier("mapSearch")
+            Button {
+                listens = true
+                sheet = .search
+            } label: {
+                KGIconView(.mic, size: 23).foregroundStyle(KGColor.ink2)
+                    .frame(width: 44, height: 44)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
+            .accessibilityIdentifier("mapVoiceSearch")
             Button { sheet = .menu } label: {
                 SeeriAlive(.happy, detail: .compact)
-                    .frame(width: 40, height: 43)
-                    .frame(width: 48, height: 48)
+                    .frame(width: 46, height: 50)
+                    .frame(width: 54, height: 54)
                     .contentShape(.rect)
             }
             .buttonStyle(KGPressStyle())
@@ -182,7 +202,7 @@ public struct MapScreen: View {
             .accessibilityIdentifier("seeriMenu")
             .padding(.trailing, KGSpace.xs)
         }
-        .frame(height: KGSize.searchBar)
+        .frame(height: Self.searchBarHeight)
         .kgGlass(in: Capsule())
         .kgShadow(.search, in: Capsule())
     }
@@ -215,7 +235,7 @@ public struct MapScreen: View {
     @ViewBuilder private func sheetContent(_ sheet: MapSheet) -> some View {
         switch sheet {
         case .search:
-            MapSearchSheet(services: services) { pick($0) }
+            MapSearchSheet(services: services, listens: listens) { pick($0) }
         case .menu:
             MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
                 .presentationDetents([.fraction(0.5), .large])

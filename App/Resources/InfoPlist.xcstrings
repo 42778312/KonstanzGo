@@ -1,72 +1,104 @@
 {
-  "sourceLanguage" : "de",
-  "strings" : {
-    "CFBundleDisplayName" : {
-      "comment" : "Bundle display name",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "KonstanzGo"
+  "sourceLanguage": "de",
+  "strings": {
+    "CFBundleDisplayName": {
+      "comment": "Bundle display name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "new",
+            "value": "KonstanzGo"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "KonstanzGo"
+        "en": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "KonstanzGo"
           }
         }
       }
     },
-    "CFBundleName" : {
-      "comment" : "Bundle name",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "KonstanzGo"
+    "CFBundleName": {
+      "comment": "Bundle name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "new",
+            "value": "KonstanzGo"
           }
         }
       }
     },
-    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
-      "comment" : "Privacy - Location Always and When In Use Usage Description",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Während einer Fahrt hält KonstanzGo die Anzeige auf dem Sperrbildschirm aktuell. Dein Standort bleibt auf diesem iPhone."
+    "NSLocationAlwaysAndWhenInUseUsageDescription": {
+      "comment": "Privacy - Location Always and When In Use Usage Description",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Während einer Fahrt hält KonstanzGo die Anzeige auf dem Sperrbildschirm aktuell. Dein Standort bleibt auf diesem iPhone."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "During a trip, KonstanzGo keeps the Lock Screen display up to date. Your location stays on this iPhone."
+        "en": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "During a trip, KonstanzGo keeps the Lock Screen display up to date. Your location stays on this iPhone."
           }
         }
       }
     },
-    "NSLocationWhenInUseUsageDescription" : {
-      "comment" : "Privacy - Location When In Use Usage Description",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone."
+    "NSLocationWhenInUseUsageDescription": {
+      "comment": "Privacy - Location When In Use Usage Description",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "new",
+            "value": "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "KonstanzGo shows you stops near you and the walk there. Your location stays on this iPhone."
+        "en": {
+          "stringUnit": {
+            "state": "needs_review",
+            "value": "KonstanzGo shows you stops near you and the walk there. Your location stays on this iPhone."
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Damit du Haltestellen und Orte per Sprache suchen kannst. Was du sagst, bleibt auf diesem iPhone."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "So you can search stops and places by voice. What you say stays on this iPhone."
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KonstanzGo erkennt deine Sprachsuche direkt auf diesem iPhone, ohne Internet."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KonstanzGo recognises your voice search right on this iPhone, without internet."
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

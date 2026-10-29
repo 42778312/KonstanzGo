@@ -721,6 +721,16 @@
         }
       }
     },
+    "Die Offline-Spracherkennung für deine Sprache ist auf diesem iPhone nicht geladen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline speech recognition for your language isn't downloaded on this iPhone."
+          }
+        }
+      }
+    },
     "Die Suche kommt als Nächstes.": {
       "extractionState": "stale",
       "localizations": {
@@ -849,6 +859,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Results"
+          }
+        }
+      }
+    },
+    "Erlaube Mikrofon und Spracherkennung in den Einstellungen, um per Sprache zu suchen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow the microphone and speech recognition in Settings to search by voice."
           }
         }
       }
@@ -1089,6 +1109,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "For line %1$@ to %2$@ at %3$@"
+          }
+        }
+      }
+    },
+    "Für die erste Sprachsuche lädt das iPhone einmal das Sprachmodell. Bitte versuch es einmal mit Internet, danach geht es offline.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For the first voice search the iPhone downloads the speech model once. Please try once with internet; after that it works offline."
           }
         }
       }
@@ -1394,6 +1424,16 @@
         }
       }
     },
+    "Ich höre zu …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening …"
+          }
+        }
+      }
+    },
     "Ich warte an Steig %@!": {
       "localizations": {
         "en": {
@@ -1630,6 +1670,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Shorter walks"
+          }
+        }
+      }
+    },
+    "Lade Sprachmodell …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading speech model …"
           }
         }
       }
@@ -2110,6 +2160,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Place"
+          }
+        }
+      }
+    },
+    "Per Sprache suchen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search by voice"
           }
         }
       }
@@ -2900,6 +2960,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Home ✓"
+          }
+        }
+      }
+    },
+    "Zuhören beenden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop listening"
           }
         }
       }

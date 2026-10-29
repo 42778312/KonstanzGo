@@ -8,8 +8,11 @@ import SwiftUI
 /// Picking something hands it to the map, which shows it in its own sheet.
 struct MapSearchSheet: View {
     let services: AppServices
+    /// Start listening right away (the microphone in the map's search bar).
+    var listens = false
     let onPick: (SavedTarget) -> Void
     @State private var query = ""
+    @State private var voice = VoiceSearch()
     @State private var results: [SearchResult] = []
     /// What `results` were found for, so "Nichts gefunden" waits for the search to finish.
     @State private var searched = ""
@@ -40,6 +43,12 @@ struct MapSearchSheet: View {
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.top, KGSpace.large)
+            if let problem = voiceProblem {
+                problem.kgFont(.footnote.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, KGSpace.large)
+                    .padding(.top, KGSpace.small)
+            }
             ScrollView {
                 VStack(alignment: .leading, spacing: KGSpace.xl) {
                     if trimmed.isEmpty {
@@ -77,8 +86,11 @@ struct MapSearchSheet: View {
         .task {
             // Focus once the sheet has settled, or the keyboard comes up without the field taking the typing.
             try? await Task.sleep(for: .milliseconds(350))
-            focused = true
+            voice.hints = services.transit.stations.map(\.shortName)
+            if listens { await voice.start() } else { focused = true }
         }
+        .onChange(of: voice.text) { _, words in if !words.isEmpty { query = words } }
+        .onDisappear { voice.stop() }
         .task(id: trimmed) {
             // Off the main thread and after a short pause, so typing never waits for the search.
             let text = trimmed
@@ -108,6 +120,19 @@ struct MapSearchSheet: View {
 
     // MARK: Parts
 
+    private var voiceProblem: Text? {
+        switch voice.state {
+        case .denied: Text("Erlaube Mikrofon und Spracherkennung in den Einstellungen, um per Sprache zu suchen.",
+                            bundle: .module)
+        case .unavailable: Text("Die Offline-Spracherkennung für deine Sprache ist auf diesem iPhone nicht geladen.",
+                                bundle: .module)
+        case .needsDownload:
+            Text("Für die erste Sprachsuche lädt das iPhone einmal das Sprachmodell. Bitte versuch es einmal mit Internet, danach geht es offline.",
+                 bundle: .module)
+        case .idle, .preparing, .listening: nil
+        }
+    }
+
     private var field: some View {
         HStack(spacing: KGSpace.small) {
             KGIconView(.search, size: 20).foregroundStyle(KGColor.ink2)
@@ -121,7 +146,15 @@ struct MapSearchSheet: View {
             .submitLabel(.search)
             .autocorrectionDisabled()
             .accessibilityIdentifier("searchField")
-            if !query.isEmpty {
+            if voice.state == .preparing {
+                Text("Lade Sprachmodell …", bundle: .module)
+                    .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.ink2)
+                    .fixedSize()
+            } else if voice.isListening {
+                Text("Ich höre zu …", bundle: .module)
+                    .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.coral)
+                    .fixedSize()
+            } else if !query.isEmpty {
                 Button { query = "" } label: {
                     KGIconView(.close, size: 10).foregroundStyle(KGColor.surface)
                         .frame(width: 20, height: 20)
@@ -131,6 +164,7 @@ struct MapSearchSheet: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text("Löschen", bundle: .module))
             }
+            MicButton(voice: voice) { focused = false }
         }
         .padding(.leading, KGSpace.mediumLarge)
         .padding(.trailing, KGSpace.xs)
@@ -327,5 +361,39 @@ struct SheetRow: View {
         .padding(.horizontal, KGSpace.mediumLarge)
         .contentShape(.rect)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// The microphone: starts or stops listening; coral and pulsing while it listens.
+struct MicButton: View {
+    let voice: VoiceSearch
+    var size: CGFloat = 20
+    var willListen: () -> Void = {}
+    @State private var pulse = false
+
+    var body: some View {
+        Button {
+            willListen()
+            voice.toggle()
+        } label: {
+            KGIconView(.mic, size: size)
+                .foregroundStyle(voice.isListening ? KGColor.white : KGColor.ink2)
+                .frame(width: size + 18, height: size + 18)
+                .background {
+                    if voice.isListening {
+                        Circle().fill(KGColor.coral)
+                            .scaleEffect(pulse ? 1.12 : 0.94)
+                            .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulse)
+                            .onAppear { pulse = true }
+                            .onDisappear { pulse = false }
+                    }
+                }
+                .frame(width: 44, height: 44)
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(voice.isListening ? Text("Zuhören beenden", bundle: .module)
+                                              : Text("Per Sprache suchen", bundle: .module))
+        .accessibilityIdentifier("voiceSearch")
     }
 }

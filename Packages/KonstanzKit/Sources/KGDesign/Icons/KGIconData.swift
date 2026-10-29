@@ -144,6 +144,11 @@ extension KGIcon {
             KGIconDrawing(filled: true, lineWidth: 2, elements: [
                 KGIconElement(shape: .path("M12 2a7 7 0 0 0-7 7c0 5.3 7 13 7 13s7-7.7 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"), paint: .inherit),
             ])
+        case .mic:  // voice search (drawn in the design's style)
+            KGIconDrawing(filled: false, lineWidth: 2.4, elements: [
+                KGIconElement(shape: .path("M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"), paint: .inherit),
+                KGIconElement(shape: .path("M6 11a6 6 0 0 0 12 0M12 17v4"), paint: .inherit),
+            ])
         case .minus:  // zoom out (drawn in the design's style)
             KGIconDrawing(filled: false, lineWidth: 2.4, elements: [
                 KGIconElement(shape: .path("M5 12h14"), paint: .inherit),
@@ -275,6 +280,8 @@ public enum KGIcon: String, CaseIterable, Sendable {
     case pin
     /// Places, dropped pin.
     case pinFilled
+    /// Voice search (drawn in the design's style).
+    case mic
     /// Zoom out (drawn in the design's style).
     case minus
     /// Add (drawn in the design's style).

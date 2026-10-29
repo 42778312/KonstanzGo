@@ -44,6 +44,10 @@
 	<string>Während einer Fahrt hält KonstanzGo die Anzeige auf dem Sperrbildschirm aktuell. Dein Standort bleibt auf diesem iPhone.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Damit du Haltestellen und Orte per Sprache suchen kannst. Was du sagst, bleibt auf diesem iPhone.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>KonstanzGo erkennt deine Sprachsuche direkt auf diesem iPhone, ohne Internet.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

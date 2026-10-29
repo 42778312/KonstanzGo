@@ -2,9 +2,9 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// A place picked from the search (Apple Maps style): name, what and where it is, ★ and ✕, then the
-/// connections there from where the user is, now or at a chosen time. Each card opens that route on the map;
-/// the start can be changed.
+/// A place picked from the search (Apple Maps style): name, what and where it is, ★ and ✕, then "Von / Nach"
+/// (both can be changed, and swapped) and the connections, now or at a chosen time. Each card opens that
+/// route on the map.
 struct PlaceSheet: View {
     let services: AppServices
     let target: SavedTarget
@@ -14,8 +14,14 @@ struct PlaceSheet: View {
     @State private var tags: [String: Set<JourneyTag>] = [:]
     @State private var searching = true
     @State private var choosingWhen = false
-    @State private var choosingStart = false
+    @State private var editing: End?
+    @State private var swapTurns = 0.0
     @State private var now = Date.now
+
+    enum End: Identifiable {
+        case from, to
+        var id: Self { self }
+    }
 
     init(services: AppServices, target: SavedTarget, onClose: @escaping () -> Void) {
         self.services = services
@@ -31,7 +37,7 @@ struct PlaceSheet: View {
         ScrollView {
             VStack(alignment: .leading, spacing: KGSpace.medium) {
                 header
-                startRow
+                endpoints
                 HStack(spacing: KGSpace.small) {
                     KGChip(whenTitle, isOn: true) { choosingWhen = true }
                         .accessibilityIdentifier("whenChip")
@@ -58,8 +64,12 @@ struct PlaceSheet: View {
                 choosingWhen = false
             }
         }
-        .sheet(isPresented: $choosingStart) {
-            EndpointPicker(services: services, title: Text("Von wo?", bundle: .module)) { query.from = $0 }
+        .sheet(item: $editing) { end in
+            EndpointPicker(services: services,
+                           title: end == .from ? Text("Von wo?", bundle: .module) : Text("Wohin?", bundle: .module)) {
+                endpoint in
+                if end == .from { query.from = endpoint } else { query.to = endpoint }
+            }
         }
     }
 
@@ -68,16 +78,16 @@ struct PlaceSheet: View {
     private var header: some View {
         HStack(alignment: .top, spacing: KGSpace.small) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: target.name).kgFont(.title).foregroundStyle(KGColor.ink)
+                Text(verbatim: isPicked ? target.name : query.to.name).kgFont(.title).foregroundStyle(KGColor.ink)
                     .lineLimit(2)
                     .accessibilityAddTraits(.isHeader)
-                if !subtitle.isEmpty {
+                if isPicked, !subtitle.isEmpty {
                     Text(verbatim: subtitle).kgFont(.footnote.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
                         .lineLimit(2)
                 }
             }
             Spacer()
-            FavoriteButton(services: services, target: target)
+            if isPicked { FavoriteButton(services: services, target: target) }
             KGRoundIconButton(.close, label: Text("Schließen", bundle: .module), surface: .plain, action: onClose)
                 .accessibilityIdentifier("closePlace")
         }
@@ -104,30 +114,64 @@ struct PlaceSheet: View {
         return parts.filter { !$0.isEmpty }.joined(separator: " · ")
     }
 
-    /// "Von Mein Standort ›": tap to start somewhere else.
-    private var startRow: some View {
-        let isHere = query.from.coordinate == services.here?.coordinate
-        return Button { choosingStart = true } label: {
-            HStack(spacing: KGSpace.medium) {
+    /// The place is still the target (not changed or swapped away).
+    private var isPicked: Bool { query.to.coordinate == target.coordinate }
+
+    /// "Von" (blue ring) and "Nach" (black diamond) on a dotted rail, each tappable, swap on the right.
+    private var endpoints: some View {
+        HStack(spacing: KGSpace.medium) {
+            VStack(spacing: 4) {
                 Circle().strokeBorder(KGColor.location, lineWidth: 4).frame(width: 14, height: 14)
+                Rectangle().fill(KGColor.chevron).frame(width: 2, height: 30)
+                    .mask(VStack(spacing: 3) { ForEach(0..<5, id: \.self) { _ in Rectangle().frame(height: 3) } })
+                RoundedRectangle(cornerRadius: 3).fill(KGColor.ink).frame(width: 12, height: 12)
+                    .rotationEffect(.degrees(45))
+            }
+            .accessibilityHidden(true)
+            VStack(spacing: 0) {
+                field(Text("Von", bundle: .module), query.from) { editing = .from }
+                    .accessibilityIdentifier("placeFrom")
+                Rectangle().fill(KGColor.line).frame(height: 1)
+                field(Text("Nach", bundle: .module), query.to) { editing = .to }
+                    .accessibilityIdentifier("placeTo")
+            }
+            Button {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) { swapTurns += 180 }
+                query = query.swapped
+            } label: {
+                KGIconView(.swap, size: 20).foregroundStyle(KGColor.ink)
+                    .rotationEffect(.degrees(swapTurns))
+                    .frame(width: KGSize.touch, height: KGSize.touch)
+                    .background(KGColor.surface, in: .circle)
+            }
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Start und Ziel tauschen", bundle: .module))
+            .accessibilityIdentifier("swapEnds")
+        }
+        .padding(.leading, KGSpace.screen)
+        .padding(.trailing, KGSpace.compact)
+        .padding(.vertical, KGSpace.xxs)
+        .background(KGColor.card, in: .kgRounded(KGRadius.option))
+    }
+
+    private func field(_ label: Text, _ endpoint: Endpoint, action: @escaping () -> Void) -> some View {
+        let isHere = endpoint.coordinate == services.here?.coordinate
+        return Button(action: action) {
+            HStack {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Von", bundle: .module).kgFont(.caption.weighted(KGFont.semiBold))
-                        .foregroundStyle(KGColor.ink2)
-                    Text(verbatim: query.from.name).kgFont(.bodyMedium).lineLimit(1)
+                    label.kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.ink2)
+                    Text(verbatim: endpoint.name).kgFont(.bodyMedium).lineLimit(1)
                         .foregroundStyle(isHere ? KGColor.location : KGColor.ink)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                KGIconView(.chevronRight, size: 13).foregroundStyle(KGColor.chevron)
+                KGIconView(.chevronRight, size: 12).foregroundStyle(KGColor.chevron)
             }
-            .padding(.horizontal, KGSpace.screen)
-            .frame(minHeight: 56)
-            .background(KGColor.card, in: .kgRounded(KGRadius.option))
+            .frame(minHeight: 50)
             .contentShape(.rect)
         }
         .buttonStyle(KGPressStyle())
         .accessibilityElement(children: .combine)
         .accessibilityHint(Text("Tippen zum Ändern", bundle: .module))
-        .accessibilityIdentifier("placeFrom")
     }
 
     @ViewBuilder private var connections: some View {

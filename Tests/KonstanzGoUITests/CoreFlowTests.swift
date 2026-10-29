@@ -22,12 +22,6 @@ final class CoreFlowTests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name + ",")).firstMatch
     }
 
-    /// From the stop's sheet on the map to its screen.
-    private func openStopScreen() {
-        let all = app.buttons["Alle Abfahrten"]
-        XCTAssertTrue(all.waitForExistence(timeout: 5), "stop sheet did not open")
-        all.tap()
-    }
 
     private func search(_ text: String) {
         app.buttons["mapSearch"].firstMatch.tap()
@@ -43,12 +37,9 @@ final class CoreFlowTests: XCTestCase {
         let result = element(labelContains: "Sternenplatz")
         XCTAssertTrue(result.waitForExistence(timeout: 5), "no search result")
         result.tap()
-        openStopScreen()
-        XCTAssertTrue(app.buttons["Abfahrten"].waitForExistence(timeout: 5), "stop screen did not open")
-        app.buttons["Linien"].tap()
-        XCTAssertTrue(element(labelContains: "Richtung").waitForExistence(timeout: 3) ||
-                      app.staticTexts["Heute fährt hier nichts mehr"].exists)
-        app.buttons["Abfahrten"].tap()
+        // The stop opens in the map's sheet with its lines and departures.
+        XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "stop sheet did not open")
+        XCTAssertTrue(app.buttons["Alle Linien"].exists)
         let departure = element(labelContains: "laut Fahrplan")
         guard departure.waitForExistence(timeout: 3) else { return } // nothing runs at this hour
         departure.tap()
@@ -56,14 +47,23 @@ final class CoreFlowTests: XCTestCase {
                       app.staticTexts["Haltestellen"].exists, "departure details did not open")
         XCTAssertTrue(app.buttons["Auf der Karte"].exists)
         app.buttons["Zurück"].firstMatch.tap()
-        XCTAssertTrue(app.buttons["Abfahrten"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "the stop's sheet should come back")
     }
 
     @MainActor
     func testAlarmDialog() {
+        // Alarms are set on a stop's screen, opened from Favoriten.
         search("Bahnhof")
         element(labelContains: "Bahnhof").tap()
-        openStopScreen()
+        let star = app.buttons["Favorit"].firstMatch
+        XCTAssertTrue(star.waitForExistence(timeout: 5))
+        if !star.isSelected { star.tap() }
+        app.buttons["closeStation"].tap()
+        app.buttons["Favoriten"].firstMatch.tap()
+        let saved = app.buttons.matching(NSPredicate(format: "identifier == 'favoriteStop' AND label CONTAINS 'Bahnhof'"))
+            .firstMatch
+        XCTAssertTrue(saved.waitForExistence(timeout: 5))
+        saved.tap()
         let alarm = app.buttons["setAlarm"]
         guard alarm.waitForExistence(timeout: 5) else { return } // no departures at this hour
         alarm.tap()
@@ -120,7 +120,7 @@ final class CoreFlowTests: XCTestCase {
     }
 }
 
-/// Changing the start in a place's sheet on the map.
+/// Changing and swapping start and target in a place's sheet on the map.
 final class EditEndpointsTests: XCTestCase {
     @MainActor
     func testChangeStartForAPlace() {
@@ -150,5 +150,8 @@ final class EditEndpointsTests: XCTestCase {
         result.tap()
         XCTAssertTrue(from.waitForExistence(timeout: 5))
         XCTAssertTrue(from.label.contains("Sternenplatz"), "start did not change: \(from.label)")
+        app.buttons["swapEnds"].tap()
+        XCTAssertTrue(app.buttons["placeTo"].label.contains("Sternenplatz"), "swap did not move the start to the target")
+        XCTAssertTrue(from.label.contains("Konzil"), "swap did not move the place to the start: \(from.label)")
     }
 }

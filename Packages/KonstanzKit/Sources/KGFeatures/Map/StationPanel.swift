@@ -3,8 +3,7 @@ import KGDesign
 import SwiftUI
 
 /// A stop tapped on the map: name, platforms and walk, star and ✕; the lines as chips that scroll sideways;
-/// the time to look from; the departures (time, line, destination, platform), each opening its trip;
-/// "Alle Abfahrten" and "Route von hier".
+/// the time to look from; the departures (time, line, destination, platform), each opening its trip.
 struct StationPanel: View {
     let services: AppServices
     let station: Station
@@ -14,7 +13,6 @@ struct StationPanel: View {
     @State private var from = Date.now
     @State private var departures: [Departure] = []
     @State private var choosingTime = false
-    @State private var choosingTarget = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -41,14 +39,6 @@ struct StationPanel: View {
             }
             .padding(.top, KGSpace.medium)
             list
-            HStack(spacing: KGSpace.compact) {
-                KGButton(Text("Alle Abfahrten", bundle: .module), kind: .secondary) {
-                    services.router.open(.stop(station.id))
-                }
-                KGButton(Text("Route von hier", bundle: .module)) { choosingTarget = true }
-                    .accessibilityIdentifier("routeFromStation")
-            }
-            .padding(.top, KGSpace.small)
         }
         .padding(.horizontal, KGSpace.large)
         .task(id: station.id) {
@@ -60,13 +50,6 @@ struct StationPanel: View {
         .onChange(of: line) { _, _ in load() }
         .onChange(of: from) { _, _ in load() }
         .sheet(isPresented: $choosingTime) { TimeSheet(date: $from) }
-        .sheet(isPresented: $choosingTarget) {
-            EndpointPicker(services: services, title: Text("Wohin?", bundle: .module)) { target in
-                services.router.open(.routes(PlanQuery(
-                    from: Endpoint(name: station.shortName, coordinate: station.coordinate), to: target,
-                    when: Calendar.konstanz.isDate(from, equalTo: .now, toGranularity: .minute) ? .now : .departAt(from))))
-            }
-        }
     }
 
     // MARK: Parts

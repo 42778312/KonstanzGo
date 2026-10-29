@@ -127,6 +127,12 @@ struct JourneyMap: View {
                     KGBusMarker(line: bus.line.name, heading: .degrees(bus.heading)).position(point)
                 }
             }
+            if let point = model.pinPoints["start"] {
+                Circle().fill(KGColor.white).frame(width: 18, height: 18)
+                    .overlay(Circle().strokeBorder(KGColor.location, lineWidth: 5))
+                    .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                    .position(point)
+            }
             if let point = model.pinPoints["end"] {
                 RoundedRectangle(cornerRadius: 4).fill(KGColor.ink)
                     .frame(width: 16, height: 16).rotationEffect(.degrees(45))
@@ -141,7 +147,10 @@ struct JourneyMap: View {
             model.lines = journey.mapLines
             model.insets = MapInsets(top: 110, bottom: bottomInset)
             model.userLocation = services.location.coordinate
-            if let last = journey.legs.last { model.pins = [MapPin(id: "end", coordinate: endPoint(last))] }
+            var ends: [MapPin] = []
+            if let first = journey.allPoints.first { ends.append(MapPin(id: "start", coordinate: first)) }
+            if let last = journey.legs.last { ends.append(MapPin(id: "end", coordinate: endPoint(last))) }
+            model.pins = ends
             model.move(.fitting(focus ?? journey.allPoints, animated: false))
         }
         .onChange(of: services.location.coordinate) { _, point in model.userLocation = point }

@@ -68,7 +68,26 @@ public struct KGMapView: UIViewRepresentable {
         if let step = model.takePendingZoom() {
             map.setZoomLevel(min(max(map.zoomLevel + step, MapRegion.minZoom), MapRegion.maxZoom), animated: true)
         }
-        if let move = model.takePendingMove() {
+        if let move = model.takePendingMove() { coordinator.queuedMove = move }
+        coordinator.runQueuedMove(on: map)
+        coordinator.reportOverlayPoints(map)
+    }
+
+    @MainActor
+    public final class Coordinator: NSObject, @preconcurrency MLNMapViewDelegate {
+        let model: MapModel
+        var dark = false
+        private var shownStations: [Int] = []
+        private var shownLines: [MapLine] = []
+        private var styleReady = false
+        /// A camera move waiting for the map to have a size and its style; fitting a route before that lands
+        /// on the wrong place and zoom.
+        var queuedMove: CameraMove?
+        private var drawing: Task<Void, Never>?
+
+        func runQueuedMove(on map: MLNMapView) {
+            guard styleReady, map.bounds.width > 0, map.bounds.height > 0, let move = queuedMove else { return }
+            queuedMove = nil
             if move.fit.count > 1 {
                 let bounds = MLNCoordinateBounds(
                     sw: CLLocationCoordinate2D(latitude: move.fit.map(\.latitude).min() ?? 0,
@@ -82,16 +101,6 @@ public struct KGMapView: UIViewRepresentable {
                 map.setCenter(move.center.location, zoomLevel: move.zoom, animated: move.animated)
             }
         }
-        coordinator.reportOverlayPoints(map)
-    }
-
-    @MainActor
-    public final class Coordinator: NSObject, @preconcurrency MLNMapViewDelegate {
-        let model: MapModel
-        var dark = false
-        private var shownStations: [Int] = []
-        private var shownLines: [MapLine] = []
-        private var styleReady = false
 
         static let stopsSource = "kg-stops"
         static let stopsLayer = "kg-stops"
@@ -121,18 +130,75 @@ public struct KGMapView: UIViewRepresentable {
             guard styleReady, let style = map.style else { return }
             guard model.lines != shownLines || style.source(withIdentifier: Self.routeSource) == nil else { return }
             shownLines = model.lines
-            let features = model.lines.map { line -> MLNPolylineFeature in
-                var points = line.points.map(\.location)
-                let feature = MLNPolylineFeature(coordinates: &points, count: UInt(points.count))
-                feature.attributes = ["kind": line.kind.rawValue]
-                return feature
-            }
-            let shape = MLNShapeCollectionFeature(shapes: features)
-            if let source = style.source(withIdentifier: Self.routeSource) as? MLNShapeSource {
-                source.shape = shape
+            if style.source(withIdentifier: Self.routeSource) == nil { addRouteLayers(to: style) }
+            draw(shownLines, on: map)
+        }
+
+        /// Draws the route in from its start, walk and bus in order, over 1.4 s (at once with Reduce Motion).
+        private func draw(_ lines: [MapLine], on map: MLNMapView) {
+            drawing?.cancel()
+            guard !lines.isEmpty, !UIAccessibility.isReduceMotionEnabled else {
+                show(lines, upTo: 1, on: map)
                 return
             }
-            let source = MLNShapeSource(identifier: Self.routeSource, shape: shape, options: nil)
+            show(lines, upTo: 0, on: map)
+            drawing = Task { [weak self, weak map] in
+                try? await Task.sleep(for: .milliseconds(250))
+                let start = ContinuousClock.now
+                while !Task.isCancelled {
+                    guard let self, let map else { return }
+                    let t = (ContinuousClock.now - start) / .seconds(1)
+                    let eased = 1 - pow(1 - min(1, t / 1.4), 3)
+                    self.show(lines, upTo: eased, on: map)
+                    if t >= 1.4 { return }
+                    try? await Task.sleep(for: .milliseconds(16))
+                }
+            }
+        }
+
+        private func show(_ lines: [MapLine], upTo progress: Double, on map: MLNMapView) {
+            guard let source = map.style?.source(withIdentifier: Self.routeSource) as? MLNShapeSource else { return }
+            source.shape = MLNShapeCollectionFeature(shapes: Self.features(lines, upTo: progress))
+        }
+
+        /// The route's first `progress` (0…1) of its length, as map features.
+        static func features(_ lines: [MapLine], upTo progress: Double) -> [MLNPolylineFeature] {
+            let lengths = lines.map { line in
+                zip(line.points, line.points.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
+            }
+            var budget = lengths.reduce(0, +) * progress
+            var features: [MLNPolylineFeature] = []
+            for (line, length) in zip(lines, lengths) where budget > 0 {
+                let points = budget >= length ? line.points : prefix(of: line.points, metres: budget)
+                budget -= length
+                guard points.count > 1 else { continue }
+                var locations = points.map(\.location)
+                let feature = MLNPolylineFeature(coordinates: &locations, count: UInt(locations.count))
+                feature.attributes = ["kind": line.kind.rawValue]
+                features.append(feature)
+            }
+            return features
+        }
+
+        private static func prefix(of points: [Coordinate], metres: Double) -> [Coordinate] {
+            var left = metres
+            var result = [points[0]]
+            for (a, b) in zip(points, points.dropFirst()) {
+                let step = a.distance(to: b)
+                if step >= left {
+                    let f = step > 0 ? left / step : 0
+                    result.append(Coordinate(latitude: a.latitude + (b.latitude - a.latitude) * f,
+                                             longitude: a.longitude + (b.longitude - a.longitude) * f))
+                    return result
+                }
+                result.append(b)
+                left -= step
+            }
+            return result
+        }
+
+        private func addRouteLayers(to style: MLNStyle) {
+            let source = MLNShapeSource(identifier: Self.routeSource, shape: nil, options: nil)
             style.addSource(source)
             let isBus = NSPredicate(format: "kind == 'bus'")
             let isWalk = NSPredicate(format: "kind == 'walk'")
@@ -227,6 +293,7 @@ public struct KGMapView: UIViewRepresentable {
             shownLines = []
             updateLines(on: mapView)
             updateStops(on: mapView)
+            runQueuedMove(on: mapView)
         }
 
         // MARK: Camera

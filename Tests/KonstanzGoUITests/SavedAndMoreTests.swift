@@ -25,11 +25,14 @@ final class SavedAndMoreTests: XCTestCase {
         let result = element(labelContains: name)
         XCTAssertTrue(result.waitForExistence(timeout: 5))
         result.tap()
-        // The stop opens in the map's sheet; "Alle Abfahrten" opens its screen.
-        let all = app.buttons["Alle Abfahrten"]
-        XCTAssertTrue(all.waitForExistence(timeout: 5))
-        all.tap()
-        XCTAssertTrue(app.buttons["Abfahrten"].waitForExistence(timeout: 5))
+        // The stop opens in the map's sheet.
+        XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5))
+    }
+
+    /// Closes the stop's sheet to reach the tabs.
+    private func closeStop() {
+        app.buttons["closeStation"].tap()
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 5))
     }
 
     @MainActor
@@ -38,11 +41,7 @@ final class SavedAndMoreTests: XCTestCase {
         let star = app.buttons["Favorit"].firstMatch
         let wasSaved = star.isSelected
         if !wasSaved { star.tap() }
-        app.buttons["Zurück"].firstMatch.tap()
-        // Back on the map the stop's sheet is open again; close it to reach the tabs.
-        let close = app.buttons["closeStation"]
-        XCTAssertTrue(close.waitForExistence(timeout: 5))
-        close.tap()
+        closeStop()
         app.buttons["Favoriten"].firstMatch.tap()
         XCTAssertTrue(app.buttons["favoriteStop"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(element(labelContains: "Sternenplatz").exists)
@@ -57,11 +56,7 @@ final class SavedAndMoreTests: XCTestCase {
     @MainActor
     func testRecentSearchesAndDeleteAll() {
         openStop("Bahnhof")
-        app.buttons["Zurück"].firstMatch.tap()
-        // Back on the map the stop's sheet is open again; close it to reach the tabs.
-        let close = app.buttons["closeStation"]
-        XCTAssertTrue(close.waitForExistence(timeout: 5))
-        close.tap()
+        closeStop()
         app.buttons["Favoriten"].firstMatch.tap()
         let link = app.buttons["recentLink"]
         XCTAssertTrue(link.waitForExistence(timeout: 5))

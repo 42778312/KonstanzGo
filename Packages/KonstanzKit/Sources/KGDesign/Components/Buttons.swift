@@ -29,11 +29,13 @@ public struct KGButtonStyle: ButtonStyle {
         configuration.label
             .kgFont(font)
             .foregroundStyle(foreground)
-            .lineLimit(2)
+            .lineLimit(kind == .outline ? 1 : 2)
+            .minimumScaleFactor(kind == .outline ? 0.8 : 1)
             .multilineTextAlignment(.center)
             .opacity(isLoading ? 0 : 1)
             .overlay { if isLoading { ProgressView().tint(foreground) } }
-            .padding(.horizontal, KGSpace.screen)
+            // Outline buttons sit three in a row ("Zuhause · Arbeit · Uni"), so they keep less space at the sides.
+            .padding(.horizontal, kind == .outline ? KGSpace.small : KGSpace.screen)
             .frame(maxWidth: .infinity, minHeight: kind == .outline ? outlineHeight : bigHeight)
             .background(background, in: shape)
             .overlay { border(shape) }

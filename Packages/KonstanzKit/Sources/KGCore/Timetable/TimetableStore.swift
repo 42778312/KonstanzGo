@@ -162,6 +162,38 @@ public final class TimetableStore: Sendable {
         }
     }
 
+    /// The next bus from `date` on that goes directly from one station to another, with its arrival
+    /// ("Nach Hause" widget). Looks at today's and yesterday's service (night buses).
+    public func nextDirectDeparture(from fromStation: Int, to toStation: Int,
+                                    after date: Date) throws -> (departure: Departure, arrival: Date)? {
+        let from = platforms(of: fromStation).map(\.id), to = platforms(of: toStation).map(\.id)
+        guard !from.isEmpty, !to.isEmpty else { return nil }
+        let fromList = from.map { _ in "?" }.joined(separator: ","), toList = to.map { _ in "?" }.joined(separator: ",")
+        var best: (departure: Departure, arrival: Date)?
+        try queue.read { db in
+            for (day, minutes) in clock.runningDays(at: date) {
+                guard let row = try Row.fetchOne(db, sql: """
+                    SELECT a.trip_id, a.departure, a.platform_id, b.arrival, t.headsign, t.route_id
+                    FROM stop_time a
+                    JOIN stop_time b ON b.trip_id = a.trip_id AND b.seq > a.seq AND b.platform_id IN (\(toList))
+                    JOIN trip t ON t.id = a.trip_id
+                    JOIN service_date sd ON sd.service_id = t.service_id AND sd.date = ?
+                    WHERE a.platform_id IN (\(fromList)) AND a.departure >= ?
+                    ORDER BY b.arrival LIMIT 1
+                    """, arguments: StatementArguments(to + [day.yyyymmdd] + from + [minutes])),
+                    let line = linesByID[row["route_id"]], let platform = platformsByID[row["platform_id"]]
+                else { continue }
+                let departure = Departure(tripID: row["trip_id"], line: line,
+                                          headsign: displayName(headsign: row["headsign"]), platform: platform,
+                                          scheduled: clock.date(day, minutes: row["departure"]))
+                let arrival = clock.date(day, minutes: row["arrival"])
+                if let current = best, current.arrival <= arrival { continue }
+                best = (departure, arrival)
+            }
+        }
+        return best
+    }
+
     /// The first bus on `day` that goes directly from a station to another (screen 23:
     /// "Erster Bus morgen um 05:42"). nil when none runs that day.
     public func firstDirectDeparture(from fromStation: Int, to toStation: Int,
@@ -192,7 +224,9 @@ public final class TimetableStore: Sendable {
     /// otherwise without the leading "Konstanz ".
     public func displayName(headsign: String) -> String {
         if let station = stations.first(where: { $0.name == headsign }) { return station.shortName }
-        if headsign.hasPrefix("Konstanz ") { return String(headsign.dropFirst("Konstanz ".count)) }
+        for prefix in ["Konstanz, ", "Konstanz "] where headsign.hasPrefix(prefix) {
+            return String(headsign.dropFirst(prefix.count))
+        }
         return headsign
     }
 

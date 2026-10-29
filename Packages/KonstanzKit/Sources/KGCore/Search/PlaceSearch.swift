@@ -45,6 +45,14 @@ public final class PlaceSearch: Sendable {
 
     public var count: Int { entries.count }
 
+    /// A place by its slug (recent searches and favourites store only the id).
+    public func place(id: String) -> Place? {
+        for entry in entries {
+            if case let .place(place) = entry.target, place.id == id { return place }
+        }
+        return nil
+    }
+
     /// For reverse lookup (same module).
     var entriesForLookup: [Entry] { entries }
 

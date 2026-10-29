@@ -38,7 +38,7 @@ final class OnboardingTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Alles bereit!"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Alarme an"].waitForExistence(timeout: 3))
         app.buttons["finishOnboarding"].tap()
-        XCTAssertTrue(app.staticTexts["appTitle"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 10))
     }
 
     @MainActor
@@ -49,6 +49,6 @@ final class OnboardingTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Alles bereit!"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["Alarme an"].exists)
         app.buttons["finishOnboarding"].tap()
-        XCTAssertTrue(app.staticTexts["appTitle"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["In deiner Nähe"].waitForExistence(timeout: 10))
     }
 }

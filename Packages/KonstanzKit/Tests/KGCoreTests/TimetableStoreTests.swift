@@ -53,6 +53,7 @@ struct TimetableStoreTests {
         #expect(departures.contains { $0.line.name == "9" && $0.headsign == "Universität" })
         #expect(!departures.contains { $0.headsign.hasPrefix("Konstanz ") })
         #expect(store.displayName(headsign: "Friedrichshafen Hafenbahnhof") == "Friedrichshafen Hafenbahnhof")
+        #expect(store.displayName(headsign: "Konstanz, Zähringerplatz") == "Zähringerplatz")
     }
 
     @Test func afterMidnightYesterdaysNightBusesStillShow() throws {
@@ -124,5 +125,14 @@ struct TimetableStoreTests {
         }
         let perQuery = Date().timeIntervalSince(start) / 16
         #expect(perQuery < 0.02, "\(Int(perQuery * 1000)) ms per query")
+    }
+
+    @Test func nextDirectBusBetweenTwoStops() throws {
+        let universitaet = try #require(store.stations.first { $0.shortName == "Universität" })
+        let next = try #require(try store.nextDirectDeparture(from: sternenplatz, to: universitaet.id,
+                                                              after: at(20261028, 14, 0)))
+        #expect(next.departure.scheduled >= at(20261028, 14, 0))
+        #expect(next.arrival > next.departure.scheduled)
+        #expect(next.arrival.timeIntervalSince(next.departure.scheduled) < 3600)
     }
 }

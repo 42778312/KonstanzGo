@@ -16,6 +16,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift", exact: "7.11.1"),
+        // The offline map. iOS only, so `swift test` keeps running on the Mac.
+        .package(url: "https://github.com/maplibre/maplibre-gl-native-distribution", exact: "6.31.0"),
     ],
     targets: [
         .target(
@@ -23,7 +25,14 @@ let package = Package(
             dependencies: [.product(name: "GRDB", package: "GRDB.swift")]
         ),
         .target(name: "KGDesign", resources: [.process("Resources")]),
-        .target(name: "KGFeatures", dependencies: ["KGCore", "KGDesign"], resources: [.process("Resources")]),
+        .target(
+            name: "KGFeatures",
+            dependencies: [
+                "KGCore", "KGDesign",
+                .product(name: "MapLibre", package: "maplibre-gl-native-distribution", condition: .when(platforms: [.iOS])),
+            ],
+            resources: [.process("Resources")]
+        ),
         .testTarget(name: "KGCoreTests", dependencies: ["KGCore"]),
         .testTarget(name: "KGDesignTests", dependencies: ["KGDesign"]),
         .testTarget(name: "KGFeaturesTests", dependencies: ["KGFeatures"]),

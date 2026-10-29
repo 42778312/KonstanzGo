@@ -33,10 +33,10 @@ struct KonstanzGoApp: App {
             if UserDefaults.standard.bool(forKey: "KGDesignSystem") {
                 DesignSystemScreen()
             } else {
-                RootView(info: timetable, permissions: permissions)
+                RootView(info: timetable, data: BundledData(bundle: .main), permissions: permissions)
             }
             #else
-            RootView(info: timetable, permissions: permissions)
+            RootView(info: timetable, data: BundledData(bundle: .main), permissions: permissions)
             #endif
         }
     }

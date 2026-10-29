@@ -2,6 +2,7 @@
 included:
   - App
   - Widgets
+  - Shared
   - Packages/KonstanzKit/Sources
 excluded:
   - Packages/KonstanzKit/.build

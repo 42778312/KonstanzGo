@@ -2,19 +2,23 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// The app's way in: the start animation, then onboarding the first time, then home. Home is still the
-/// Milestone 0 placeholder until the map arrives (plan S4).
+/// The app's way in: the start animation, then onboarding the first time, then home with the map.
 public struct RootView: View {
     enum Stage { case start, onboarding, home }
 
     let info: TimetableInfo?
     @State private var stage = Stage.start
     @State private var onboarding: OnboardingModel
+    /// Opens the timetable, search and walking data while the start animation plays (S1.2).
+    @State private var loader: TransitLoader
+    @AppStorage("appearance") private var appearance = Appearance.automatic.rawValue
     /// The first start plays the full animation; later starts the short one (S1.4).
     private let shortStart: Bool
 
-    public init(info: TimetableInfo?, permissions: PermissionAsking, defaults: UserDefaults = .standard) {
+    public init(info: TimetableInfo?, data: BundledData?, permissions: PermissionAsking,
+                defaults: UserDefaults = .standard) {
         self.info = info
+        _loader = State(initialValue: TransitLoader(data: data))
         let model = OnboardingModel(defaults: defaults, permissions: permissions)
         _onboarding = State(initialValue: model)
         shortStart = model.isFinished
@@ -36,17 +40,19 @@ public struct RootView: View {
                 }
                 .transition(.opacity)
             case .home:
-                HomePlaceholder(info: info) {
+                HomeView(loader: loader) {
                     onboarding.reset()
                     withAnimation(.easeInOut(duration: 0.35)) { stage = .start }
                 }
                 .transition(.opacity)
             }
         }
+        .preferredColorScheme(Appearance(rawValue: appearance)?.colorScheme)
     }
 }
 
-/// What home shows until the map is built: the bundled timetable's date, and a way to see onboarding again.
+/// The bundled timetable's date and a way to see onboarding again (used before the map existed; kept for the
+/// snapshot pipeline check).
 public struct HomePlaceholder: View {
     let info: TimetableInfo?
     let onReplay: () -> Void
@@ -99,6 +105,6 @@ public struct HomePlaceholder: View {
 }
 
 #Preview("Onboarding") {
-    RootView(info: nil, permissions: FixedPermissions(allow: true),
+    RootView(info: nil, data: nil, permissions: FixedPermissions(allow: true),
              defaults: UserDefaults(suiteName: "preview") ?? .standard)
 }

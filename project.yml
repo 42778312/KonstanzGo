@@ -41,6 +41,8 @@ targets:
     platform: iOS
     sources:
       - path: App/Sources
+      # Shared with the widget extension: data access and the stop picker for intents.
+      - path: Shared
       - path: App/Resources/Assets.xcassets
       - path: App/Resources/Localizable.xcstrings
       - path: App/Resources/InfoPlist.xcstrings
@@ -76,6 +78,9 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         ITSAppUsesNonExemptEncryption: false
         NSSupportsLiveActivities: true
+        CFBundleURLTypes:
+          - CFBundleURLName: de.konstanzgo.app
+            CFBundleURLSchemes: [konstanzgo]
         UIBackgroundModes: [location]
         NSLocationWhenInUseUsageDescription: "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone."
         NSLocationAlwaysAndWhenInUseUsageDescription: "Während einer Fahrt hält KonstanzGo die Anzeige auf dem Sperrbildschirm aktuell. Dein Standort bleibt auf diesem iPhone."
@@ -101,6 +106,8 @@ targets:
     platform: iOS
     sources:
       - path: Widgets/Sources
+      - path: Widgets/Resources/Localizable.xcstrings
+      - path: Shared
     dependencies:
       - package: KonstanzKit
         product: KGCore

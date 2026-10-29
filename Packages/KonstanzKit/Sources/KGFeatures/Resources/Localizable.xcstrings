@@ -1,12 +1,172 @@
 {
   "sourceLanguage": "de",
   "strings": {
+    "%@ in Konstanz: https://www.openstreetmap.org/?mlat=%lf&mlon=%lf": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ in Konstanz: https://www.openstreetmap.org/?mlat=%2$lf&mlon=%3$lf"
+          }
+        }
+      }
+    },
+    "%@ in die %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ onto %2$@"
+          }
+        }
+      }
+    },
+    "%@ überqueren": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cross %@"
+          }
+        }
+      }
+    },
+    "%@° N · %@° O": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@° N · %2$@° E"
+          }
+        }
+      }
+    },
     "%lld Min.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld min"
+          }
+        }
+      }
+    },
+    "%lld Min. Fahrt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min ride"
+          }
+        }
+      }
+    },
+    "%lld Min. vorher": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min before"
+          }
+        }
+      }
+    },
+    "%lld von %lld Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld stops"
+          }
+        }
+      }
+    },
+    "%lld× Umsteigen · ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld× change · from %2$@"
+          }
+        }
+      }
+    },
+    "Ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From %@"
+          }
+        }
+      }
+    },
+    "Ab %@ %@ suchen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search from %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Ab zu %@! Bus %@ um %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off to %1$@! Bus %2$@ at %3$@."
+          }
+        }
+      }
+    },
+    "Abbrechen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Abfahrt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depart"
+          }
+        }
+      }
+    },
+    "Abfahrt %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departs %@"
+          }
+        }
+      }
+    },
+    "Abfahrt teilen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share departure"
+          }
+        }
+      }
+    },
+    "Abfahrten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departures"
           }
         }
       }
@@ -21,12 +181,42 @@
         }
       }
     },
+    "Abfahrtsalarm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Departure alarm"
+          }
+        }
+      }
+    },
     "Abfahrtsalarme": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Departure alarms"
+          }
+        }
+      }
+    },
+    "Alarm %lld Min. vorher": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alarm %lld min before"
+          }
+        }
+      }
+    },
+    "Alarm stellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set alarm"
           }
         }
       }
@@ -41,6 +231,16 @@
         }
       }
     },
+    "Alle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
     "Alle Haltestellen": {
       "localizations": {
         "en": {
@@ -51,12 +251,192 @@
         }
       }
     },
+    "Alle löschen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete all"
+          }
+        }
+      }
+    },
+    "Alles aktuell": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All up to date"
+          }
+        }
+      }
+    },
     "Alles bereit!": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "All set!"
+          }
+        }
+      }
+    },
+    "Als Zuhause": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set as home"
+          }
+        }
+      }
+    },
+    "Altstadt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Old town"
+          }
+        }
+      }
+    },
+    "Am Ziel gibt es im Umkreis von 1,5 km keine Haltestelle.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There's no stop within 1.5 km of the destination."
+          }
+        }
+      }
+    },
+    "An %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrive %@"
+          }
+        }
+      }
+    },
+    "Andere Zeit wählen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose another time"
+          }
+        }
+      }
+    },
+    "Ankommen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrive"
+          }
+        }
+      }
+    },
+    "Ankunft": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrive"
+          }
+        }
+      }
+    },
+    "Ankunft ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrival "
+          }
+        }
+      }
+    },
+    "Ankunft %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrival %@"
+          }
+        }
+      }
+    },
+    "Ankunft %@ %@ suchen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search arriving %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Arbeit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work"
+          }
+        }
+      }
+    },
+    "Auf dem Sperrbildschirm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On the Lock Screen"
+          }
+        }
+      }
+    },
+    "Auf den Sperrbildschirm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show on Lock Screen"
+          }
+        }
+      }
+    },
+    "Auf der Karte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On the map"
+          }
+        }
+      }
+    },
+    "Automatisch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic"
+          }
+        }
+      }
+    },
+    "Bearbeiten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
           }
         }
       }
@@ -81,12 +461,142 @@
         }
       }
     },
+    "Bereit ohne Netz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready without signal"
+          }
+        }
+      }
+    },
+    "Bevorzugen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefer"
+          }
+        }
+      }
+    },
+    "Bitte installiere die App neu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please reinstall the app."
+          }
+        }
+      }
+    },
     "Bodensee": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Lake Constance"
+          }
+        }
+      }
+    },
+    "Bus %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bus %@"
+          }
+        }
+      }
+    },
+    "Bus %@ nach %@: ab %@ um %@, an %@ um %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bus %1$@ to %2$@: leaves %3$@ at %4$@, arrives %5$@ at %6$@."
+          }
+        }
+      }
+    },
+    "Bus %@ um %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bus %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "Darstellung": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        }
+      }
+    },
+    "Daten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
+          }
+        }
+      }
+    },
+    "Datenbank": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Database"
+          }
+        }
+      }
+    },
+    "Datenschutz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy"
+          }
+        }
+      }
+    },
+    "Datenschutzerklärung": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy policy"
+          }
+        }
+      }
+    },
+    "Datenschutzerklärung lesen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read the privacy policy"
+          }
+        }
+      }
+    },
+    "Dein Bus %@ kommt in %lld Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus %1$@ comes in %2$lld min"
           }
         }
       }
@@ -111,12 +621,182 @@
         }
       }
     },
+    "Deine Daten bleiben bei dir": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data stays with you"
+          }
+        }
+      }
+    },
+    "Der Fahrplan hat für die nächsten Stunden keine Abfahrt mehr.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The timetable has no more departures for the next few hours."
+          }
+        }
+      }
+    },
+    "Der Fahrplan in der App reicht nur bis %@. Bitte aktualisiere die App.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app's timetable only runs until %@. Please update the app."
+          }
+        }
+      }
+    },
+    "Die Suche kommt als Nächstes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search is coming next."
+          }
+        }
+      }
+    },
+    "Die Treppe nehmen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take the stairs"
+          }
+        }
+      }
+    },
+    "Du bist da!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're there!"
+          }
+        }
+      }
+    },
+    "Du bist gerade nicht in Konstanz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're not in Konstanz right now."
+          }
+        }
+      }
+    },
+    "Du bist gerade nicht in Konstanz. Hier sind Haltestellen in der Altstadt.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're not in Konstanz right now. Here are stops in the old town."
+          }
+        }
+      }
+    },
+    "Du kannst ihn jederzeit löschen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can delete it at any time."
+          }
+        }
+      }
+    },
+    "Dunkel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        }
+      }
+    },
+    "Einfach Bus fahren.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just ride the bus."
+          }
+        }
+      }
+    },
+    "Einführung ansehen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Watch the introduction"
+          }
+        }
+      }
+    },
     "Einführung noch einmal ansehen": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Watch the introduction again"
+          }
+        }
+      }
+    },
+    "Einstellungen, Offline-Daten und Datenschutz kommen bald.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings, offline data and privacy are coming soon."
+          }
+        }
+      }
+    },
+    "Er wird nie an uns gesendet.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's never sent to us."
+          }
+        }
+      }
+    },
+    "Ergebnisse": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Results"
+          }
+        }
+      }
+    },
+    "Erlaube Mitteilungen in den Einstellungen, dann kann ich dich erinnern.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow notifications in Settings and I can remind you."
+          }
+        }
+      }
+    },
+    "Erlaube deinen Standort, dann zeige ich dir die nächste Haltestelle.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow your location and I'll show you the nearest stop."
           }
         }
       }
@@ -131,6 +811,46 @@
         }
       }
     },
+    "Erledigt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "Erster Bus heute um %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First bus today at %@"
+          }
+        }
+      }
+    },
+    "Erster Bus morgen um %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First bus tomorrow at %@"
+          }
+        }
+      }
+    },
+    "Fahrplan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable"
+          }
+        }
+      }
+    },
     "Fahrplan bis %@": {
       "localizations": {
         "en": {
@@ -141,12 +861,212 @@
         }
       }
     },
+    "Fahrplan bis %@ · bereit ohne Netz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable until %@ · ready without signal"
+          }
+        }
+      }
+    },
+    "Fahrplan endet bald": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable ends soon"
+          }
+        }
+      }
+    },
+    "Fahrplan endet bald · Bitte App aktualisieren": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable ends soon · Please update the app"
+          }
+        }
+      }
+    },
+    "Fahrpläne": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetables"
+          }
+        }
+      }
+    },
+    "Fahrt beenden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End trip"
+          }
+        }
+      }
+    },
+    "Fahrtfortschritt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trip progress"
+          }
+        }
+      }
+    },
+    "Favorit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favourite"
+          }
+        }
+      }
+    },
+    "Favoriten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favourites"
+          }
+        }
+      }
+    },
+    "Fertig": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "Festlegen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set"
+          }
+        }
+      }
+    },
+    "Früheste Ankunft": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Earliest arrival"
+          }
+        }
+      }
+    },
+    "Fußweg zu %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk to %@"
+          }
+        }
+      }
+    },
+    "Fährt in %lld Min. ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leaves in %1$lld min from %2$@"
+          }
+        }
+      }
+    },
+    "Für Linie %@ nach %@ um %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For line %1$@ to %2$@ at %3$@"
+          }
+        }
+      }
+    },
     "Ganz Konstanz, auch ohne Internet": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "All of Konstanz, even without internet"
+          }
+        }
+      }
+    },
+    "Gebiete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Areas"
+          }
+        }
+      }
+    },
+    "Gemerkt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved"
+          }
+        }
+      }
+    },
+    "Geradeaus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Straight on"
+          }
+        }
+      }
+    },
+    "Geradeaus über %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Straight on along %@"
+          }
+        }
+      }
+    },
+    "Gestern": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yesterday"
+          }
+        }
+      }
+    },
+    "Gleich kommt dein Bus!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus is coming!"
           }
         }
       }
@@ -171,12 +1091,62 @@
         }
       }
     },
+    "Halte eine Haltestelle gedrückt, um sie zu merken.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press and hold a stop to save it."
+          }
+        }
+      }
+    },
     "Haltestelle": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Stop"
+          }
+        }
+      }
+    },
+    "Haltestelle nicht gefunden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop not found"
+          }
+        }
+      }
+    },
+    "Haltestelle · %lld Min. zu Fuß": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop · %lld min walk"
+          }
+        }
+      }
+    },
+    "Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops"
+          }
+        }
+      }
+    },
+    "Haltestellen & Wege": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops & paths"
           }
         }
       }
@@ -191,12 +1161,132 @@
         }
       }
     },
+    "Haltestellen in der Nähe": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops nearby"
+          }
+        }
+      }
+    },
     "Haltestellen, Straßen und Orte": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Stops, streets and places"
+          }
+        }
+      }
+    },
+    "Hell": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        }
+      }
+    },
+    "Heute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
+          }
+        }
+      }
+    },
+    "Heute fährt hier nichts mehr": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing leaves here today any more"
+          }
+        }
+      }
+    },
+    "Heute fährt hier nichts mehr.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing leaves here today any more."
+          }
+        }
+      }
+    },
+    "Heute · ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today · from %@"
+          }
+        }
+      }
+    },
+    "Hier fährt im Umkreis von 1,5 km kein Bus.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bus runs within 1.5 km of here."
+          }
+        }
+      }
+    },
+    "Hier landen bald deine Lieblingshaltestellen und Orte.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your favourite stops and places will live here soon."
+          }
+        }
+      }
+    },
+    "Hilfe & Feedback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help & feedback"
+          }
+        }
+      }
+    },
+    "Ich warte an Steig %@!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'm waiting at platform %@!"
+          }
+        }
+      }
+    },
+    "In deiner Nähe": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Near you"
+          }
+        }
+      }
+    },
+    "In der App enthalten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Included in the app"
           }
         }
       }
@@ -211,12 +1301,172 @@
         }
       }
     },
+    "Jetzt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now"
+          }
+        }
+      }
+    },
+    "Jetzt suchen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search now"
+          }
+        }
+      }
+    },
+    "Jetzt umsteigen!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change now!"
+          }
+        }
+      }
+    },
+    "Karte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Map"
+          }
+        }
+      }
+    },
+    "Karte verschieben": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move the map"
+          }
+        }
+      }
+    },
+    "Karte von Konstanz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Map of Konstanz"
+          }
+        }
+      }
+    },
+    "Karte, Orte und Wege": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Map, places and paths"
+          }
+        }
+      }
+    },
+    "Kartenebenen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Map layers"
+          }
+        }
+      }
+    },
     "Kein Netz? Kein Problem!": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "No signal? No problem!"
+          }
+        }
+      }
+    },
+    "Keine Haltestelle in der Nähe": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No stop nearby"
+          }
+        }
+      }
+    },
+    "Keine Verbindung gefunden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No connection found"
+          }
+        }
+      }
+    },
+    "Keine Werbung, kein Tracking": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No ads, no tracking"
+          }
+        }
+      }
+    },
+    "Kommt bald": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coming soon"
+          }
+        }
+      }
+    },
+    "Konstanz Stadt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konstanz city"
+          }
+        }
+      }
+    },
+    "KonstanzGo arbeitet vollständig offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nWir erheben, speichern und übertragen keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Er verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Mehr › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KonstanzGo works completely offline. Timetables, map and search are part of the app.\n\nWe don't collect, store or send any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour location is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under More › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
+          }
+        }
+      }
+    },
+    "KonstanzGo ist keine offizielle App der Stadtwerke Konstanz oder der NVBW.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KonstanzGo is not an official app of Stadtwerke Konstanz or NVBW."
+          }
+        }
+      }
+    },
+    "KonstanzGo · Version %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KonstanzGo · Version %@"
           }
         }
       }
@@ -231,12 +1481,102 @@
         }
       }
     },
+    "Kürzere Fußwege": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shorter walks"
+          }
+        }
+      }
+    },
+    "Laut Fahrplan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scheduled"
+          }
+        }
+      }
+    },
+    "Leicht links": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bear left"
+          }
+        }
+      }
+    },
+    "Leicht rechts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bear right"
+          }
+        }
+      }
+    },
+    "Linien": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lines"
+          }
+        }
+      }
+    },
+    "Links": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left"
+          }
+        }
+      }
+    },
+    "Los": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go"
+          }
+        }
+      }
+    },
     "Los geht's": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Let's go"
+          }
+        }
+      }
+    },
+    "Los geht's zu Fuß!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off you go on foot!"
+          }
+        }
+      }
+    },
+    "Los über %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start along %@"
           }
         }
       }
@@ -251,12 +1591,272 @@
         }
       }
     },
+    "Markierter Ort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dropped pin"
+          }
+        }
+      }
+    },
+    "Mehr": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More"
+          }
+        }
+      }
+    },
+    "Mein Standort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My location"
+          }
+        }
+      }
+    },
+    "Meine Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My stops"
+          }
+        }
+      }
+    },
+    "Meine Orte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My places"
+          }
+        }
+      }
+    },
+    "Merken": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
     "Mitteilungen": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Notifications"
+          }
+        }
+      }
+    },
+    "Mitteilungen sind aus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications are off"
+          }
+        }
+      }
+    },
+    "Möglichst in einem Bus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One bus if possible"
+          }
+        }
+      }
+    },
+    "Nach": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To"
+          }
+        }
+      }
+    },
+    "Nach links wischen zum Löschen. Dein Verlauf bleibt nur auf diesem iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe left to delete. Your history stays on this iPhone only."
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "Neue Fahrpläne kommen mit App-Updates. Die App lädt nie selbst etwas aus dem Netz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New timetables come with app updates. The app never downloads anything itself."
+          }
+        }
+      }
+    },
+    "Nichts gefunden für „%@“": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found for “%@”"
+          }
+        }
+      }
+    },
+    "Noch %lld Haltestellen!": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld more stop!"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld more stops!"
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Noch %lld Haltestelle!"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Noch %lld Haltestellen!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Noch keine Adresse": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No address yet"
+          }
+        }
+      }
+    },
+    "Noch keine Haltestelle gemerkt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved stops yet"
+          }
+        }
+      }
+    },
+    "Noch nicht festgelegt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set yet"
+          }
+        }
+      }
+    },
+    "Noch nichts gesucht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing searched yet"
+          }
+        }
+      }
+    },
+    "Nur noch ein Stück zu Fuß!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just a short walk left!"
+          }
+        }
+      }
+    },
+    "Nächste Haltestelle aussteigen!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get off at the next stop!"
+          }
+        }
+      }
+    },
+    "Nächste Haltestelle · %lld Min. zu Fuß": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nearest stop · %lld min walk"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Offline bereit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready offline"
           }
         }
       }
@@ -271,12 +1871,32 @@
         }
       }
     },
+    "Offline-Daten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline data"
+          }
+        }
+      }
+    },
     "Offline-Daten fehlen": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Offline data is missing"
+          }
+        }
+      }
+    },
+    "Offline-Daten ›": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline data ›"
           }
         }
       }
@@ -291,12 +1911,122 @@
         }
       }
     },
+    "Ohne Standort zeige ich dir die Altstadt. Erlauben geht in den Einstellungen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Without your location I'll show you the old town. You can allow it in Settings."
+          }
+        }
+      }
+    },
+    "Ort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place"
+          }
+        }
+      }
+    },
+    "Pin gesetzt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pin dropped"
+          }
+        }
+      }
+    },
+    "Pünktlich": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On time"
+          }
+        }
+      }
+    },
+    "Rechts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right"
+          }
+        }
+      }
+    },
+    "Richtung %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Towards %@"
+          }
+        }
+      }
+    },
+    "Route": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route"
+          }
+        }
+      }
+    },
+    "Route hierher": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route here"
+          }
+        }
+      }
+    },
     "Sag mir, wohin du willst.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Tell me where you want to go."
+          }
+        }
+      }
+    },
+    "Scharf links": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharp left"
+          }
+        }
+      }
+    },
+    "Scharf rechts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharp right"
+          }
+        }
+      }
+    },
+    "Schließen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
           }
         }
       }
@@ -311,12 +2041,92 @@
         }
       }
     },
+    "Schnell los": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quick start"
+          }
+        }
+      }
+    },
+    "Schnellste": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fastest"
+          }
+        }
+      }
+    },
+    "Schrift": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Font"
+          }
+        }
+      }
+    },
+    "Seeri sucht deine Verbindung": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeri is finding your connection"
+          }
+        }
+      }
+    },
+    "Seeri sucht deine Verbindung …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeri is finding your connection …"
+          }
+        }
+      }
+    },
+    "Sichern": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "Sie ist nicht im aktuellen Fahrplan.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It isn't in the current timetable."
+          }
+        }
+      }
+    },
     "Sieh, wann dein Bus kommt": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "See when your bus comes"
+          }
+        }
+      }
+    },
+    "Software": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Software"
           }
         }
       }
@@ -331,12 +2141,32 @@
         }
       }
     },
+    "Sprache": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        }
+      }
+    },
     "Später": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Later"
+          }
+        }
+      }
+    },
+    "Spätere Verbindungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later connections"
           }
         }
       }
@@ -351,12 +2181,302 @@
         }
       }
     },
+    "Standort erlauben": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow location"
+          }
+        }
+      }
+    },
+    "Standort ist in den Einstellungen aus.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location is turned off in Settings."
+          }
+        }
+      }
+    },
+    "Standort nur auf dem iPhone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location stays on your iPhone"
+          }
+        }
+      }
+    },
+    "Start und Ziel liegen direkt nebeneinander. Da bist du zu Fuß schneller.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start and destination are right next to each other. You're faster on foot."
+          }
+        }
+      }
+    },
+    "Start und Ziel tauschen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swap start and destination"
+          }
+        }
+      }
+    },
+    "Steig": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Platform"
+          }
+        }
+      }
+    },
+    "Steig %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Platform %@"
+          }
+        }
+      }
+    },
+    "Straße · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Street · %@"
+          }
+        }
+      }
+    },
+    "Straße überqueren": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cross the street"
+          }
+        }
+      }
+    },
+    "Suchverlauf bleibt lokal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search history stays local"
+          }
+        }
+      }
+    },
+    "Suchverlauf und Fahrten löschen?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete search history and trips?"
+          }
+        }
+      }
+    },
+    "Teilen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
+          }
+        }
+      }
+    },
+    "Tipp: ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tip: "
+          }
+        }
+      }
+    },
+    "Tippe auf den Stern bei einer Haltestelle oder halte sie in der Suche gedrückt.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the star on a stop, or press and hold it in search."
+          }
+        }
+      }
+    },
+    "Tippen nimmt den Alarm zurück": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to cancel the alarm"
+          }
+        }
+      }
+    },
     "Tippen zum Überspringen": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Tap to skip"
+          }
+        }
+      }
+    },
+    "Um %@ fährt leider kein Bus nach %@. Seeri schläft gerade.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorry, no bus goes to %2$@ at %1$@. Seeri is asleep."
+          }
+        }
+      }
+    },
+    "Umbenennen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename"
+          }
+        }
+      }
+    },
+    "Umdrehen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn around"
+          }
+        }
+      }
+    },
+    "Uni": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uni"
+          }
+        }
+      }
+    },
+    "Verbindungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connections"
+          }
+        }
+      }
+    },
+    "Verlauf gelöscht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History deleted"
+          }
+        }
+      }
+    },
+    "Verlauf löschen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete history"
+          }
+        }
+      }
+    },
+    "Verlauf löschen?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete history?"
+          }
+        }
+      }
+    },
+    "Version %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version %@"
+          }
+        }
+      }
+    },
+    "Versuch es mit einer Haltestelle, einer Straße oder einem Ort.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try a stop, a street or a place."
+          }
+        }
+      }
+    },
+    "Von": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From"
+          }
+        }
+      }
+    },
+    "Wann & wie": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When & how"
+          }
+        }
+      }
+    },
+    "Wann soll ich dich erinnern?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When should I remind you?"
+          }
+        }
+      }
+    },
+    "Was du suchst, erscheint hier – nur auf diesem iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you search for appears here – only on this iPhone."
           }
         }
       }
@@ -371,12 +2491,92 @@
         }
       }
     },
+    "Wenig laufen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Less walking"
+          }
+        }
+      }
+    },
+    "Wenig umsteigen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fewer changes"
+          }
+        }
+      }
+    },
     "Willkommen bei KonstanzGo": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Welcome to KonstanzGo"
+          }
+        }
+      }
+    },
+    "Ziel ändern": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change destination"
+          }
+        }
+      }
+    },
+    "Zu Fuß · %lld Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On foot · %lld min"
+          }
+        }
+      }
+    },
+    "Zuhause": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        }
+      }
+    },
+    "Zuhause ✓": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home ✓"
+          }
+        }
+      }
+    },
+    "Zuletzt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent"
+          }
+        }
+      }
+    },
+    "Zuletzt gesucht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent searches"
           }
         }
       }
@@ -391,12 +2591,102 @@
         }
       }
     },
+    "ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "from %@"
+          }
+        }
+      }
+    },
+    "an %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "arrive %@"
+          }
+        }
+      }
+    },
+    "heute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "today"
+          }
+        }
+      }
+    },
     "jetzt": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "now"
+          }
+        }
+      }
+    },
+    "morgen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tomorrow"
+          }
+        }
+      }
+    },
+    "nach %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "to %@"
+          }
+        }
+      }
+    },
+    "Öffnet die Haltestelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the stop"
+          }
+        }
+      }
+    },
+    "Über KonstanzGo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About KonstanzGo"
+          }
+        }
+      }
+    },
+    "„%@“ gelöscht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” deleted"
+          }
+        }
+      }
+    },
+    "„%@“ gemerkt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” saved"
           }
         }
       }

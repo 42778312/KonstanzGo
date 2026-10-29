@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Writes App/Resources/Data/map/style.json: the MapLibre style for the offline Konstanz map,
-in a light palette close to Apple Maps.
+Writes App/Resources/Data/map/style.json and style-dark.json: the MapLibre styles for the offline Konstanz map,
+in the design's light and dark palettes.
 
     python3 DataPipeline/map/make_style.py
 
@@ -11,33 +11,26 @@ Tiles: Protomaps basemap (OpenStreetMap), schema v4, cut to Konstanz with
 import json
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parents[2] / "App/Resources/Data/map/style.json"
+OUT = Path(__file__).resolve().parents[2] / "App/Resources/Data/map"
 
-# Palette close to Apple Maps (light): warm land, soft blue water, fresh greens, white streets,
-# yellow motorways, buildings with a fine outline, colour-coded places.
-LAND = "#F6F4EF"
-BUILDING = "#EDEAE5"
-BUILDING_LINE = "#DEDAD3"
-PARK = "#CFE8C0"
-PARK_DARK = "#BFDDAB"
-PITCH = "#C2E3B2"
-EDUCATION = "#F1E8D8"
-HOSPITAL = "#F7E0DE"
-INDUSTRIAL = "#ECE9E4"
-PEDESTRIAN = "#FBFAF7"
-WATER = "#A7D3F2"
-SHORE = "#93C4E8"
-ROAD = "#FFFFFF"
-ROAD_CASING = "#D9D3C9"
-HIGHWAY = "#FFD873"
-HIGHWAY_CASING = "#E5B64C"
-PATH = "#C9C2B6"
-RAIL = "#B8B2A8"
-BORDER = "#B9B2C6"
-DISTRICT_LABEL = "#7D828B"
-STREET_LABEL = "#5E6168"
-WATER_LABEL = "#3F7FB5"
-HALO = "#FFFFFF"
+# The design's map (screens 07, 09, 21; dark: 28): warm grey land, pale blue water, soft green parks,
+# white streets on a grey casing, grey labels, blue water names. Values the design does not show
+# (industry, hospitals, motorways, paths …) are picked to sit quietly between them.
+LIGHT = dict(
+    LAND="#F2F1ED", BUILDING="#E5E2DE", BUILDING_LINE="#D9D5CF", PARK="#D8E8D2", PARK_DARK="#CCE0C4",
+    PITCH="#D0E5C8", EDUCATION="#EEE9DF", HOSPITAL="#F3E3E1", INDUSTRIAL="#EAE8E3", PEDESTRIAN="#F8F7F4",
+    WATER="#B9D8E8", SHORE="#A9CDE0", ROAD="#FFFFFF", ROAD_CASING="#D5D3CF", HIGHWAY="#FFFFFF",
+    HIGHWAY_CASING="#C9C6C1", PATH="#C4C0B8", RAIL="#B8B4AD", BORDER="#B9B2C6", DISTRICT_LABEL="#757575",
+    STREET_LABEL="#5E6168", WATER_LABEL="#3F6FB0", HALO="#FFFFFF", WATER_HALO="#D6EBF8", POI_DEFAULT="#6B7A90",
+)
+DARK = dict(
+    LAND="#1E1E1E", BUILDING="#2A2A2A", BUILDING_LINE="#333333", PARK="#203126", PARK_DARK="#1C2B21",
+    PITCH="#22352A", EDUCATION="#26241F", HOSPITAL="#2C2222", INDUSTRIAL="#232323", PEDESTRIAN="#262626",
+    WATER="#182D38", SHORE="#1F3846", ROAD="#3A3A3A", ROAD_CASING="#2D2D2D", HIGHWAY="#4A4A4A",
+    HIGHWAY_CASING="#2D2D2D", PATH="#4A4A4A", RAIL="#4E4E4E", BORDER="#5A5470", DISTRICT_LABEL="#9E9E9E",
+    STREET_LABEL="#B0B0B0", WATER_LABEL="#6E9BD6", HALO="#1E1E1E", WATER_HALO="#182D38", POI_DEFAULT="#8A96A8",
+)
+globals().update(LIGHT)
 
 NAME = ["coalesce", ["get", "name:de"], ["get", "name"]]
 
@@ -45,6 +38,26 @@ NAME = ["coalesce", ["get", "name:de"], ["get", "name"]]
 def zoom(*stops, base=1.5):
     """Width/size by zoom: zoom(12, 1, 16, 8) → exponential interpolation."""
     return ["interpolate", ["exponential", base], ["zoom"], *stops]
+
+
+def zoom_value(expr, z):
+    """The value of a zoom(...) expression at zoom z (MapLibre's exponential interpolation)."""
+    base = expr[1][1]
+    stops = list(zip(expr[3::2], expr[4::2]))
+    if z <= stops[0][0]:
+        return stops[0][1]
+    for (z0, v0), (z1, v1) in zip(stops, stops[1:]):
+        if z <= z1:
+            t = (z - z0) / (z1 - z0) if base == 1 else (base ** (z - z0) - 1) / (base ** (z1 - z0) - 1)
+            return v0 + (v1 - v0) * t
+    return stops[-1][1]
+
+
+def zoom_sum(a, b):
+    """a + b as one zoom curve: MapLibre allows only one zoom interpolation per expression."""
+    zooms = sorted(set(a[3::2]) | set(b[3::2]))
+    stops = [x for z in zooms for x in (z, round(zoom_value(a, z) + zoom_value(b, z), 2))]
+    return ["interpolate", a[1], ["zoom"], *stops]
 
 
 def kinds(*k):
@@ -58,12 +71,13 @@ def details(*k):
 NOT_TUNNEL = ["!", ["to-boolean", ["get", "is_tunnel"]]]
 
 
+LAYER_CODE = r"""
 def road(f, width, casing_extra, color=ROAD, casing=ROAD_CASING, minzoom=0, suffix=""):
     f = ["all", f, NOT_TUNNEL]
     return (
         {"id": f"road-{suffix}-casing", "type": "line", "source": "osm", "source-layer": "roads",
          "minzoom": minzoom, "filter": f, "layout": {"line-cap": "round", "line-join": "round"},
-         "paint": {"line-color": casing, "line-width": ["+", width, casing_extra]}},
+         "paint": {"line-color": casing, "line-width": zoom_sum(width, casing_extra)}},
         {"id": f"road-{suffix}", "type": "line", "source": "osm", "source-layer": "roads",
          "minzoom": minzoom, "filter": f, "layout": {"line-cap": "round", "line-join": "round"},
          "paint": {"line-color": color, "line-width": width}},
@@ -97,7 +111,7 @@ POI_COLORS = [
     (["bank", "post_office", "police", "townhall", "place_of_worship", "hotel", "fire_station"], "#6B7A90"),
 ]
 POI_KINDS = [k for ks, _ in POI_COLORS for k in ks]
-POI_COLOR = ["match", ["get", "kind"]] + [x for ks, c in POI_COLORS for x in (ks, c)] + ["#6B7A90"]
+POI_COLOR = ["match", ["get", "kind"]] + [x for ks, c in POI_COLORS for x in (ks, c)] + [POI_DEFAULT]
 
 minor_w = zoom(13, 0.5, 15, 3, 17, 9, 18, 15)
 major_w = zoom(11, 0.8, 13, 2.2, 15, 6, 17, 14, 18, 22)
@@ -169,7 +183,7 @@ layers += [
      "filter": ["all", ["==", ["geometry-type"], "Point"], ["has", "name"]],
      "layout": {"text-field": NAME, "text-font": ["Noto Sans Italic"], "text-size": 13, "text-max-width": 8,
                 "text-letter-spacing": 0.05},
-     "paint": {"text-color": WATER_LABEL, "text-halo-color": "#D6EBF8", "text-halo-width": 1.2}},
+     "paint": {"text-color": WATER_LABEL, "text-halo-color": WATER_HALO, "text-halo-width": 1.2}},
     # Places: a coloured dot with a white ring and the name under it.
     {"id": "poi-dots", "type": "circle", "source": "osm", "source-layer": "pois", "minzoom": 16,
      "filter": ["all", ["in", ["get", "kind"], ["literal", POI_KINDS]], ["has", "name"]],
@@ -186,18 +200,30 @@ layers += [
     district("neighbourhood-names", ["neighbourhood"], minzoom=14, size=11),
 ]
 
-style = {
-    "version": 8,
-    "name": "Konstanz Transit",
-    "glyphs": "asset://map/fonts/{fontstack}/{range}.pbf",
-    "sources": {
-        "osm": {
-            "type": "vector",
-            "url": "pmtiles://asset://map/konstanz.pmtiles",
-            "attribution": "© OpenStreetMap",
-        }
-    },
-    "layers": layers,
-}
-OUT.write_text(json.dumps(style, ensure_ascii=False, indent=1))
-print(f"{OUT}: {len(layers)} layers")
+"""
+
+
+def build(palette, name):
+    """The style in one palette. The layer code reads the colour names as globals."""
+    globals().update(palette)
+    exec(LAYER_CODE, globals())
+    style = {
+        "version": 8,
+        "name": name,
+        "glyphs": "asset://map/fonts/{fontstack}/{range}.pbf",
+        "sources": {
+            "osm": {
+                "type": "vector",
+                "url": "pmtiles://asset://map/konstanz.pmtiles",
+                "attribution": "© OpenStreetMap",
+            }
+        },
+        "layers": layers,
+    }
+    return style
+
+
+for palette, file, title in [(LIGHT, "style.json", "KonstanzGo"), (DARK, "style-dark.json", "KonstanzGo dark")]:
+    style = build(palette, title)
+    (OUT / file).write_text(json.dumps(style, ensure_ascii=False, indent=1))
+    print(f"{OUT / file}: {len(style['layers'])} layers")

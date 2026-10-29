@@ -138,11 +138,14 @@ public struct KGUserDot: View {
 public struct KGStopMarker: View {
     let name: String
     let isSelected: Bool
+    let showsName: Bool
     @State private var pulsing = false
 
-    public init(_ name: String, isSelected: Bool = false) {
+    /// `showsName: false` when the map draws stop names itself.
+    public init(_ name: String, isSelected: Bool = false, showsName: Bool = true) {
         self.name = name
         self.isSelected = isSelected
+        self.showsName = showsName
     }
 
     public var body: some View {
@@ -166,7 +169,7 @@ public struct KGStopMarker: View {
                         .frame(width: KGSize.touch, height: KGSize.touch)
                 }
             }
-            if isSelected {
+            if isSelected, showsName {
                 Text(verbatim: name)
                     .kgFont(.caption.weighted(KGFont.extraBold))
                     .foregroundStyle(KGColor.ink)

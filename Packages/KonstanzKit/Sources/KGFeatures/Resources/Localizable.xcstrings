@@ -1023,6 +1023,16 @@
         }
       }
     },
+    "Favoriten und Einstellungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favourites and settings"
+          }
+        }
+      }
+    },
     "Fertig": {
       "localizations": {
         "en": {
@@ -1109,6 +1119,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Saved"
+          }
+        }
+      }
+    },
+    "Gemerkte Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved stops"
+          }
+        }
+      }
+    },
+    "Gemerkte Orte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved places"
           }
         }
       }
@@ -1914,6 +1944,16 @@
         }
       }
     },
+    "Noch kein Ort gemerkt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No saved places yet"
+          }
+        }
+      }
+    },
     "Noch keine Adresse": {
       "localizations": {
         "en": {
@@ -2520,6 +2560,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tap the star on a stop, or press and hold it in search."
+          }
+        }
+      }
+    },
+    "Tippe auf ★, um etwas zu merken": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap ★ to save one"
           }
         }
       }

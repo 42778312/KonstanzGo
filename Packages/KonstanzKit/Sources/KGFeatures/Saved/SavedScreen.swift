@@ -65,7 +65,7 @@ struct SavedScreen: View {
                         if !places.isEmpty { myPlaces }
                         recentLink
                     }
-                    .padding(.bottom, HomeView.barSpace + KGSpace.large)
+                    .padding(.bottom, KGSpace.large)
                 }
                 .scrollIndicators(.hidden)
             }

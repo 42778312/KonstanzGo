@@ -1,6 +1,6 @@
 import XCTest
 
-/// Starting the app after onboarding: the map with the search bar at the bottom (no nearby list), and the tabs.
+/// Starting the app after onboarding: the map with the search bar at the bottom (no nearby list, no tab bar), and Seeri's menu.
 final class LaunchTests: XCTestCase {
     override func setUp() {
         continueAfterFailure = false
@@ -24,16 +24,20 @@ final class LaunchTests: XCTestCase {
     }
 
     @MainActor
-    func testTabs() {
+    func testSeeriOpensTheMenu() {
         let app = launch(language: "de", locale: "de_DE")
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
-        app.buttons["Mehr"].firstMatch.tap()
+        XCTAssertFalse(app.buttons["Karte"].exists, "the tab bar was removed")
+        app.buttons["seeriMenu"].tap()
         XCTAssertTrue(app.buttons["replayOnboarding"].waitForExistence(timeout: 3))
-        app.buttons["Favoriten"].firstMatch.tap()
+        app.buttons["openFavorites"].tap()
         XCTAssertTrue(app.staticTexts["SCHNELL LOS"].waitForExistence(timeout: 3) ||
                       app.staticTexts["Schnell los"].exists)
-        app.buttons["Karte"].firstMatch.tap()
-        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 5))
+        app.buttons["backLink"].firstMatch.tap()
+        // A tap on the map closes the menu.
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        // (The tap may land on a stop, which opens that stop instead of the bare map; either way the menu is gone.)
+        XCTAssertTrue(app.buttons["replayOnboarding"].waitForNonExistence(timeout: 3), "the menu did not close")
     }
 
     @MainActor

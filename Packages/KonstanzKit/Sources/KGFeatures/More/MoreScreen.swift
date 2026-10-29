@@ -11,11 +11,12 @@ enum AppInfo {
     }
 }
 
-/// The "Mehr" tab's own screens.
-enum MoreRoute: Hashable { case offline, privacy, about }
+/// The menu's own screens.
+enum MoreRoute: Hashable { case favorites, offline, privacy, about }
 
-/// Screen 13 (Mehr): the offline status on top; notifications, alarm lead time; language, appearance;
-/// privacy, help, about; the version (plan S17.1).
+/// Screen 13 (Mehr), opened from Seeri in the map's search bar as a half sheet: the offline status on top;
+/// Favoriten; notifications, alarm lead time; language, appearance; privacy, help, about; the version
+/// (plan S17.1).
 struct MoreScreen: View {
     let services: AppServices
     let onReplayOnboarding: () -> Void
@@ -35,6 +36,13 @@ struct MoreScreen: View {
                         .accessibilityAddTraits(.isHeader)
                     OfflineCard(info: services.transit.timetableInfo) { path.append(.offline) }
                         .riseIn(after: 0)
+                    KGSettingsGroup {
+                        KGSettingsRow(Text("Favoriten", bundle: .module), icon: .star, tile: KGColor.warn) {
+                            path.append(.favorites)
+                        }
+                        .accessibilityIdentifier("openFavorites")
+                    }
+                    .riseIn(after: 0.05)
                     KGSettingsGroup {
                         KGSettingsRow(Text("Mitteilungen", bundle: .module), icon: .bell, tile: KGColor.tileRed,
                                       isOn: Binding { notifications } set: { setNotifications($0) })
@@ -77,7 +85,7 @@ struct MoreScreen: View {
                 }
                 .padding(.horizontal, KGSpace.screen)
                 .padding(.top, KGSpace.small)
-                .padding(.bottom, HomeView.barSpace + KGSpace.large)
+                .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
             .background(KGColor.card.ignoresSafeArea())
@@ -85,6 +93,14 @@ struct MoreScreen: View {
             .navigationDestination(for: MoreRoute.self) { route in
                 Group {
                     switch route {
+                    case .favorites:
+                        SavedScreen(services: services)
+                            .safeAreaInset(edge: .top, spacing: 0) {
+                                BackLink(title: Text("Mehr", bundle: .module)) { path.removeLast() }
+                                    .padding(.horizontal, KGSpace.screen)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(KGColor.card)
+                            }
                     case .offline: OfflineDataScreen(services: services) { path.removeLast() }
                     case .privacy: PrivacyScreen(services: services) { path.removeLast() }
                     case .about: AboutScreen(info: services.transit.timetableInfo) { path.removeLast() }
@@ -287,7 +303,7 @@ struct OfflineDataScreen: View {
                     .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink3)
             }
             .padding(.horizontal, KGSpace.screen)
-            .padding(.bottom, HomeView.barSpace + KGSpace.large)
+            .padding(.bottom, KGSpace.large)
         }
         .background(KGColor.card.ignoresSafeArea())
     }
@@ -324,7 +340,7 @@ struct PrivacyScreen: View {
                     .accessibilityIdentifier("clearHistory")
             }
             .padding(.horizontal, KGSpace.screen)
-            .padding(.bottom, HomeView.barSpace + KGSpace.large)
+            .padding(.bottom, KGSpace.large)
         }
         .background(KGColor.card.ignoresSafeArea())
         .confirmationDialog(Text("Suchverlauf und Fahrten löschen?", bundle: .module), isPresented: $confirming,
@@ -419,7 +435,7 @@ struct AboutScreen: View {
                 source(Text("Datenbank", bundle: .module), "GRDB.swift – MIT")
             }
             .padding(.horizontal, KGSpace.screen)
-            .padding(.bottom, HomeView.barSpace + KGSpace.large)
+            .padding(.bottom, KGSpace.large)
         }
         .background(KGColor.card.ignoresSafeArea())
     }

@@ -42,7 +42,17 @@ final class SavedAndMoreTests: XCTestCase {
         let wasSaved = star.isSelected
         if !wasSaved { star.tap() }
         closeStop()
-        app.buttons["Favoriten"].firstMatch.tap()
+        // The search lists it under "Gemerkte Haltestellen".
+        app.buttons["mapSearch"].firstMatch.tap()
+        let stopsChip = app.buttons["category-1"]
+        XCTAssertTrue(stopsChip.waitForExistence(timeout: 5))
+        stopsChip.tap()
+        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sternenplatz'")).firstMatch
+            .waitForExistence(timeout: 3), "saved stop missing from the search's categories")
+        app.buttons["closeSearch"].tap()
+        app.buttons["seeriMenu"].tap()
+        XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
+        app.buttons["openFavorites"].tap()
         XCTAssertTrue(app.buttons["favoriteStop"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(element(labelContains: "Sternenplatz").exists)
         // Leave the store as it was.
@@ -57,7 +67,9 @@ final class SavedAndMoreTests: XCTestCase {
     func testRecentSearchesAndDeleteAll() {
         openStop("Bahnhof")
         closeStop()
-        app.buttons["Favoriten"].firstMatch.tap()
+        app.buttons["seeriMenu"].tap()
+        XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
+        app.buttons["openFavorites"].tap()
         let link = app.buttons["recentLink"]
         XCTAssertTrue(link.waitForExistence(timeout: 5))
         link.tap()
@@ -69,7 +81,7 @@ final class SavedAndMoreTests: XCTestCase {
 
     @MainActor
     func testMoreOfflineAndPrivacy() {
-        app.buttons["Mehr"].firstMatch.tap()
+        app.buttons["seeriMenu"].tap()
         let offline = app.buttons["offlineCard"]
         XCTAssertTrue(offline.waitForExistence(timeout: 5))
         XCTAssertTrue(element(labelContains: "Fahrplan bis").exists, "offline status missing")

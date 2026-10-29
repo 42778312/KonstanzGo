@@ -15,6 +15,8 @@ public final class AppServices {
     public let router = Router()
     /// Switches home's tab (set by HomeView), so Favoriten and links can open screens on the map's stack.
     public var selectTab: ((HomeTab) -> Void)?
+    /// The menu (Seeri in the search bar) is open; screens it opens close it.
+    public var showsMenu = false
     /// Set to open the map's search sheet (links and Favoriten); the map clears it.
     public var wantsSearch = false
     /// Bumped whenever the user store changes, so lists re-read it.

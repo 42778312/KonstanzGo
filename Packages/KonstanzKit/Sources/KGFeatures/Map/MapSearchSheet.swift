@@ -2,8 +2,9 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// The map's search, Apple Maps style: the field at the top with ✕, and under it either the quick places
-/// (Zuhause, Uni, Arbeit) and recent searches, or the results while typing, each in a rounded group.
+/// The map's search, Apple Maps style: the field at the top with ✕, and under it either the categories
+/// (Schnell hin, saved stops, saved places: chips and cards that swipe sideways) and recent searches, or the
+/// results while typing, each in a rounded group.
 /// Picking something hands it to the map, which shows it in its own sheet.
 struct MapSearchSheet: View {
     let services: AppServices
@@ -13,6 +14,12 @@ struct MapSearchSheet: View {
     /// What `results` were found for, so "Nichts gefunden" waits for the search to finish.
     @State private var searched = ""
     @State private var settingSlot: Favorite.Slot?
+    @State private var category: Category? = .quick
+
+    enum Category: Int, CaseIterable, Identifiable {
+        case quick, stops, places
+        var id: Int { rawValue }
+    }
     @FocusState private var focused: Bool
     @Environment(\.dismiss) private var dismiss
 
@@ -36,7 +43,7 @@ struct MapSearchSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: KGSpace.xl) {
                     if trimmed.isEmpty {
-                        quickPlaces
+                        categories
                         recent
                     } else if results.isEmpty, searched == trimmed {
                         KGEmptyState(.focused, title: Text("Nichts gefunden für „\(query)“", bundle: .module),
@@ -131,12 +138,89 @@ struct MapSearchSheet: View {
         .background(KGColor.surface, in: .capsule)
     }
 
-    /// Zuhause · Uni · Arbeit: one tap to the connections there, or set the address first.
-    private var quickPlaces: some View {
-        group(Text("Schnell hin", bundle: .module)) {
-            slotRow(.home, icon: .home, tint: KGColor.location, title: Text("Zuhause", bundle: .module))
-            slotRow(.uni, icon: .uniCap, tint: KGColor.live, title: Text("Uni", bundle: .module))
-            slotRow(.work, icon: .work, tint: KGColor.warn, title: Text("Arbeit", bundle: .module), last: true)
+    /// Schnell hin · Haltestellen · Orte: chips on top, and one card each that swipes sideways.
+    private var categories: some View {
+        VStack(alignment: .leading, spacing: KGSpace.medium) {
+            ScrollViewReader { chips in
+                ScrollView(.horizontal) {
+                    HStack(spacing: KGSpace.small) {
+                        ForEach(Category.allCases) { item in
+                            KGChip(title(item), isOn: (category ?? .quick) == item) {
+                                withAnimation(KGMotion.slide) { category = item }
+                            }
+                            .id(item)
+                            .accessibilityIdentifier("category-\(item.rawValue)")
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+                // The chip row follows the cards, so the chosen one is always in view.
+                .onChange(of: category) { _, item in
+                    withAnimation(KGMotion.slide) { chips.scrollTo(item, anchor: .center) }
+                }
+            }
+            ScrollView(.horizontal) {
+                HStack(alignment: .top, spacing: KGSpace.medium) {
+                    ForEach(Category.allCases) { item in
+                        card(item)
+                            .containerRelativeFrame(.horizontal)
+                            .id(item)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+            .scrollPosition(id: $category)
+            .scrollIndicators(.hidden)
+        }
+    }
+
+    private func title(_ item: Category) -> Text {
+        switch item {
+        case .quick: Text("Schnell hin", bundle: .module)
+        case .stops: Text("Gemerkte Haltestellen", bundle: .module)
+        case .places: Text("Gemerkte Orte", bundle: .module)
+        }
+    }
+
+    private var savedFavorites: [Favorite] {
+        _ = services.userVersion
+        return ((try? services.user?.favorites()) ?? []).filter { $0.slot == nil }
+    }
+
+    @ViewBuilder private func card(_ item: Category) -> some View {
+        VStack(spacing: 0) {
+            switch item {
+            case .quick:
+                slotRow(.home, icon: .home, tint: KGColor.location, title: Text("Zuhause", bundle: .module))
+                slotRow(.uni, icon: .uniCap, tint: KGColor.live, title: Text("Uni", bundle: .module))
+                slotRow(.work, icon: .work, tint: KGColor.warn, title: Text("Arbeit", bundle: .module), last: true)
+            case .stops:
+                let stops = savedFavorites.filter { if case .station = $0.target { true } else { false } }
+                savedRows(stops, icon: .bus, tint: KGColor.coral,
+                          empty: Text("Noch keine Haltestelle gemerkt", bundle: .module))
+            case .places:
+                let places = savedFavorites.filter { if case .station = $0.target { false } else { true } }
+                savedRows(places, icon: .pinFilled, tint: KGColor.live,
+                          empty: Text("Noch kein Ort gemerkt", bundle: .module))
+            }
+        }
+        .padding(.vertical, KGSpace.xs)
+        .background(KGColor.surface, in: .kgRounded(KGRadius.card))
+        .clipShape(.kgRounded(KGRadius.card))
+    }
+
+    @ViewBuilder private func savedRows(_ items: [Favorite], icon: KGIcon, tint: Color, empty: Text) -> some View {
+        if items.isEmpty {
+            SheetRow(icon: .star, tint: KGColor.ink3, title: empty,
+                     subtitle: Text("Tippe auf ★, um etwas zu merken", bundle: .module), showsDivider: false)
+        }
+        ForEach(Array(items.enumerated()), id: \.element.id) { index, favorite in
+            Button { onPick(favorite.target) } label: {
+                SheetRow(icon: icon, tint: tint, title: Text(verbatim: favorite.displayName),
+                         subtitle: Self.kind(favorite.target), showsDivider: index < items.count - 1)
+            }
+            .buttonStyle(KGRowPressStyle())
         }
     }
 

@@ -7,8 +7,9 @@ import SwiftUI
 /// stop and a picked place each open in a sheet over the map (reworked after testing on a phone).
 public struct MapScreen: View {
     let services: AppServices
-    /// Room the floating tab bar takes, from the screen's bottom edge.
+    /// How far the search bar sits above the screen's bottom edge.
     let bottomBar: CGFloat
+    let onReplayOnboarding: () -> Void
     @State private var map = MapModel()
     @State private var sheet: MapSheet?
     /// How far the stop or place sheet is open; a tap on the map folds it to a bar.
@@ -21,29 +22,33 @@ public struct MapScreen: View {
     /// What the sheet over the map shows.
     enum MapSheet: Identifiable, Hashable {
         case search
+        /// Mehr (with Favoriten), from Seeri.
+        case menu
         case station(Int)
         case place(SavedTarget)
 
         var id: String {
             switch self {
             case .search: "search"
+            case .menu: "menu"
             case let .station(id): "station-\(id)"
             case let .place(target): "place-\(target.name)-\(target.coordinate.latitude)-\(target.coordinate.longitude)"
             }
         }
     }
 
-    public init(services: AppServices, bottomBar: CGFloat) {
+    public init(services: AppServices, bottomBar: CGFloat, onReplayOnboarding: @escaping () -> Void = {}) {
         self.services = services
         self.bottomBar = bottomBar
+        self.onReplayOnboarding = onReplayOnboarding
     }
 
     private var transit: TransitService { services.transit }
     private var location: LocationModel { services.location }
     /// The folded stop or place bar, from the screen's bottom edge.
     private static let foldedSpace: CGFloat = 100
-    /// The search bar and the tab bar under it.
-    private var barSpace: CGFloat { bottomBar + KGSize.searchBar + KGSpace.medium }
+    /// The search bar, from the screen's bottom edge.
+    private var barSpace: CGFloat { bottomBar + KGSize.searchBar }
 
     public var body: some View {
         ZStack(alignment: .top) {
@@ -69,7 +74,7 @@ public struct MapScreen: View {
             if sheet == nil {
                 searchBar
                     .padding(.horizontal, KGSpace.screen)
-                    .padding(.bottom, bottomBar + KGSpace.small)
+                    .padding(.bottom, bottomBar)
                     .frame(maxHeight: .infinity, alignment: .bottom)
                     .ignoresSafeArea(edges: .bottom)
             }
@@ -95,11 +100,15 @@ public struct MapScreen: View {
         .onChange(of: showsStops) { _, show in map.stations = show ? transit.stations : [] }
         .onChange(of: sheet, initial: true) { _, new in sheetChanged(new) }
         .onChange(of: detent) { _, new in
-            if sheet != nil, sheet != .search {
+            if sheet != nil, sheet != .search, sheet != .menu {
                 map.insets.bottom = new == FoldingSheet<EmptyView>.folded ? Self.foldedSpace : height * 0.5
             }
         }
         .onChange(of: services.router.homeCount) { _, _ in sheet = nil }
+        .onChange(of: sheet) { _, new in services.showsMenu = new == .menu }
+        .onChange(of: services.showsMenu) { _, shows in
+            if !shows, sheet == .menu { sheet = nil }
+        }
         .onChange(of: services.wantsSearch) { _, wants in
             if wants {
                 services.wantsSearch = false
@@ -143,29 +152,39 @@ public struct MapScreen: View {
         .ignoresSafeArea()
     }
 
-    /// One glass bar: magnifier, "Wohin möchtest du?", and Seeri bouncing at the end.
+    /// One glass bar: magnifier and "Wohin möchtest du?" open the search; Seeri at the end opens the menu.
     private var searchBar: some View {
-        Button { sheet = .search } label: {
-            HStack(spacing: KGSpace.medium) {
-                KGIconView(.search, size: 21).foregroundStyle(KGColor.ink)
-                Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium).foregroundStyle(KGColor.ink2)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+        HStack(spacing: KGSpace.small) {
+            Button { sheet = .search } label: {
+                HStack(spacing: KGSpace.medium) {
+                    KGIconView(.search, size: 21).foregroundStyle(KGColor.ink)
+                    Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium).foregroundStyle(KGColor.ink2)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.leading, KGSpace.mediumLarge)
+                .frame(maxHeight: .infinity)
+                .contentShape(.rect)
+            }
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
+            .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
+            .accessibilityIdentifier("mapSearch")
+            Button { sheet = .menu } label: {
                 SeeriAlive(.happy, detail: .compact)
                     .frame(width: 40, height: 43)
-                    .accessibilityHidden(true)
+                    .frame(width: 48, height: 48)
+                    .contentShape(.rect)
             }
-            .padding(.leading, KGSpace.mediumLarge)
-            .padding(.trailing, KGSpace.compact)
-            .frame(height: KGSize.searchBar)
-            .contentShape(.capsule)
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Mehr", bundle: .module))
+            .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
+            .accessibilityIdentifier("seeriMenu")
+            .padding(.trailing, KGSpace.xs)
         }
-        .buttonStyle(KGPressStyle())
+        .frame(height: KGSize.searchBar)
         .kgGlass(in: Capsule())
         .kgShadow(.search, in: Capsule())
-        .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
-        .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
-        .accessibilityIdentifier("mapSearch")
     }
 
     /// Layers and my location, one glass column.
@@ -197,6 +216,11 @@ public struct MapScreen: View {
         switch sheet {
         case .search:
             MapSearchSheet(services: services) { pick($0) }
+        case .menu:
+            MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
+                .presentationDetents([.fraction(0.5), .large])
+                .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.5)))
+                .presentationDragIndicator(.visible)
         case let .station(id):
             if let station = transit.station(id: id) {
                 FoldingSheet(detent: $detent, title: station.shortName, onClose: { self.sheet = nil }) {
@@ -228,6 +252,7 @@ public struct MapScreen: View {
         map.onTapMap = {
             switch sheet {
             case .station, .place: withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded }
+            case .menu: sheet = nil
             default: break
             }
         }
@@ -264,7 +289,7 @@ public struct MapScreen: View {
             map.pins = [MapPin(id: "place", coordinate: target.coordinate)]
             map.insets.bottom = half
             map.move(CameraMove(center: target.coordinate, zoom: 16))
-        case .search:
+        case .search, .menu:
             break
         case nil:
             withAnimation(KGMotion.sheet) { map.selectedStationID = nil }

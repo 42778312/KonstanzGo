@@ -90,7 +90,7 @@ public enum KGFont {
 
     /// True once the font is available (registered here or already by the system).
     public static let isRegistered: Bool = {
-        guard let url = Bundle.module.url(forResource: "Figtree", withExtension: "ttf") else { return false }
+        guard let url = Bundle.kgDesign.url(forResource: "Figtree", withExtension: "ttf") else { return false }
         var error: Unmanaged<CFError>?
         if CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error) { return true }
         // "Already registered" is fine (a second bundle copy, or previews).

@@ -38,7 +38,7 @@ struct FontTests {
     }
 
     @Test func licenceShipsWithTheFont() throws {
-        let url = try #require(Bundle.module.url(forResource: "Figtree-OFL", withExtension: "txt"))
+        let url = try #require(Bundle.kgDesign.url(forResource: "Figtree-OFL", withExtension: "txt"))
         #expect(try String(contentsOf: url, encoding: .utf8).contains("SIL Open Font License"))
     }
 }

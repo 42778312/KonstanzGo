@@ -8,7 +8,7 @@ public struct KGMapSearchBar: View {
     @ScaledMetric(relativeTo: .body) private var height: CGFloat = KGSize.searchBar
 
     public init(placeholder: Text? = nil, action: @escaping () -> Void) {
-        self.placeholder = placeholder ?? Text("Wohin möchtest du?", bundle: .module)
+        self.placeholder = placeholder ?? Text("Wohin möchtest du?", bundle: .kgDesign)
         self.action = action
     }
 
@@ -30,7 +30,7 @@ public struct KGMapSearchBar: View {
         }
         .buttonStyle(KGPressStyle())
         .accessibilityLabel(placeholder)
-        .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
+        .accessibilityHint(Text("Öffnet die Suche", bundle: .kgDesign))
     }
 }
 
@@ -45,7 +45,7 @@ public struct KGSearchField: View {
 
     public init(text: Binding<String>, prompt: Text? = nil, onCancel: @escaping () -> Void) {
         _text = text
-        self.prompt = prompt ?? Text("Haltestelle, Adresse oder Ort", bundle: .module)
+        self.prompt = prompt ?? Text("Haltestelle, Adresse oder Ort", bundle: .kgDesign)
         self.onCancel = onCancel
     }
 
@@ -73,13 +73,13 @@ public struct KGSearchField: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, -13)
-                    .accessibilityLabel(Text("Eingabe löschen", bundle: .module))
+                    .accessibilityLabel(Text("Eingabe löschen", bundle: .kgDesign))
                 }
             }
             .padding(.horizontal, KGSpace.compact)
             .frame(minHeight: height)
             .background(KGColor.card, in: .kgRounded(KGRadius.medium))
-            KGTextButton(Text("Abbrechen", bundle: .module), style: .bodyMedium.weighted(KGFont.regular),
+            KGTextButton(Text("Abbrechen", bundle: .kgDesign), style: .bodyMedium.weighted(KGFont.regular),
                          action: onCancel)
         }
         .onAppear { focused = true }
@@ -93,5 +93,5 @@ public struct KGSearchField: View {
         KGSearchField(text: $text) {}
     }
     .padding()
-    .background(Color(KGPalette.mapLand))
+    .background(KGColor.mapLand)
 }

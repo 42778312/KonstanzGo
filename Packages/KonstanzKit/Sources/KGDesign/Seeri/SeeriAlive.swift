@@ -12,8 +12,8 @@ public struct SeeriAlive: View {
     nonisolated static let blinkLength = 0.16
 
     public init(_ expression: Seeri.Expression = .happy, detail: Seeri.Detail = .full, hat: Seeri.Hat = .none,
-                shadow: Bool = false) {
-        seeri = { blink in Seeri(expression, detail: detail, hat: hat, shadow: shadow, blink: blink) }
+                shadow: Bool = false, sign: String? = nil) {
+        seeri = { blink in Seeri(expression, detail: detail, hat: hat, shadow: shadow, blink: blink, sign: sign) }
     }
 
     /// How closed the eyes are at `time` (0 open … 1 shut), a quick close-and-open once per cycle.

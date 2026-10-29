@@ -52,7 +52,8 @@ private struct KGShadowModifier<S: Shape>: ViewModifier {
         if colorScheme == .dark {
             content.overlay(shape.stroke(Color.white.opacity(0.08), lineWidth: 1))
         } else {
-            shadow.layers.reduce(AnyView(content)) { view, layer in
+            // One group first, so the shadow follows the outline only, not every label inside.
+            shadow.layers.reduce(AnyView(content.compositingGroup())) { view, layer in
                 AnyView(view.shadow(color: layer.color, radius: layer.radius, x: 0, y: layer.y))
             }
             .overlay {

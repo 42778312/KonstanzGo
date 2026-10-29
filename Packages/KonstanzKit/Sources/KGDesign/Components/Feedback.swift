@@ -27,6 +27,7 @@ public struct KGEmptyState<Actions: View>: View {
                 .kgFont(.titleL.weighted(KGFont.bold).sized(26))
                 .foregroundStyle(KGColor.ink)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, KGSpace.compact)
                 .accessibilityAddTraits(.isHeader)
                 .kgRiseIn(index: 1)
@@ -35,6 +36,7 @@ public struct KGEmptyState<Actions: View>: View {
                 .lineSpacing(5)
                 .foregroundStyle(KGColor.ink2)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, KGSpace.xs)
                 .kgRiseIn(index: 2)
             if let hint {
@@ -57,9 +59,10 @@ public struct KGEmptyState<Actions: View>: View {
 }
 
 /// Seeri's speech bubble (B24): white with a hairline, pops in from its tail. `large` is the welcome
-/// bubble (19 SemiBold, tail below the middle); `small` the map callout (13 ExtraBold, no tail).
+/// bubble (19 SemiBold, tail below the middle); `side` speaks from Seeri on its left (onboarding 03–05,
+/// tail on the left edge); `small` is the map callout (13 ExtraBold, no tail).
 public struct KGSpeechBubble: View {
-    public enum Size: Sendable { case large, small }
+    public enum Size: Sendable { case large, side, small }
 
     let text: Text
     let size: Size
@@ -72,29 +75,64 @@ public struct KGSpeechBubble: View {
     }
 
     public var body: some View {
-        let radius = size == .large ? KGRadius.card : KGRadius.large
         text
-            .kgFont(size == .large ? .headline.weighted(KGFont.semiBold) : .caption.weighted(KGFont.extraBold))
-            .lineSpacing(size == .large ? 5 : 0)
-            .multilineTextAlignment(.center)
+            .kgFont(size == .small ? .caption.weighted(KGFont.extraBold) : .headline.weighted(KGFont.semiBold))
+            .lineSpacing(size == .small ? 0 : 5)
+            .multilineTextAlignment(size == .large ? .center : .leading)
+            .fixedSize(horizontal: false, vertical: true)
             .foregroundStyle(KGColor.ink)
-            .padding(.vertical, size == .large ? KGSpace.screen : KGSpace.small)
-            .padding(.horizontal, size == .large ? KGSpace.large : KGSpace.medium)
+            .padding(.vertical, padding.height)
+            .padding(.horizontal, padding.width)
             .background(KGColor.surface, in: .kgRounded(radius))
             .overlay { RoundedRectangle(cornerRadius: radius, style: .continuous).stroke(KGColor.line, lineWidth: 1) }
-            .overlay(alignment: .bottom) {
-                if size == .large {
-                    Tail().fill(KGColor.surface)
-                        .overlay(Tail().stroke(KGColor.line, lineWidth: 1))
-                        .frame(width: 22, height: 10)
-                        .offset(y: 9.5)
-                }
-            }
-            .scaleEffect(shown ? 1 : 0.7, anchor: size == .large ? .bottom : .bottomLeading)
+            .overlay(alignment: size == .side ? .leading : .bottom) { tail }
+            .scaleEffect(shown ? 1 : 0.7, anchor: anchor)
             .opacity(shown ? 1 : 0)
             .onAppear {
                 withAnimation(KGMotion.animation(KGMotion.pop, reduceMotion: reduceMotion)) { shown = true }
             }
+    }
+
+    private var radius: CGFloat {
+        switch size {
+        case .large: KGRadius.card
+        case .side: 18
+        case .small: KGRadius.large
+        }
+    }
+
+    private var padding: CGSize {
+        switch size {
+        case .large: CGSize(width: KGSpace.large, height: KGSpace.screen)
+        case .side: CGSize(width: KGSpace.screen, height: KGSpace.mediumLarge)
+        case .small: CGSize(width: KGSpace.medium, height: KGSpace.small)
+        }
+    }
+
+    private var anchor: UnitPoint {
+        switch size {
+        case .large: .bottom
+        case .side: .leading
+        case .small: .bottomLeading
+        }
+    }
+
+    @ViewBuilder private var tail: some View {
+        switch size {
+        case .large:
+            Tail().fill(KGColor.surface)
+                .overlay(Tail().stroke(KGColor.line, lineWidth: 1))
+                .frame(width: 22, height: 10)
+                .offset(y: 9.5)
+        case .side:
+            Tail().fill(KGColor.surface)
+                .overlay(Tail().stroke(KGColor.line, lineWidth: 1))
+                .frame(width: 22, height: 10)
+                .rotationEffect(.degrees(90))
+                .offset(x: -15.5)
+        case .small:
+            EmptyView()
+        }
     }
 
     /// The little triangle under the bubble, open at the top so it joins the bubble.
@@ -125,7 +163,7 @@ public struct KGToast: View {
             message.kgFont(.callout).foregroundStyle(KGColor.surface)
             if let undo {
                 Button(action: undo) {
-                    Text("Rückgängig", bundle: .module)
+                    Text("Rückgängig", bundle: .kgDesign)
                         .kgFont(.callout.weighted(KGFont.extraBold))
                         .foregroundStyle(KGColor.lineFill)
                         .frame(minHeight: KGSize.touch)
@@ -163,11 +201,11 @@ private struct SwipeToDelete: ViewModifier {
                     deleted += 1
                     action()
                 } label: {
-                    Label { Text("Löschen", bundle: .module) } icon: { Image(systemName: "trash") }
+                    Label { Text("Löschen", bundle: .kgDesign) } icon: { Image(systemName: "trash") }
                 }
                 .tint(KGColor.coral)
             }
-            .accessibilityAction(named: Text("Löschen", bundle: .module)) {
+            .accessibilityAction(named: Text("Löschen", bundle: .kgDesign)) {
                 deleted += 1
                 action()
             }

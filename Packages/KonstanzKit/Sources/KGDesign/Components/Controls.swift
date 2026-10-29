@@ -307,7 +307,7 @@ public struct KGStepProgress: View {
         }
         .animation(KGMotion.animation(KGMotion.progress, reduceMotion: reduceMotion), value: step)
         .accessibilityElement()
-        .accessibilityLabel(Text("Schritt \(step) von \(count)", bundle: .module))
+        .accessibilityLabel(Text("Schritt \(step) von \(count)", bundle: .kgDesign))
     }
 }
 

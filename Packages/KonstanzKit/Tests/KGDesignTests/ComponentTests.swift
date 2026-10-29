@@ -13,7 +13,7 @@ struct ComponentTests {
     }()
 
     /// The tests read the catalog in whichever language this machine prefers; both are checked.
-    static let german = Bundle.module.preferredLocalizations.first?.hasPrefix("de") ?? true
+    static let german = KGStrings.line("1") == "Linie 1"
 
     @Test("under a minute is jetzt")
     func now() {
@@ -65,5 +65,13 @@ struct ComponentTests {
         let tomorrow = Self.now.addingTimeInterval(24 * 3600)
         #expect(KGStrings.shortDay(tomorrow, locale: Locale(identifier: "de_DE")) == "Do. 29. Okt.")
         #expect(KGStrings.shortDay(tomorrow, locale: Locale(identifier: "en_GB")) == "Thu 29 Oct")
+    }
+}
+
+@Suite("Strings follow the view's locale")
+struct LocaleStringTests {
+    @Test func todayInBothLanguages() {
+        #expect(KGStrings.text("Heute", locale: Locale(identifier: "de_DE")) == "Heute")
+        #expect(KGStrings.text("Heute", locale: Locale(identifier: "en_GB")) == "Today")
     }
 }

@@ -14,9 +14,9 @@ public struct KGMapControls: View {
 
     public var body: some View {
         VStack(spacing: KGSpace.medium) {
-            KGRoundIconButton(.layers, label: Text("Kartenebenen", bundle: .module), surface: .mapSquare,
+            KGRoundIconButton(.layers, label: Text("Kartenebenen", bundle: .kgDesign), surface: .mapSquare,
                               action: onLayers)
-            KGRoundIconButton(.locate, label: Text("Mein Standort", bundle: .module), surface: .mapSquare,
+            KGRoundIconButton(.locate, label: Text("Mein Standort", bundle: .kgDesign), surface: .mapSquare,
                               tint: isFollowing ? KGColor.location : KGColor.ink, action: onLocate)
                 .accessibilityAddTraits(isFollowing ? [.isSelected] : [])
         }
@@ -71,7 +71,7 @@ public struct KGBusMarker: View {
         .kgLoop(.livePulse, phase: $phase)
         .environment(\.colorScheme, .light)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("Bus \(line), geschätzte Position", bundle: .module))
+        .accessibilityLabel(Text("Bus \(line), geschätzte Position", bundle: .kgDesign))
     }
 
     private struct Triangle: Shape {
@@ -117,7 +117,7 @@ public struct KGUserDot: View {
         .frame(width: 44, height: 44)
         .kgLoop(.locationPulse, phase: $pulsing)
         .accessibilityElement()
-        .accessibilityLabel(Text("Mein Standort", bundle: .module))
+        .accessibilityLabel(Text("Mein Standort", bundle: .kgDesign))
     }
 
     private struct Cone: Shape {
@@ -178,14 +178,14 @@ public struct KGStopMarker: View {
         .animation(KGMotion.pop, value: isSelected)
         .environment(\.colorScheme, .light)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("Haltestelle \(name)", bundle: .module))
+        .accessibilityLabel(Text("Haltestelle \(name)", bundle: .kgDesign))
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
     }
 }
 
 #Preview("Map") {
     ZStack {
-        Color(KGPalette.mapLand)
+        KGColor.mapLand
         VStack(spacing: 40) {
             HStack(spacing: 40) {
                 KGBusMarker(line: "9A", heading: .degrees(60))

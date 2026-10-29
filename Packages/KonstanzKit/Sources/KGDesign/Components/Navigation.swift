@@ -124,7 +124,7 @@ public struct KGFloatingTabBar<ID: Hashable>: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
-                .accessibilityValue(Text("Tab \(index + 1) von \(tabs.count)", bundle: .module))
+                .accessibilityValue(Text("Tab \(index + 1) von \(tabs.count)", bundle: .kgDesign))
             }
         }
         .padding(KGSize.tabBarPadding)
@@ -186,7 +186,7 @@ public struct KGTimelineStop: View {
     private var bold: Bool { state != .past && state != .coming }
 
     private var timeText: Text {
-        state == .current ? Text("jetzt", bundle: .module) : Text(verbatim: KGStrings.clock(time))
+        state == .current ? Text("jetzt", bundle: .kgDesign) : Text(verbatim: KGStrings.clock(time))
     }
 
     private var timeColor: Color {

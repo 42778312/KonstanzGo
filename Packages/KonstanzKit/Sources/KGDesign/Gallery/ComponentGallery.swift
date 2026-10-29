@@ -228,7 +228,7 @@ private struct MapPart: View {
     var body: some View {
         Caption("Karte (07, 09)")
         ZStack(alignment: .topTrailing) {
-            Color(KGPalette.mapLand)
+            KGColor.mapLand
             HStack(alignment: .center, spacing: KGSpace.xl) {
                 VStack(spacing: KGSpace.xl) {
                     KGBusMarker(line: "9A", heading: .degrees(70), animated: false)

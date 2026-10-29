@@ -100,7 +100,8 @@ public struct KGRouteCard: View {
         Text(verbatim: KGStrings.clock(departure) + " – " + KGStrings.clock(arrival))
             .kgFont(.title.weighted(KGFont.extraBold)).monospacedDigit()
             .foregroundStyle(KGColor.ink)
-            .accessibilityLabel(Text("\(KGStrings.clock(departure)) bis \(KGStrings.clock(arrival))", bundle: .module))
+            .accessibilityLabel(Text("\(KGStrings.clock(departure)) bis \(KGStrings.clock(arrival))",
+                                     bundle: .kgDesign))
     }
 
     @ViewBuilder private var tagView: some View {
@@ -109,8 +110,8 @@ public struct KGRouteCard: View {
 
     private var duration: some View {
         let minutes = Int((arrival.timeIntervalSince(departure) / 60).rounded())
-        return Text("\(minutes) Min.", bundle: .module).kgFont(.callout).foregroundStyle(KGColor.ink2)
-            .accessibilityLabel(Text("\(minutes) Minuten Fahrt", bundle: .module))
+        return Text("\(minutes) Min.", bundle: .kgDesign).kgFont(.callout).foregroundStyle(KGColor.ink2)
+            .accessibilityLabel(Text("\(minutes) Minuten Fahrt", bundle: .kgDesign))
     }
 }
 

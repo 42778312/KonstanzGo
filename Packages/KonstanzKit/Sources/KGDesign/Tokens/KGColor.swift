@@ -88,6 +88,18 @@ public enum KGPalette {
     /// The search field's clear button.
     public static let clearButton = KGColorValue(0xAEAEB2, dark: 0x636366)
 
+    // Onboarding illustrations (screens 01–06).
+    /// The town silhouette behind the lake (02).
+    public static let sceneTown = KGColorValue(0xE6EEF6, dark: 0x26313B)
+    /// Gulls over the lake (02).
+    public static let sceneGull = KGColorValue(0x9FB7C4, dark: 0x6E8794)
+    /// The start screen's darker sea band (01).
+    public static let startSea = KGColorValue(0xD9464F)
+    /// The sample notification banner (05), iOS's own banner grey.
+    public static let banner = KGColorValue(0xF2F2F7, dark: 0x2C2C2E, opacity: 0.96)
+    /// The trail behind the bus on the search demo (04).
+    public static let trail = KGColorValue(0xFFC2C6, dark: 0x6A3438)
+
     // MARK: Seeri
     public static let seeriBody = KGColorValue(0xF05A62)
     public static let seeriFace = KGColorValue(0xEAF6FF)
@@ -154,6 +166,19 @@ public enum KGColor {
     public static let tileIndigo = Color(KGPalette.tileIndigo)
     public static let tileBlack = Color(KGPalette.tileBlack)
     public static let clearButton = Color(KGPalette.clearButton)
+    public static let mapLand = Color(KGPalette.mapLand)
+    public static let mapWater = Color(KGPalette.mapWater)
+    public static let mapWaterLabel = Color(KGPalette.mapWaterLabel)
+    public static let mapPark = Color(KGPalette.mapPark)
+    public static let mapBuilding = Color(KGPalette.mapBuilding)
+    public static let mapRoadCasing = Color(KGPalette.mapRoadCasing)
+    public static let mapRoad = Color(KGPalette.mapRoad)
+    public static let mapLabel = Color(KGPalette.mapLabel)
+    public static let sceneTown = Color(KGPalette.sceneTown)
+    public static let sceneGull = Color(KGPalette.sceneGull)
+    public static let startSea = Color(KGPalette.startSea)
+    public static let banner = Color(KGPalette.banner)
+    public static let trail = Color(KGPalette.trail)
     public static let seeriBody = Color(KGPalette.seeriBody)
     public static let seeriFace = Color(KGPalette.seeriFace)
     public static let seeriDark = Color(KGPalette.seeriDark)

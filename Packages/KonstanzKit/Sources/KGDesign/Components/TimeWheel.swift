@@ -1,14 +1,15 @@
 import SwiftUI
 
 /// One wheel column (screen 19): rows 30 pt high, five visible, snapping. The middle row is 20 Bold black,
-/// its neighbours 17 grey, the outer ones 15 light grey. Swiping or VoiceOver's adjust gestures change it,
-/// with a selection tick.
+/// its neighbours 17 grey, the outer ones 15 light grey. Dragging (with a flick carrying on) or VoiceOver's
+/// adjust gestures change it, with a selection tick. Drawn without a scroll view, so it always rests centred
+/// on the selection, also in snapshots.
 public struct KGWheel<Value: Hashable>: View {
     @Binding var selection: Value
     let values: [Value]
     let label: (Value) -> String
     let accessibilityTitle: Text
-    @State private var position: Value?
+    @State private var drag: CGFloat = 0
 
     public static var rowHeight: CGFloat { 30 }
 
@@ -22,61 +23,68 @@ public struct KGWheel<Value: Hashable>: View {
 
     public var body: some View {
         let row = Self.rowHeight
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 0) {
-                ForEach(values, id: \.self) { value in
-                    let distance = distanceFromSelection(value)
+        let selected = values.firstIndex(of: selection) ?? 0
+        // Which row is under the band while dragging.
+        let center = Double(selected) - Double(drag / row)
+        ZStack {
+            ForEach(Array(values.enumerated()), id: \.offset) { index, value in
+                let distance = abs(Double(index) - center)
+                if distance < 3 {
                     Text(verbatim: label(value))
                         .kgFont(style(distance))
                         .monospacedDigit()
-                        .foregroundStyle(distance == 0 ? KGColor.ink : distance == 1 ? KGColor.ink2 : KGColor.ink4)
+                        .foregroundStyle(distance < 0.5 ? KGColor.ink : distance < 1.5 ? KGColor.ink2 : KGColor.ink4)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
-                        .frame(maxWidth: .infinity, minHeight: row, maxHeight: row)
-                        .contentShape(.rect)
-                        .onTapGesture { withAnimation(KGMotion.slide) { position = value } }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: row)
+                        .offset(y: (Double(index) - center) * row)
+                        .onTapGesture { select(index) }
                 }
             }
-            .scrollTargetLayout()
         }
-        .scrollIndicators(.hidden)
-        .scrollTargetBehavior(.viewAligned)
-        .scrollPosition(id: $position, anchor: .center)
-        .contentMargins(.vertical, row * 2, for: .scrollContent)
         .frame(height: row * 5)
-        .onAppear { position = selection }
-        .onChange(of: position) { _, new in
-            if let new, new != selection { selection = new }
-        }
-        .onChange(of: selection) { _, new in
-            if position != new { withAnimation(KGMotion.slide) { position = new } }
-        }
+        .frame(maxWidth: .infinity)
+        .clipped()
+        .contentShape(.rect)
+        .gesture(
+            DragGesture(minimumDistance: 2)
+                .onChanged { drag = $0.translation.height }
+                .onEnded { value in
+                    let steps = Int((-value.predictedEndTranslation.height / row).rounded())
+                    var transaction = Transaction(animation: nil)
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) {
+                        // Keep the rows where they are while the selection jumps, then let them settle.
+                        let target = min(max(selected + steps, 0), values.count - 1)
+                        drag += CGFloat(target - selected) * row
+                        selection = values[target]
+                    }
+                    withAnimation(KGMotion.slide) { drag = 0 }
+                }
+        )
         .sensoryFeedback(KGHaptic.selection, trigger: selection)
         .accessibilityElement()
         .accessibilityLabel(accessibilityTitle)
         .accessibilityValue(Text(verbatim: label(selection)))
         .accessibilityAdjustableAction { direction in
-            guard let index = values.firstIndex(of: selection) else { return }
             switch direction {
-            case .increment: if index + 1 < values.count { selection = values[index + 1] }
-            case .decrement: if index > 0 { selection = values[index - 1] }
+            case .increment: select(selected + 1)
+            case .decrement: select(selected - 1)
             @unknown default: break
             }
         }
     }
 
-    private func distanceFromSelection(_ value: Value) -> Int {
-        guard let center = values.firstIndex(of: position ?? selection),
-              let index = values.firstIndex(of: value) else { return 2 }
-        return abs(index - center)
+    private func select(_ index: Int) {
+        guard values.indices.contains(index) else { return }
+        withAnimation(KGMotion.slide) { selection = values[index] }
     }
 
-    private func style(_ distance: Int) -> KGTextStyle {
-        switch distance {
-        case 0: .bodyStrong.sized(20)
-        case 1: .bodyMedium.weighted(KGFont.regular)
-        default: .callout.weighted(KGFont.regular)
-        }
+    private func style(_ distance: Double) -> KGTextStyle {
+        if distance < 0.5 { return .bodyStrong.sized(20) }
+        if distance < 1.5 { return .bodyMedium.weighted(KGFont.regular) }
+        return .callout.weighted(KGFont.regular)
     }
 }
 
@@ -87,6 +95,7 @@ public struct KGTimeWheel: View {
     let today: Date
     let days: Int
     let calendar: Calendar
+    @Environment(\.locale) private var locale
 
     /// `days` days starting `today` minus two (the design shows two days back for context; past times are
     /// the screen's job to refuse).
@@ -100,18 +109,19 @@ public struct KGTimeWheel: View {
     public var body: some View {
         let row = KGWheel<Int>.rowHeight
         HStack(spacing: 0) {
-            KGWheel(selection: dayBinding, values: Array(-2..<days), accessibilityTitle: Text("Tag", bundle: .module)) {
+            KGWheel(selection: dayBinding, values: Array(-2..<days),
+                    accessibilityTitle: Text("Tag", bundle: .kgDesign)) {
                 dayLabel($0)
             }
             .frame(maxWidth: .infinity)
             .layoutPriority(2)
             KGWheel(selection: hourBinding, values: Array(0..<24),
-                    accessibilityTitle: Text("Stunde", bundle: .module)) {
+                    accessibilityTitle: Text("Stunde", bundle: .kgDesign)) {
                 String(format: "%02d", $0)
             }
             .frame(maxWidth: .infinity)
             KGWheel(selection: minuteBinding, values: Array(stride(from: 0, to: 60, by: 5)),
-                    accessibilityTitle: Text("Minute", bundle: .module)) {
+                    accessibilityTitle: Text("Minute", bundle: .kgDesign)) {
                 String(format: "%02d", $0)
             }
             .frame(maxWidth: .infinity)
@@ -152,9 +162,9 @@ public struct KGTimeWheel: View {
     private var minuteBinding: Binding<Int> { Binding { parts.minute } set: { set(minute: $0) } }
 
     private func dayLabel(_ offset: Int) -> String {
-        if offset == 0 { return String(localized: "Heute", bundle: .module) }
+        if offset == 0 { return KGStrings.text("Heute", locale: locale) }
         guard let day = calendar.date(byAdding: .day, value: offset, to: startOfToday) else { return "" }
-        return KGStrings.shortDay(day, calendar: calendar)
+        return KGStrings.shortDay(day, calendar: calendar, locale: locale)
     }
 }
 

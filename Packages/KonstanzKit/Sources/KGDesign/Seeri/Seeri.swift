@@ -41,14 +41,17 @@ public struct Seeri: View {
     let shadow: Bool
     /// 0 eyes open … 1 closed, for blinking.
     let blink: Double
+    /// Text on the roof sign: "GO!" on the start, welcome and ready screens; empty elsewhere.
+    let sign: String?
 
     public init(_ expression: Expression = .happy, detail: Detail = .full, hat: Hat = .none,
-                shadow: Bool = false, blink: Double = 0) {
+                shadow: Bool = false, blink: Double = 0, sign: String? = nil) {
         self.expression = expression
         self.detail = detail
         self.hat = hat
         self.shadow = shadow
         self.blink = blink
+        self.sign = sign
     }
 
     /// The drawing's grid: 160 × 170, plus 40 above for a hat.
@@ -65,6 +68,13 @@ public struct Seeri: View {
             context.translateBy(x: -viewBox.minX, y: -viewBox.minY)
             SeeriDrawing(expression: expression, detail: detail, hat: hat, shadow: shadow, blink: blink)
                 .draw(in: &context)
+            if let sign, hat == .none {
+                // 10 pt ExtraBold yellow, centred at (80, 19) on the grid like the design's <text>.
+                KGFont.registerOnce()
+                let text = Text(verbatim: sign).font(.custom(KGFont.extraBold, fixedSize: 10))
+                    .foregroundStyle(KGColor.lineFill)
+                context.draw(text, at: CGPoint(x: 80, y: 15.5), anchor: .center)
+            }
         }
         .aspectRatio(viewBox.width / viewBox.height, contentMode: .fit)
         .accessibilityHidden(true)

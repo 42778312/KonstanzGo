@@ -114,7 +114,7 @@ public struct KGMinutes: View {
             case let (.minutes(count), .large):
                 HStack(alignment: .firstTextBaseline, spacing: KGSpace.xxs) {
                     Text(count, format: .number).kgFont(.bigMinutes(24))
-                    Text("Min.", bundle: .module).kgFont(.caption.weighted(KGFont.semiBold))
+                    Text("Min.", bundle: .kgDesign).kgFont(.caption.weighted(KGFont.semiBold))
                 }
             default:
                 value.text.kgFont(style == .large ? .bigMinutes(24) : .minutes)
@@ -150,8 +150,8 @@ public enum KGMinutesValue: Hashable, Sendable {
 
     public var text: Text {
         switch self {
-        case .now: Text("jetzt", bundle: .module)
-        case let .minutes(count): Text("\(count) Min.", bundle: .module)
+        case .now: Text("jetzt", bundle: .kgDesign)
+        case let .minutes(count): Text("\(count) Min.", bundle: .kgDesign)
         case let .clock(date): Text(verbatim: KGStrings.clock(date))
         }
     }
@@ -159,9 +159,9 @@ public enum KGMinutesValue: Hashable, Sendable {
     /// For VoiceOver: "jetzt", "in 3 Minuten", "um 14:35".
     public var spoken: String {
         switch self {
-        case .now: String(localized: "jetzt", bundle: .module)
-        case let .minutes(count): String(localized: "in \(count) Minuten", bundle: .module)
-        case let .clock(date): String(localized: "um \(KGStrings.clock(date))", bundle: .module)
+        case .now: String(localized: "jetzt", bundle: .kgDesign)
+        case let .minutes(count): String(localized: "in \(count) Minuten", bundle: .kgDesign)
+        case let .clock(date): String(localized: "um \(KGStrings.clock(date))", bundle: .kgDesign)
         }
     }
 }
@@ -196,15 +196,16 @@ public struct KGWalkChip: View {
     public var body: some View {
         HStack(spacing: KGSpace.xxs) {
             KGIconView(.walk, size: 13)
-            Text("\(minutes) Min.", bundle: .module).kgFont(.caption.weighted(KGFont.semiBold))
+            Text("\(minutes) Min.", bundle: .kgDesign).kgFont(.caption.weighted(KGFont.semiBold))
         }
         .foregroundStyle(KGColor.ink2)
         .padding(.leading, KGSpace.small)
         .padding(.trailing, KGSpace.compact)
         .frame(minHeight: KGSize.badgeHeight)
         .background(KGColor.surface, in: .capsule)
+        .fixedSize()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(minutes) Minuten zu Fuß", bundle: .module))
+        .accessibilityLabel(Text("\(minutes) Minuten zu Fuß", bundle: .kgDesign))
     }
 }
 
@@ -307,7 +308,7 @@ public struct KGDepartureRow: View {
                     .kgFont(style == .large ? .bodyMedium : .body)
                     .foregroundStyle(KGColor.ink)
                 if style == .large, let platform {
-                    Text("Steig \(platform)", bundle: .module).kgFont(.caption).foregroundStyle(KGColor.ink2)
+                    Text("Steig \(platform)", bundle: .kgDesign).kgFont(.caption).foregroundStyle(KGColor.ink2)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

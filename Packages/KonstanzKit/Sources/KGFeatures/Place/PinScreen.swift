@@ -154,9 +154,9 @@ struct PinScreen: View {
         whereabouts = services.transit.whereabouts(at: point)
     }
 
-    /// "47,66° N · 9,18° O" in German, "47.66° N · 9.18° E" in English.
-    static func degrees(_ point: Coordinate) -> String {
-        let format = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(2))
+    /// "47,66° N · 9,18° O" in German, "47.66° N · 9.18° E" in English; `digits` after the comma.
+    static func degrees(_ point: Coordinate, digits: Int = 2) -> String {
+        let format = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(digits))
         return String(localized: "\(point.latitude.formatted(format))° N · \(point.longitude.formatted(format))° O",
                       bundle: .module)
     }

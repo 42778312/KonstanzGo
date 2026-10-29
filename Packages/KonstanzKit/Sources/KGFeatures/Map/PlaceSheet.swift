@@ -85,6 +85,18 @@ struct PlaceSheet: View {
                     Text(verbatim: subtitle).kgFont(.footnote.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
                         .lineLimit(2)
                 }
+                // A dropped pin: its exact latitude and longitude (about a metre), selectable to copy.
+                if isPicked, case .point = target {
+                    Label {
+                        Text(verbatim: PinScreen.degrees(target.coordinate, digits: 5)).monospacedDigit()
+                    } icon: {
+                        KGIconView(.pin, size: 13)
+                    }
+                    .kgFont(.footnote.weighted(KGFont.semiBold))
+                    .foregroundStyle(KGColor.location)
+                    .textSelection(.enabled)
+                    .accessibilityIdentifier("pinCoordinates")
+                }
             }
             Spacer()
             if isPicked { FavoriteButton(services: services, target: target) }

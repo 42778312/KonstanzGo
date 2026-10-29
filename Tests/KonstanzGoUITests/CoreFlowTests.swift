@@ -143,6 +143,10 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(to.waitForExistence(timeout: 5), "the connections did not open")
         XCTAssertTrue(app.buttons["placeFrom"].exists)
         XCTAssertTrue(element(labelContains: "Markierter Ort").exists)
+        // Its exact latitude and longitude, around Konstanz.
+        let coordinates = app.descendants(matching: .any)["pinCoordinates"]
+        XCTAssertTrue(coordinates.exists, "no coordinates")
+        XCTAssertTrue(coordinates.label.contains("47,") && coordinates.label.contains("9,"), "got \(coordinates.label)")
         XCTAssertFalse(app.staticTexts["Pin gesetzt"].exists, "the pin screen is skipped")
     }
 }

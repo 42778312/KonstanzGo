@@ -12,6 +12,8 @@ public struct MapScreen: View {
     let onReplayOnboarding: () -> Void
     @State private var map = MapModel()
     @State private var sheet: MapSheet?
+    /// Counts long presses, for the haptic tap when a pin drops.
+    @State private var drops = 0
     /// The search was opened with the microphone: listen instead of typing.
     @State private var listens = false
     /// How far the stop or place sheet is open; a tap on the map folds it to a bar.
@@ -93,6 +95,7 @@ public struct MapScreen: View {
             }
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
+        .sensoryFeedback(.impact(weight: .medium), trigger: drops)
         .sheet(item: presented) { sheet in sheetContent(sheet) }
         .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles) }
         .task { await moveVehicles() }
@@ -158,10 +161,10 @@ public struct MapScreen: View {
                     .position(point)
                     .allowsHitTesting(false)
             }
-            if let point = map.pinPoints["place"] {
-                KGIconView(.pinFilled, size: 40).foregroundStyle(KGColor.coral)
-                    .shadow(color: .black.opacity(0.2), radius: 4, y: 3)
-                    .position(x: point.x, y: point.y - 18)
+            if let point = map.pinPoints["place"], let pinned = map.pins.first(where: { $0.id == "place" }) {
+                DroppedPin()
+                    .id(pinned.coordinate)  // a new drop plays again
+                    .position(point)
                     .allowsHitTesting(false)
             }
         }
@@ -283,6 +286,7 @@ public struct MapScreen: View {
         }
         // A long press drops the target: the connections there from where the user is, straight away.
         map.onLongPress = { point in
+            drops += 1
             let street = services.transit.whereabouts(at: point).street
             sheet = .place(.point(name: street ?? String(localized: "Markierter Ort", bundle: .module), coordinate: point))
         }
@@ -413,5 +417,37 @@ private struct LayersSheet: View {
         .padding(KGSpace.large)
         .presentationDetents([.height(250)])
         .presentationCornerRadius(KGRadius.card)
+    }
+}
+
+/// The pin of a picked place or a long press, drawn with its tip on the point: it falls in from above and
+/// bounces, its shadow grows as it lands, and a ring spreads from the spot.
+private struct DroppedPin: View {
+    @State private var landed = false
+    @State private var ripple = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        ZStack {
+            Circle().stroke(KGColor.coral, lineWidth: 2)
+                .frame(width: 20, height: 20)
+                .scaleEffect(ripple ? 3.2 : 0.3)
+                .opacity(ripple ? 0 : 0.9)
+            Ellipse().fill(.black.opacity(0.35))
+                .frame(width: landed ? 16 : 6, height: landed ? 6 : 3)
+            KGIconView(.pinFilled, size: 40).foregroundStyle(KGColor.coral)
+                .shadow(color: .black.opacity(0.25), radius: 3, y: 2)
+                .scaleEffect(landed ? 1 : 0.7, anchor: .bottom)
+                .offset(y: landed ? -20 : -80)
+                .opacity(landed ? 1 : 0)
+        }
+        .onAppear {
+            guard !reduceMotion else {
+                landed = true
+                return
+            }
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.55)) { landed = true }
+            withAnimation(.easeOut(duration: 0.9).delay(0.25)) { ripple = true }
+        }
     }
 }

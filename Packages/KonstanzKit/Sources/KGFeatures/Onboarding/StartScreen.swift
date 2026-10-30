@@ -2,8 +2,8 @@ import KGDesign
 import SwiftUI
 
 /// Screen 01, kept short on purpose: the logo, Seeri and the name appear at once (a quick fade), and the
-/// app moves on after half a second. Only the first launch shows it; later launches open the map straight
-/// away (plan S1, changed after testing on a phone: the full animation made people wait).
+/// app moves on after half a second. Every launch shows it, right after iOS's launch screen with the same
+/// logo on the same coral (plan S1; kept short after testing on a phone: the full animation made people wait).
 public struct StartScreen: View {
     let onDone: () -> Void
     @State private var shown = false

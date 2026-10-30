@@ -20,8 +20,8 @@ public struct RootView: View {
         _loader = State(initialValue: TransitLoader(data: data))
         let model = OnboardingModel(defaults: defaults, permissions: permissions)
         _onboarding = State(initialValue: model)
-        // After onboarding the app opens straight on the map; the start screen is for the first launch only.
-        _stage = State(initialValue: model.isFinished ? .home : .start)
+        // The logo shows on every launch: the short start screen, then the map (or onboarding the first time).
+        _stage = State(initialValue: .start)
     }
 
     public var body: some View {

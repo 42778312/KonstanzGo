@@ -73,6 +73,8 @@ targets:
         LSApplicationCategoryType: public.app-category.navigation
         UILaunchScreen:
           UIColorName: LaunchBackground
+          UIImageName: LaunchLogo
+          UIImageRespectsSafeAreaInsets: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIRequiresFullScreen: true
         UIApplicationSceneManifest:

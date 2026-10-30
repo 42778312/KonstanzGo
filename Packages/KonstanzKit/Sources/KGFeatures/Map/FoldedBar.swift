@@ -44,13 +44,14 @@ struct FoldingSheet<Content: View>: View {
 
     @Binding var detent: PresentationDetent
     let title: String
+    var subtitle: Text?
     let onClose: () -> Void
     @ViewBuilder let content: Content
 
     var body: some View {
         Group {
             if detent == Self.folded {
-                FoldedBar(title: title, onOpen: { detent = Self.half }, onClose: onClose)
+                FoldedBar(title: title, subtitle: subtitle, onOpen: { detent = Self.half }, onClose: onClose)
                     .frame(maxHeight: .infinity)
             } else {
                 content

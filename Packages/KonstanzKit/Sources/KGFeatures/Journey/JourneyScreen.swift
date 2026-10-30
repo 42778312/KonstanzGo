@@ -12,24 +12,23 @@ struct JourneyScreen: View {
     let journey: Journey
     @State private var now = Date.now
     @State private var savedArrival = false
-    /// Folded to a bar, half the screen, or pulled up full, like the map's own sheets.
-    @State private var level = Level.half
+    /// Folded to a bar, half the screen, or pulled up full: the map's own sheet, dragged the same way.
+    @State private var detent = FoldingSheet<EmptyView>.half
+    /// Shown a moment after the screen opens and taken away before it closes: iOS drops a sheet presented
+    /// while the map's sheet is still going away.
+    @State private var showsSheet = false
     @State private var screenHeight: CGFloat = 800
 
-    enum Level { case folded, half, full }
+    private var expanded: Bool { detent != FoldingSheet<EmptyView>.folded }
 
-    private var expanded: Bool { level != .folded }
-    private var sheetHeight: CGFloat { level == .full ? screenHeight - 110 : Self.sheetHeight }
-
-    private static let sheetHeight: CGFloat = 472
     private static let barHeight: CGFloat = 110
 
     var body: some View {
         ZStack(alignment: .top) {
             // The whole trip in view: walks and every bus.
             JourneyMap(services: services, journey: journey,
-                       bottomInset: expanded ? Self.sheetHeight : Self.barHeight) {
-                if expanded { withAnimation(KGMotion.sheet) { level = .folded } }
+                       bottomInset: expanded ? screenHeight * 0.5 : Self.barHeight) {
+                if expanded { withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded } }
             }
             HStack(spacing: KGSpace.small) {
                 KGRoundIconButton(.close, label: Text("Zurück zu den Verbindungen", bundle: .module), action: endTrip)
@@ -57,31 +56,16 @@ struct JourneyScreen: View {
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.top, 11)
-            VStack {
-                Spacer()
-                Group {
-                    if expanded {
-                        KGSheetSurface { sheet }.frame(height: sheetHeight)
-                    } else {
-                        bar
-                    }
-                }
-                // Swipe up and down between the bar, half and full, one step per swipe.
-                .gesture(DragGesture(minimumDistance: 16).onEnded { drag in
-                    let step = drag.translation.height
-                    guard abs(step) > 40 else { return }
-                    withAnimation(KGMotion.sheet) {
-                        switch (level, step < 0) {
-                        case (.folded, true): level = .half
-                        case (.half, true): level = .full
-                        case (.full, false): level = .half
-                        case (.half, false): level = .folded
-                        default: break
-                        }
-                    }
-                })
+        }
+        // Swipe down to the bar, up to full; a tap on the map folds it too (the map's FoldingSheet).
+        .sheet(isPresented: $showsSheet) {
+            FoldingSheet(detent: $detent, title: routeTitle, subtitle: arrivalLine, onClose: endTrip) {
+                sheet.padding(.top, KGSpace.large)
             }
-            .ignoresSafeArea(edges: expanded ? .bottom : [])
+        }
+        .task {
+            try? await Task.sleep(for: .seconds(0.45))
+            showsSheet = true
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { screenHeight = $0 }
         .task {
@@ -149,18 +133,10 @@ struct JourneyScreen: View {
         .padding(.horizontal, KGSpace.large)
     }
 
-    /// The folded sheet: a glass bar with the route and ✕ (ends the trip); tap it to see the stops again.
-    private var bar: some View {
-        FoldedBar(title: routeTitle,
-                  subtitle: KGMinutesValue(departure: journey.end, now: now).text + Text(verbatim: " · ")
-                      + Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end)),
-                  onOpen: { withAnimation(KGMotion.sheet) { level = .half } },
-                  onClose: endTrip)
-            .padding(.vertical, KGSpace.small)
-            .kgGlass(in: .kgRounded(KGRadius.cardLarge))
-            .kgShadow(.floating, in: .kgRounded(KGRadius.cardLarge))
-            .padding(.horizontal, KGSpace.screen)
-            .padding(.bottom, KGSpace.xs)
+    /// Under the route in the folded bar: "12 Min. · Ankunft 20:09".
+    private var arrivalLine: Text {
+        KGMinutesValue(departure: journey.end, now: now).text + Text(verbatim: " · ")
+            + Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end))
     }
 
     /// "Konzilstr./Theater → combit GmbH": where the first bus leaves and where the trip ends.
@@ -178,7 +154,12 @@ struct JourneyScreen: View {
     /// ✕ goes back to the connections, so another one can be picked.
     private func endTrip() {
         TripActivity.end()
-        services.router.back()
+        showsSheet = false
+        Task {
+            // Let the sheet go before the map's own comes back.
+            try? await Task.sleep(for: .seconds(0.4))
+            services.router.back()
+        }
     }
 
     /// What Seeri says in each phase ("Noch 4 Haltestellen").

@@ -127,6 +127,11 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(app.otherElements["Fahrtfortschritt"].waitForExistence(timeout: 3) ||
                       element(labelContains: "Fahrtfortschritt").waitForExistence(timeout: 1), "the stops did not come back")
         XCTAssertTrue(app.descendants(matching: .any)["journeyLegs"].exists, "the whole trip should be listed")
+        // Swiped down like the other sheets, it rests on the bar too.
+        foldSheet(above: element(labelContains: "Fahrtfortschritt"))
+        XCTAssertTrue(bar.waitForExistence(timeout: 3), "a swipe down did not fold the sheet")
+        bar.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["journeyLegs"].waitForExistence(timeout: 3))
         // ✕ goes back to the connections, to pick another one.
         end.tap()
         XCTAssertTrue(app.buttons["placeFrom"].waitForExistence(timeout: 5), "did not return to the connections")

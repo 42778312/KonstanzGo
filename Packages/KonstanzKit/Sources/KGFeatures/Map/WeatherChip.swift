@@ -2,7 +2,7 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// The weather over the map, where "Offline bereit" was (Apple Maps' corner): the sky's symbol and the
+/// The weather over the map in glass, where "Offline bereit" was (Apple Maps' corner): the sky's symbol and the
 /// temperature at DWD's Konstanz station. Fresh while online; offline, the last reading.
 struct WeatherChip: View {
     let reading: WeatherReading
@@ -24,7 +24,7 @@ struct WeatherChip: View {
         }
         .padding(.horizontal, KGSpace.small)
         .frame(minHeight: 40)
-        .background(KGColor.surface, in: .kgRounded(KGRadius.medium))
+        .kgGlass(in: .kgRounded(KGRadius.medium))
         .kgShadow(.floating, in: .kgRounded(KGRadius.medium))
         .animation(KGMotion.pop, value: reading)
         .accessibilityElement(children: .ignore)

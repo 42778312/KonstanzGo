@@ -7,7 +7,8 @@ import Testing
 struct WeatherTests {
     /// The top of the real file of 30 Oct 2026 (columns trimmed to the ones the app reads, and two more).
     static let report = """
-    surface observations;Parameter description;cloud_cover_total;dry_bulb_temperature_at_2_meter_above_ground;precipitation_amount_last_hour;present_weather;relative_humidity
+    surface observations;Parameter description;cloud_cover_total;dry_bulb_temperature_at_2_meter_above_ground;\
+    precipitation_amount_last_hour;present_weather;relative_humidity
     10929;Unit;%;Grad C;mm;CODE_TABLE;%
     Datum;Uhrzeit (UTC);Wolkenbedeckung;Temperatur (2m);Niederschlag (letzte Stunde);aktuelles Wetter;Relative Feuchte
     30.10.26;20:00;---;---;---;---;---

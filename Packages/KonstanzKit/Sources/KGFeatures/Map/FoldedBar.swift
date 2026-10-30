@@ -57,6 +57,8 @@ struct FoldingSheet<Content: View>: View {
             }
         }
         .presentationDetents([Self.folded, Self.half, .large], selection: $detent)
+        // Swiping down rests on the folded bar (Apple Maps); ✕ closes.
+        .interactiveDismissDisabled()
         .presentationBackgroundInteraction(.enabled(upThrough: Self.half))
         .presentationDragIndicator(detent == Self.folded ? .hidden : .visible)
     }

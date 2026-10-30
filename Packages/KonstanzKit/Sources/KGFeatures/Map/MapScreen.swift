@@ -15,6 +15,8 @@ public struct MapScreen: View {
     /// Counts long presses, for the haptic tap when a pin drops.
     @State private var drops = 0
     @State private var touring = false
+    /// When the last sheet closed: a new one can only open once its closing animation is over.
+    @State private var closedAt = Date.distantPast
     /// The search was opened with the microphone: listen instead of typing.
     @State private var listens = false
     /// How far the stop or place sheet is open; a tap on the map folds it to a bar.
@@ -176,7 +178,7 @@ public struct MapScreen: View {
         HStack(spacing: KGSpace.xs) {
             Button {
                 listens = false
-                sheet = .search
+                open(.search)
             } label: {
                 HStack(spacing: KGSpace.medium) {
                     KGIconView(.search, size: 24).foregroundStyle(KGColor.ink)
@@ -196,7 +198,7 @@ public struct MapScreen: View {
             .tourSpot(.search)
             Button {
                 listens = true
-                sheet = .search
+                open(.search)
             } label: {
                 KGIconView(.mic, size: 23).foregroundStyle(KGColor.ink2)
                     .frame(width: 44, height: 44)
@@ -206,7 +208,7 @@ public struct MapScreen: View {
             .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
             .accessibilityIdentifier("mapVoiceSearch")
             .tourSpot(.mic)
-            Button { sheet = .menu } label: {
+            Button { open(.menu) } label: {
                 SeeriAlive(.happy, detail: .compact)
                     .frame(width: 46, height: 50)
                     .frame(width: 54, height: 54)
@@ -307,6 +309,8 @@ public struct MapScreen: View {
             default: break
             }
         }
+        // The voice search's recognizer loads in the background, so the microphone listens at once.
+        VoiceSearch.warmUp(hints: transit.stations.map(\.shortName))
         // Ask once if nobody has yet (e.g. "Später" in onboarding), so the blue dot can show.
         if location.access == .unknown { location.requestAccess() }
         location.start()
@@ -321,6 +325,17 @@ public struct MapScreen: View {
     private func pick(_ target: SavedTarget) {
         services.updateUser { try $0.addRecent(target) }
         sheet = .place(target)
+    }
+
+    /// Opens search or the menu; right after another sheet closed, once that has finished closing (iOS drops
+    /// a sheet presented during the previous one's dismissal).
+    private func open(_ new: MapSheet) {
+        let wait = 0.45 - Date.now.timeIntervalSince(closedAt)
+        guard wait > 0 else { return sheet = new }
+        Task {
+            try? await Task.sleep(for: .seconds(wait))
+            if sheet == nil { sheet = new }
+        }
     }
 
     /// Marks what the sheet is about on the map and keeps it in view above the sheet.
@@ -353,6 +368,7 @@ public struct MapScreen: View {
         case .search, .menu:
             break
         case nil:
+            closedAt = .now
             withAnimation(KGMotion.sheet) { map.selectedStationID = nil }
             map.pins = []
             map.lines = []

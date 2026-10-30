@@ -13,6 +13,14 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 15))
     }
 
+    /// Drags the sheet down by its grab handle, just above `element`, so it rests on the folded bar.
+    private func foldSheet(above element: XCUIElement) {
+        let window = app.windows.firstMatch
+        let top = element.frame.minY - 22
+        let start = window.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: window.frame.midX, dy: top))
+        start.press(forDuration: 0.15, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)))
+    }
+
     private func element(labelContains text: String) -> XCUIElement {
         app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
     }
@@ -59,7 +67,8 @@ final class CoreFlowTests: XCTestCase {
         let back = app.buttons["tripBack"]
         XCTAssertTrue(back.waitForExistence(timeout: 5), "departure details did not open")
         XCTAssertTrue(app.buttons["closeTrip"].exists)
-        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.2)).tap()
+        // Swipe the sheet down: it rests on the folded bar (a tap on the zoomed-out map may hit a stop).
+        foldSheet(above: back)
         XCTAssertTrue(app.buttons["foldedBar"].waitForExistence(timeout: 3), "the trip did not fold")
         app.buttons["foldedBar"].tap()
         XCTAssertTrue(back.waitForExistence(timeout: 3))

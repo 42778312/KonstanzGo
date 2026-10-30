@@ -22,6 +22,14 @@ final class UserJourneyTests: XCTestCase {
         app.launch()
     }
 
+    /// Drags the sheet down by its grab handle, just above `element`, so it rests on the folded bar.
+    private func foldSheet(above element: XCUIElement) {
+        let window = app.windows.firstMatch
+        let top = element.frame.minY - 22
+        let start = window.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: window.frame.midX, dy: top))
+        start.press(forDuration: 0.15, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)))
+    }
+
     private func element(_ text: String) -> XCUIElement {
         app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
     }
@@ -186,7 +194,8 @@ final class UserJourneyTests: XCTestCase {
             step("15 Abfahrt öffnen: Haltestellen der Fahrt") {
                 departure.tap()
                 XCTAssertTrue(app.buttons["tripBack"].waitForExistence(timeout: 5))
-                tapMap(0.2, 0.2)
+                // Swipe the sheet down to fold it (a tap on the zoomed-out map may land on a stop).
+                foldSheet(above: app.buttons["tripBack"])
                 XCTAssertTrue(app.buttons["foldedBar"].waitForExistence(timeout: 3), "the trip did not fold")
                 app.buttons["foldedBar"].tap()
                 app.buttons["tripBack"].tap()

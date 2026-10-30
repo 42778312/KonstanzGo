@@ -45,6 +45,10 @@ final class VoiceSearch {
     private var task: SFSpeechRecognitionTask?
     #endif
 
+    #if !os(iOS)
+    static func warmUp(hints: [String]) {}
+    #endif
+
     func toggle() {
         if isListening || state == .preparing { stop() } else { Task { await start() } }
     }
@@ -89,30 +93,80 @@ final class VoiceSearch {
     #if os(iOS)
     // MARK: iOS 26: on-device dictation
 
+    /// A recognizer with its model already loaded, ready for the next press of the microphone. Loading the
+    /// model takes about two seconds; everything else a few milliseconds.
+    @available(iOS 26, *)
+    private struct Ready {
+        let module: DictationTranscriber
+        let analyzer: SpeechAnalyzer
+        let format: AVAudioFormat
+    }
+
+    /// Kept between searches (`Any` because the type needs iOS 26).
+    private static var ready: Any?
+    private static var warming = false
+
+    /// Loads the recognizer ahead of time, so listening starts at once. Only when the language model is already
+    /// on the iPhone; downloading it waits for the first press of the microphone.
+    static func warmUp(hints: [String]) {
+        guard #available(iOS 26, *), ready == nil, !warming,
+              AVAudioApplication.shared.recordPermission == .granted else { return }
+        warming = true
+        Task {
+            defer { warming = false }
+            guard let module = await OfflineSpeech.transcriber(), await OfflineSpeech.isInstalled(module) else { return }
+            ready = try? await prepared(module, hints: hints)
+        }
+    }
+
+    @available(iOS 26, *)
+    private static func prepared(_ module: DictationTranscriber, hints: [String]) async throws -> Ready? {
+        let analyzer = SpeechAnalyzer(modules: [module])
+        try await analyzer.setContext(OfflineSpeech.context(hints: hints))
+        guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [module]) else { return nil }
+        try await analyzer.prepareToAnalyze(in: format)
+        return Ready(module: module, analyzer: analyzer, format: format)
+    }
+
     @available(iOS 26, *)
     private func startAnalyzer() async {
-        guard let module = await OfflineSpeech.transcriber() else { return state = .unavailable }
-        if !(await OfflineSpeech.isInstalled(module)) {
-            state = .preparing
-            do { try await OfflineSpeech.install(module) } catch { return state = .needsDownload }
-            guard state == .preparing else { return }  // cancelled meanwhile
-        }
-        let analyzer = SpeechAnalyzer(modules: [module])
-        do {
-            try await analyzer.setContext(OfflineSpeech.context(hints: hints))
+        var prepared = Self.ready as? Ready
+        Self.ready = nil
+        if prepared == nil {
+            guard let module = await OfflineSpeech.transcriber() else { return state = .unavailable }
+            if !(await OfflineSpeech.isInstalled(module)) {
+                state = .preparing
+                do { try await OfflineSpeech.install(module) } catch { return state = .needsDownload }
+                guard state == .preparing else { return }  // cancelled meanwhile
+            }
+            // Without a warm recognizer: build it, but don't wait for the model before listening.
+            let analyzer = SpeechAnalyzer(modules: [module])
+            try? await analyzer.setContext(OfflineSpeech.context(hints: hints))
             guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [module]) else {
                 return state = .unavailable
             }
+            prepared = Ready(module: module, analyzer: analyzer, format: format)
+        }
+        guard let prepared else { return state = .unavailable }
+        let module = prepared.module, analyzer = prepared.analyzer
+        // The microphone first: what the user says while the model loads is kept and recognized after.
+        let (stream, input) = AsyncStream.makeStream(of: AnalyzerInput.self)
+        do {
             try startMicrophone()
             let microphone = engine.inputNode.outputFormat(forBus: 0)
-            guard let converter = AVAudioConverter(from: microphone, to: format) else { return fail() }
-            let (stream, input) = AsyncStream.makeStream(of: AnalyzerInput.self)
-            engine.inputNode.installTap(onBus: 0, bufferSize: 2048, format: microphone,
-                                        block: Self.feed(converter: converter, format: format, into: input))
+            guard let converter = AVAudioConverter(from: microphone, to: prepared.format) else { return fail() }
+            engine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: microphone,
+                                        block: Self.feed(converter: converter, format: prepared.format, into: input))
             engine.prepare()
             try engine.start()
+        } catch {
+            return fail()
+        }
+        endInput = { input.finish() }
+        state = .listening
+        waitForPause(first: true)
+        do {
             try await analyzer.start(inputSequence: stream)
-            endInput = { input.finish() }
         } catch {
             return fail()
         }
@@ -125,12 +179,11 @@ final class VoiceSearch {
                 }
             } catch {}
         }
-        finishing = { [reading] in
+        finishing = { [reading, hints] in
             try? await analyzer.finalizeAndFinishThroughEndOfInput()
             await reading?.value
+            Self.warmUp(hints: hints)  // ready for the next time
         }
-        state = .listening
-        waitForPause(first: true)
     }
 
     /// The microphone's audio, converted to what the analyzer wants, on the audio thread.
@@ -229,11 +282,11 @@ final class VoiceSearch {
         if done { stop() } else { waitForPause(first: false) }
     }
 
-    /// Stops 1.5 s after the last word, or after 6 s if nothing was said.
+    /// Stops 1 s after the last word, or after 6 s if nothing was said.
     private func waitForPause(first: Bool) {
         silence?.cancel()
         silence = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(first ? 6 : 1.5))
+            try? await Task.sleep(for: .seconds(first ? 6 : 1))
             guard !Task.isCancelled else { return }
             self?.stop()
         }

@@ -85,10 +85,13 @@ struct MapSearchSheet: View {
         // See-through like the stop sheet, even pulled up to full height.
         .presentationBackground(.thinMaterial)
         .task {
+            voice.hints = services.transit.stations.map(\.shortName)
+            // From the microphone: listen straight away.
+            if listens { return await voice.start() }
             // Focus once the sheet has settled, or the keyboard comes up without the field taking the typing.
             try? await Task.sleep(for: .milliseconds(350))
-            voice.hints = services.transit.stations.map(\.shortName)
-            if listens { await voice.start() } else { focused = true }
+            focused = true
+            VoiceSearch.warmUp(hints: voice.hints)
         }
         .onChange(of: voice.text) { _, words in if !words.isEmpty { query = words } }
         .onDisappear { voice.stop() }

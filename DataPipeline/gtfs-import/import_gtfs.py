@@ -138,10 +138,15 @@ def simplify(points, tolerance_m=SHAPE_TOLERANCE_M):
         a, b = stack.pop()
         (x1, y1), (x2, y2) = xy[a], xy[b]
         dx, dy = x2 - x1, y2 - y1
-        length = math.hypot(dx, dy) or 1e-9
+        length = math.hypot(dx, dy)
         best, index = 0.0, -1
         for i in range(a + 1, b):
-            d = abs(dy * (xy[i][0] - x1) - dx * (xy[i][1] - y1)) / length
+            if length < 1e-6:
+                # A loop (ring lines start and end at the same stop): the distance to that point. Measured
+                # from the zero-length line, every point would count as 0 m off and the whole route vanished.
+                d = math.hypot(xy[i][0] - x1, xy[i][1] - y1)
+            else:
+                d = abs(dy * (xy[i][0] - x1) - dx * (xy[i][1] - y1)) / length
             if d > best:
                 best, index = d, i
         if best > tolerance_m:

@@ -5,13 +5,13 @@ import Synchronization
 /// The buses running now, placed by the timetable (no live positions: the app works offline).
 /// Each day's trips are read once; a trip's trajectory is built the first time it is needed.
 public final class VehicleTracker: Sendable {
-    private struct Call {
+    struct Call {
         var coordinate: Coordinate
         var arrival: Int
         var departure: Int
     }
 
-    private struct TripCalls {
+    struct TripCalls {
         var trip: Int
         var route: Int
         var headsign: String
@@ -31,11 +31,15 @@ public final class VehicleTracker: Sendable {
     private let store: TimetableStore
     private let queue: DatabaseQueue
     private let clock: ServiceClock
+    /// The street network, for buses between stops their route shape doesn't connect.
+    private let streets: WalkRouter?
     private let cache = Mutex(Cache())
 
-    public init(store: TimetableStore, url: URL, clock: ServiceClock = ServiceClock()) throws {
+    public init(store: TimetableStore, url: URL, clock: ServiceClock = ServiceClock(),
+                streets: WalkRouter? = nil) throws {
         self.store = store
         self.clock = clock
+        self.streets = streets
         var config = Configuration()
         config.readonly = true
         queue = try DatabaseQueue(path: url.path, configuration: config)
@@ -74,7 +78,7 @@ public final class VehicleTracker: Sendable {
 
     // MARK: Loading
 
-    private func trips(on day: ServiceDay) throws -> [TripCalls] {
+    func trips(on day: ServiceDay) throws -> [TripCalls] {
         if let cached = cache.withLock({ $0.days[day] }) { return cached }
         let trips = try queue.read { db -> [TripCalls] in
             var trips: [TripCalls] = []
@@ -108,14 +112,17 @@ public final class VehicleTracker: Sendable {
         return trips
     }
 
-    private func trajectory(_ trip: TripCalls, line: Line, day: ServiceDay) throws -> Trajectory? {
+    func trajectory(_ trip: TripCalls, line: Line, day: ServiceDay) throws -> Trajectory? {
         let key = "\(day.yyyymmdd)/\(trip.trip)"
         if let cached = cache.withLock({ $0.trajectories[key] }) { return cached }
         let shape = try trip.shape.map(shape(id:)) ?? []
         let trajectory = Trajectory(tripID: trip.trip, line: line, headsign: trip.headsign,
                                     calls: trip.calls.map { TimedStop(coordinate: $0.coordinate, arrival: $0.arrival,
                                                                       departure: $0.departure) },
-                                    shape: shape)
+                                    shape: shape,
+                                    streets: line.mode == .bus ? streets.map { router in
+                                        { router.route(from: $0, to: $1)?.path }
+                                    } : nil)
         if let trajectory { cache.withLock { $0.trajectories[key] = trajectory } }
         return trajectory
     }

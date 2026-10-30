@@ -26,9 +26,24 @@ struct ShapeTests {
         #expect(matched == matched?.sorted())
     }
 
-    @Test func implausiblePiecesAreRefused() {
-        let shape = Shapes.densify(out + back)
-        #expect(Shapes.piece(of: shape, from: 0, to: shape.count - 1, between: out[0], and: back[10]) == nil)
+    @Test func aDetourWithNoShortWayIsRefused() {
+        // From A 2 km north and back down to B, 375 m east of A: the bus doesn't drive that in a minute.
+        let a = out[0], b = out[10]
+        let far = Coordinate(latitude: 47.68, longitude: 9.17)
+        let shape = Shapes.densify([a, far, b])
+        #expect(Shapes.piece(of: shape, from: 0, to: shape.count - 1, between: a, and: b, seconds: 60,
+                             topSpeed: 22) == nil)
+    }
+
+    @Test func aBranchBackPastTheStopTakesTheShortWay() {
+        // The shape runs from A out a 1 km branch, back past A, then on to B: the bus goes straight on.
+        let a = out[0], b = out[4]
+        let branch = Coordinate(latitude: 47.669, longitude: 9.17)
+        let shape = Shapes.densify([a, branch, a, b])
+        let to = shape.count - 1
+        let piece = Shapes.piece(of: shape, from: 0, to: to, between: a, and: b)
+        let length = piece.map { zip($0, $0.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) } }
+        #expect(length.map { $0 < 300 } == true, "piece length \(String(describing: length))")
     }
 }
 
@@ -240,5 +255,33 @@ struct MapVehicleTests {
         let again = ContinuousClock.now
         _ = try tracker.positions(at: now.addingTimeInterval(0.25))
         #expect(ContinuousClock.now - again < .milliseconds(60), "first \(again - started)")
+    }
+}
+
+/// Every bus and train of a weekday follows its route: along the line's shape, or the streets where the shape
+/// has a gap, never a straight line across the Rhine or the lake (line 2's whole route was once drawn as one).
+@Suite("Vehicles on their routes")
+struct VehicleRouteTests {
+    @Test func noStraightCutsOnAWeekday() throws {
+        let transit = try OfflineTransit(data: repoData)
+        let tracker = transit.tracker
+        let day = ServiceDay(yyyymmdd: 20261028)
+        var cuts: [String: Int] = [:]
+        var legs = 0
+        for trip in try tracker.trips(on: day) {
+            guard let line = transit.store.line(id: trip.route),
+                  let trajectory = try tracker.trajectory(trip, line: line, day: day) else { continue }
+            for index in 1..<trip.calls.count {
+                legs += 1
+                let from = trajectory.callDistance[index - 1], to = trajectory.callDistance[index]
+                let between = trajectory.cumulative.filter { $0 > from + 0.5 && $0 < to - 0.5 }.count
+                if between == 0, to - from > 150 { cuts["\(line.name) \(line.mode)", default: 0] += 1 }
+            }
+        }
+        #expect(legs > 8_000)
+        let buses = cuts.filter { $0.key.hasSuffix("bus") }
+        #expect(buses.isEmpty, "straight cuts: \(cuts.sorted { $0.key < $1.key })")
+        // Line 2 is a loop; its whole route used to vanish.
+        #expect(cuts.keys.allSatisfy { !$0.hasPrefix("2 ") })
     }
 }

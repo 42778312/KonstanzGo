@@ -35,7 +35,7 @@ public final class OfflineTransit: TransitService {
         walker = WalkRouter(graph: try WalkGraph.read(from: data.walkGraph))
         planner = try JourneyPlanner(store: store, url: data.timetable, walker: walker)
         placeSearch = try PlaceSearch(indexURL: data.searchIndex, store: store)
-        tracker = try VehicleTracker(store: store, url: data.timetable)
+        tracker = try VehicleTracker(store: store, url: data.timetable, streets: walker)
         lookup = ReverseLookup(walk: walker, store: store)
         timetableInfo = try? TimetableInfo.read(from: data.timetable)
     }

@@ -49,13 +49,35 @@ public enum Shapes {
         return matched
     }
 
-    /// The road between two stops of a trip: the matched piece of the shape, or nil when it is implausible
-    /// (more than 1.8 × the straight line plus 200 m: the wrong street or a loop the bus does not drive).
+    /// The road between two stops of a trip: the matched piece of the shape, or nil when it is implausible.
+    ///
+    /// When the matched piece is too long, it is tried again from the shape's *last* pass by `start` before
+    /// `to`: a shape that runs out a branch and comes back past the stop (lines 6, 203, the S6) would otherwise
+    /// send the bus round the whole branch.
+    /// It is plausible when no longer than 1.8 × the straight line plus 200 m, or, given `seconds` and
+    /// `topSpeed`, when it can be driven in the time the timetable gives (a campus loop like line 9's at the
+    /// Universität is twice the straight line, and real).
     public static func piece(of shape: [Coordinate], from: Int, to: Int, between start: Coordinate,
-                             and end: Coordinate) -> [Coordinate]? {
+                             and end: Coordinate, seconds: Double = 0, topSpeed: Double = 0,
+                             within radius: Double = radius) -> [Coordinate]? {
         guard to > from, from >= 0, to < shape.count else { return nil }
-        let piece = Array(shape[from...to])
-        let length = zip(piece, piece.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
-        return length <= 1.8 * start.distance(to: end) + 200 ? piece : nil
+        func plausible(_ piece: ArraySlice<Coordinate>) -> Bool {
+            let length = zip(piece, piece.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
+            if length <= 1.8 * start.distance(to: end) + 200 { return true }
+            return seconds > 0 && topSpeed > 0 && length / seconds <= topSpeed * 0.7
+        }
+        if plausible(shape[from...to]) { return Array(shape[from...to]) }
+        // The latest point near `start` before `to`, in the last pass that comes close.
+        var first = from
+        if let last = (from..<to).last(where: { shape[$0].distance(to: start) <= radius }) {
+            var best = last
+            var index = last
+            while index > from, shape[index - 1].distance(to: start) <= radius {
+                index -= 1
+                if shape[index].distance(to: start) < shape[best].distance(to: start) { best = index }
+            }
+            if shape[best].distance(to: start) <= shape[from].distance(to: start) + radius { first = best }
+        }
+        return first > from && plausible(shape[first...to]) ? Array(shape[first...to]) : nil
     }
 }

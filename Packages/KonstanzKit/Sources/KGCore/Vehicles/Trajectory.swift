@@ -55,11 +55,13 @@ public struct Trajectory: Sendable {
     public var end: Double { arrival[arrival.count - 1] }
 
     /// A trip's trajectory from its calls (position, arrival and departure in timetable minutes of its service
-    /// day). Each stretch follows the shape when it fits, else goes straight. `shiftSeconds` moves the times onto
-    /// the day shown (−86 400 for yesterday's service).
+    /// day). Each stretch follows the shape when it fits; else the streets (`streets`, for buses) when they can
+    /// be driven in the time given; a straight line only as the last resort. `shiftSeconds` moves the times
+    /// onto the day shown (−86 400 for yesterday's service).
     public init?(tripID: Int, line: Line, headsign: String,
                  calls: [TimedStop],
-                 shape: [Coordinate], shiftSeconds: Double = 0) {
+                 shape: [Coordinate], shiftSeconds: Double = 0,
+                 streets: (@Sendable (Coordinate, Coordinate) -> [Coordinate]?)? = nil) {
         guard calls.count >= 2 else { return nil }
         let stops = calls.map(\.coordinate)
         let dense = Shapes.densify(shape)
@@ -75,14 +77,28 @@ public struct Trajectory: Sendable {
         }
         for index in 1..<stops.count {
             let seconds = Double(calls[index].arrival - calls[index - 1].departure) * 60
+            // Timetable minutes are rounded: "1 min" can be almost two.
+            let available = seconds + 60
             if let matched,
                let piece = Shapes.piece(of: dense, from: matched[index - 1], to: matched[index],
-                                        between: stops[index - 1], and: stops[index]) {
+                                        between: stops[index - 1], and: stops[index], seconds: seconds,
+                                        topSpeed: topSpeed) {
                 // The street path only when it is drivable in the time the timetable gives.
                 let pieceLength = zip(piece, piece.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
                 let straight = stops[index - 1].distance(to: stops[index])
-                if seconds <= 0 || pieceLength / seconds <= topSpeed || straight / seconds > topSpeed {
+                if seconds <= 0 || pieceLength / available <= topSpeed || straight / available > topSpeed {
                     piece.forEach(add)
+                    add(stops[index])
+                    distances.append(length)
+                    continue
+                }
+            }
+            // No usable shape here: along the streets if they make sense for the time given.
+            let straight = stops[index - 1].distance(to: stops[index])
+            if straight > 150, let road = streets?(stops[index - 1], stops[index]), road.count > 1 {
+                let roadLength = zip(road, road.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
+                if roadLength <= 2.5 * straight + 200, seconds <= 0 || roadLength / available <= topSpeed {
+                    road.forEach(add)
                 }
             }
             add(stops[index])

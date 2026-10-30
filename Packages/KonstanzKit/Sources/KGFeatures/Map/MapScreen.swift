@@ -2,7 +2,7 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// Screen 07 (Karte), Apple Maps style: the offline map full screen and free to move, "Offline bereit" on
+/// Screen 07 (Karte), Apple Maps style: the offline map full screen and free to move, the weather on
 /// top, layers and location on the right, and one glass search bar at the bottom with Seeri. Search, a tapped
 /// stop and a picked place each open in a sheet over the map (reworked after testing on a phone).
 public struct MapScreen: View {
@@ -47,7 +47,7 @@ public struct MapScreen: View {
     public var body: some View {
         ZStack(alignment: .top) {
             mapLayer
-            OfflinePill(info: transit.timetableInfo)
+            StatusCorner(info: transit.timetableInfo, weather: services.weather)
                 .padding(.horizontal, KGSpace.screen)
                 .padding(.top, KGSpace.small)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -428,17 +428,25 @@ extension MapScreen {
     }
 }
 
-/// "Offline bereit", orange "Fahrplan endet bald" in the last 14 days of the timetable (S4.2).
-private struct OfflinePill: View {
+/// The map's top corner: the weather, or orange "Fahrplan endet bald" in the last 14 days of the timetable
+/// (S4.2). Nothing before the first reading (a first start without internet). Asks for fresh weather while
+/// the map is open.
+private struct StatusCorner: View {
     let info: TimetableInfo?
+    let weather: WeatherModel
 
     var body: some View {
-        if let end = info.flatMap({ Calendar.konstanz.date(from: $0.validUntil) }),
-           end.timeIntervalSinceNow < 14 * 24 * 3600 {
-            KGStatusPill(Text("Fahrplan endet bald", bundle: .module), isWarning: true)
-        } else {
-            KGStatusPill(Text("Offline bereit", bundle: .module))
+        ZStack(alignment: .leading) {
+            if let end = info.flatMap({ Calendar.konstanz.date(from: $0.validUntil) }),
+               end.timeIntervalSinceNow < 14 * 24 * 3600 {
+                KGStatusPill(Text("Fahrplan endet bald", bundle: .module), isWarning: true)
+            } else if let reading = weather.reading {
+                WeatherChip(reading: reading)
+                    .transition(.opacity)
+            }
         }
+        .frame(minWidth: 1, minHeight: 1)
+        .task { await weather.keepFresh() }
     }
 }
 

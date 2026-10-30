@@ -91,7 +91,7 @@ struct SeeriTour: View {
                 guide
                     .frame(width: min(size.width - 32, 330))
                     .position(guidePoint(size: size, hole: hole))
-                // Level with "Offline bereit", clear of the status bar (the overlay ignores the safe area).
+                // Level with the weather, clear of the status bar (the overlay ignores the safe area).
                 skip
                     .position(x: size.width - 80, y: 72)
             }

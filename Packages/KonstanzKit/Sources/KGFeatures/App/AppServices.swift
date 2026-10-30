@@ -13,6 +13,8 @@ public final class AppServices {
     public let user: UserStore?
     public let location: LocationModel
     public let router = Router()
+    /// The weather in the map's corner: DWD's Konstanz station when online, the last reading offline.
+    public let weather = WeatherModel()
     /// Switches home's tab (set by HomeView), so Favoriten and links can open screens on the map's stack.
     public var selectTab: ((HomeTab) -> Void)?
     /// A sheet for the map to open (saved things, links, a departure); the map clears it.

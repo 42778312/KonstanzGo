@@ -66,8 +66,8 @@ else
     pass "debug switches only in Debug"
 fi
 
-echo "== Offline: no web addresses the app would call"
-hosts=$(strings "$APP/KonstanzGo" | grep -Eo "https?://[a-zA-Z0-9.-]+" | sort -u | grep -v "apple.com\|openstreetmap.org\|w3.org" || true)
+echo "== Offline: no web addresses the app would call (but DWD's weather)"
+hosts=$(strings "$APP/KonstanzGo" | grep -Eo "https?://[a-zA-Z0-9.-]+" | sort -u | grep -v "apple.com\|openstreetmap.org\|w3.org\|opendata.dwd.de" || true)
 [ -z "$hosts" ] && pass "no unexpected hosts in the binary" || warn "hosts in the binary: $(echo $hosts)"
 
 echo "== Translations (English for every German text)"

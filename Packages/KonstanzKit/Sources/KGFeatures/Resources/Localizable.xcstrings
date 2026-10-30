@@ -1203,6 +1203,16 @@
         }
       }
     },
+    "Gemessen um %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measured at %@"
+          }
+        }
+      }
+    },
     "Geradeaus": {
       "localizations": {
         "en": {
@@ -1233,12 +1243,32 @@
         }
       }
     },
+    "Gewitter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "thunderstorm"
+          }
+        }
+      }
+    },
     "Gleich kommt dein Bus": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Your bus is coming"
+          }
+        }
+      }
+    },
+    "Graupel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hail"
           }
         }
       }
@@ -2004,6 +2034,16 @@
         }
       }
     },
+    "Nebel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fog"
+          }
+        }
+      }
+    },
     "Neue Fahrpläne kommen mit App-Updates. Die App lädt nie selbst etwas aus dem Netz.": {
       "localizations": {
         "en": {
@@ -2020,6 +2060,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nothing found for “%@”"
+          }
+        }
+      }
+    },
+    "Nieselregen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "drizzle"
           }
         }
       }
@@ -2274,6 +2324,16 @@
         }
       }
     },
+    "Regen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rain"
+          }
+        }
+      }
+    },
     "Richtung %@": {
       "localizations": {
         "en": {
@@ -2360,6 +2420,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Close"
+          }
+        }
+      }
+    },
+    "Schnee": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "snow"
+          }
+        }
+      }
+    },
+    "Schneeregen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sleet"
           }
         }
       }
@@ -2640,6 +2720,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cross the street"
+          }
+        }
+      }
+    },
+    "Sturmböen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "strong gusts"
           }
         }
       }
@@ -2994,6 +3084,26 @@
         }
       }
     },
+    "Wetter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weather"
+          }
+        }
+      }
+    },
+    "Wetter in Konstanz: %@, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weather in Konstanz: %1$@, %2$@"
+          }
+        }
+      }
+    },
     "Willkommen bei KonstanzGo": {
       "localizations": {
         "en": {
@@ -3174,6 +3284,16 @@
         }
       }
     },
+    "bewölkt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cloudy"
+          }
+        }
+      }
+    },
     "heute": {
       "localizations": {
         "en": {
@@ -3194,6 +3314,16 @@
         }
       }
     },
+    "klar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "clear"
+          }
+        }
+      }
+    },
     "morgen": {
       "localizations": {
         "en": {
@@ -3210,6 +3340,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "to %@"
+          }
+        }
+      }
+    },
+    "starker Regen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "heavy rain"
+          }
+        }
+      }
+    },
+    "teils bewölkt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "partly cloudy"
           }
         }
       }

@@ -19,7 +19,10 @@ final class LaunchTests: XCTestCase {
         let app = launch(language: "de", locale: "de_DE")
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["mapSearch"].label.contains("Wohin möchtest du?"))
-        XCTAssertTrue(app.staticTexts["Offline bereit"].exists)
+        // The weather replaced "Offline bereit": DWD's Konstanz station, or its last reading offline.
+        let weather = app.descendants(matching: .any)["weather"]
+        XCTAssertTrue(weather.waitForExistence(timeout: 15), "no weather in the corner")
+        XCTAssertTrue(weather.label.hasPrefix("Wetter in Konstanz"), weather.label)
         XCTAssertFalse(app.staticTexts["In deiner Nähe"].exists, "the nearby list was removed")
     }
 

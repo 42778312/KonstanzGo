@@ -420,6 +420,7 @@ struct AboutScreen: View {
                 source(Text("Fahrplan", bundle: .module),
                        "\(info?.attribution ?? "Datensatz der NVBW GmbH"), Datenlizenz Deutschland – Namensnennung – Version 2.0")
                 source(Text("Karte, Orte und Wege", bundle: .module), "© OpenStreetMap contributors (ODbL), via Protomaps")
+                source(Text("Wetter", bundle: .module), "Deutscher Wetterdienst, Station Konstanz – CC BY 4.0")
                 KGSectionHeader(Text("Software", bundle: .module))
                 source(Text("Schrift", bundle: .module), "Figtree – SIL Open Font License 1.1")
                 source(Text("Karte", bundle: .module), "MapLibre Native – BSD 2-Clause")

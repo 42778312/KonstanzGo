@@ -113,7 +113,7 @@ final class UserJourneyTests: XCTestCase {
             XCTAssertTrue(next.waitForNonExistence(timeout: 3), "the tour did not end")
             XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 3))
             XCTAssertTrue(app.buttons["mapSearch"].isHittable, "map covered after the tour")
-            XCTAssertTrue(element("Offline bereit").exists)
+            XCTAssertTrue(app.descendants(matching: .any)["weather"].waitForExistence(timeout: 15), "no weather in the corner")
         }
         step("05 Suche nach einem Ort") {
             search("Konzil")

@@ -185,10 +185,11 @@ final class UserJourneyTests: XCTestCase {
         if departure.waitForExistence(timeout: 3) {
             step("15 Abfahrt öffnen: Haltestellen der Fahrt") {
                 departure.tap()
-                XCTAssertTrue(app.staticTexts["HALTESTELLEN"].waitForExistence(timeout: 5) ||
-                              app.staticTexts["Haltestellen"].exists)
-                XCTAssertFalse(app.buttons["Auf der Karte"].exists)
-                app.buttons["Zurück"].firstMatch.tap()
+                XCTAssertTrue(app.buttons["tripBack"].waitForExistence(timeout: 5))
+                tapMap(0.2, 0.2)
+                XCTAssertTrue(app.buttons["foldedBar"].waitForExistence(timeout: 3), "the trip did not fold")
+                app.buttons["foldedBar"].tap()
+                app.buttons["tripBack"].tap()
                 XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5))
             }
         }

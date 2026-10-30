@@ -15,6 +15,8 @@ public final class AppServices {
     public let router = Router()
     /// Switches home's tab (set by HomeView), so Favoriten and links can open screens on the map's stack.
     public var selectTab: ((HomeTab) -> Void)?
+    /// A sheet for the map to open (saved things, links, a departure); the map clears it.
+    var sheetRequest: MapSheet?
     /// Set to start Seeri's tour of the map (after onboarding, or from Mehr); the map clears it.
     public var wantsTour = false
     /// The menu (Seeri in the search bar) is open; screens it opens close it.
@@ -32,18 +34,15 @@ public final class AppServices {
     }
 
     /// Opens a saved or searched thing on the map tab: stop → 09, place → 15, point → 16.
+    /// Opens a saved or recent thing in the map's sheet: a stop with its departures, anything else with the
+    /// connections there.
     public func openOnMap(_ target: SavedTarget) {
         selectTab?(.map)
-        switch target {
-        case let .station(id, _, _): router.open(.stop(id))
-        case let .place(id, name, kind, coordinate):
-            if kind == .street || kind == .address {
-                router.open(.pin(coordinate))
-            } else {
-                router.open(.place(transit.placeSearch.place(id: id)
-                    ?? Place(id: id, name: name, kind: kind, category: "", area: "", coordinate: coordinate)))
-            }
-        case let .point(_, coordinate): router.open(.pin(coordinate))
+        router.home()
+        if case let .station(id, _, _) = target {
+            sheetRequest = .station(id)
+        } else {
+            sheetRequest = .place(target)
         }
     }
 
@@ -55,14 +54,12 @@ public final class AppServices {
         selectTab?(.map)
         switch url.host {
         case "stop":
-            if let id = parts.first.flatMap(Int.init) { router.home(); router.open(.stop(id)) }
+            if let id = parts.first.flatMap(Int.init) { router.home(); sheetRequest = .station(id) }
         case "route":
             let slot = parts.first.flatMap(Favorite.Slot.init(rawValue:)) ?? .home
             guard let favorite = try? user?.slot(slot) else { router.home(); wantsSearch = true; return }
-            let start = here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module), coordinate: MapRegion.center)
             router.home()
-            router.open(.routes(PlanQuery(from: start, to: Endpoint(name: favorite.displayName,
-                                                                    coordinate: favorite.target.coordinate))))
+            sheetRequest = .place(favorite.target)
         default:
             break
         }

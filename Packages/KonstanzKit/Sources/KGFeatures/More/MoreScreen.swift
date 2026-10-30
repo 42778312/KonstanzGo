@@ -12,7 +12,7 @@ enum AppInfo {
 }
 
 /// The menu's own screens.
-enum MoreRoute: Hashable { case favorites, offline, privacy, about }
+enum MoreRoute: Hashable { case favorites, recent, offline, privacy, about }
 
 /// Screen 13 (Mehr), opened from Seeri in the map's search bar as a half sheet: the offline status on top;
 /// Favoriten; notifications, alarm lead time; language (the app is always dark); privacy, help, about; the version
@@ -103,6 +103,8 @@ struct MoreScreen: View {
                                     .padding(.horizontal, KGSpace.screen)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                    case .recent:
+                        RecentScreen(services: services) { path.removeLast() }
                     case .offline: OfflineDataScreen(services: services) { path.removeLast() }
                     case .privacy: PrivacyScreen(services: services) { path.removeLast() }
                     case .about: AboutScreen(info: services.transit.timetableInfo) { path.removeLast() }

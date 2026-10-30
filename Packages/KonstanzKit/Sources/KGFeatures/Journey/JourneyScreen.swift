@@ -12,7 +12,14 @@ struct JourneyScreen: View {
     let journey: Journey
     @State private var now = Date.now
     @State private var savedArrival = false
-    @State private var expanded = true
+    /// Folded to a bar, half the screen, or pulled up full, like the map's own sheets.
+    @State private var level = Level.half
+    @State private var screenHeight: CGFloat = 800
+
+    enum Level { case folded, half, full }
+
+    private var expanded: Bool { level != .folded }
+    private var sheetHeight: CGFloat { level == .full ? screenHeight - 110 : Self.sheetHeight }
 
     private static let sheetHeight: CGFloat = 472
     private static let barHeight: CGFloat = 110
@@ -22,7 +29,7 @@ struct JourneyScreen: View {
             // The whole trip in view: walks and every bus.
             JourneyMap(services: services, journey: journey,
                        bottomInset: expanded ? Self.sheetHeight : Self.barHeight) {
-                if expanded { withAnimation(KGMotion.sheet) { expanded = false } }
+                if expanded { withAnimation(KGMotion.sheet) { level = .folded } }
             }
             HStack(spacing: KGSpace.small) {
                 KGRoundIconButton(.close, label: Text("Zurück zu den Verbindungen", bundle: .module), action: endTrip)
@@ -54,19 +61,29 @@ struct JourneyScreen: View {
                 Spacer()
                 Group {
                     if expanded {
-                        KGSheetSurface { sheet }.frame(height: Self.sheetHeight)
+                        KGSheetSurface { sheet }.frame(height: sheetHeight)
                     } else {
                         bar
                     }
                 }
+                // Swipe up and down between the bar, half and full, one step per swipe.
                 .gesture(DragGesture(minimumDistance: 16).onEnded { drag in
-                    let down = drag.translation.height > 40
-                    let up = drag.translation.height < -40
-                    if down || up { withAnimation(KGMotion.sheet) { expanded = up } }
+                    let step = drag.translation.height
+                    guard abs(step) > 40 else { return }
+                    withAnimation(KGMotion.sheet) {
+                        switch (level, step < 0) {
+                        case (.folded, true): level = .half
+                        case (.half, true): level = .full
+                        case (.full, false): level = .half
+                        case (.half, false): level = .folded
+                        default: break
+                        }
+                    }
                 })
             }
             .ignoresSafeArea(edges: expanded ? .bottom : [])
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { screenHeight = $0 }
         .task {
             while !Task.isCancelled {
                 now = .now
@@ -137,7 +154,7 @@ struct JourneyScreen: View {
         FoldedBar(title: routeTitle,
                   subtitle: KGMinutesValue(departure: journey.end, now: now).text + Text(verbatim: " · ")
                       + Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end)),
-                  onOpen: { withAnimation(KGMotion.sheet) { expanded = true } },
+                  onOpen: { withAnimation(KGMotion.sheet) { level = .half } },
                   onClose: endTrip)
             .padding(.vertical, KGSpace.small)
             .kgGlass(in: .kgRounded(KGRadius.cardLarge))

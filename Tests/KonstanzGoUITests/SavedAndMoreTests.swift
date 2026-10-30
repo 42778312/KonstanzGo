@@ -57,8 +57,9 @@ final class SavedAndMoreTests: XCTestCase {
         XCTAssertTrue(element(labelContains: "Sternenplatz").exists)
         // Leave the store as it was.
         if !wasSaved {
+            // The saved stop opens in the map's sheet, with its star.
             app.buttons["favoriteStop"].firstMatch.tap()
-            XCTAssertTrue(app.buttons["Favorit"].firstMatch.waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5))
             app.buttons["Favorit"].firstMatch.tap()
         }
     }
@@ -75,7 +76,11 @@ final class SavedAndMoreTests: XCTestCase {
         link.tap()
         XCTAssertTrue(element(labelContains: "Bahnhof").waitForExistence(timeout: 5))
         app.buttons["clearRecent"].tap()
-        app.buttons.matching(identifier: "Alle löschen").lastMatch.tap()
+        // The dialog's button, not the page's own (same title, identifier "clearRecent").
+        let confirm = app.buttons.matching(NSPredicate(format: "label == 'Alle löschen' AND identifier != 'clearRecent'"))
+            .firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 3), "the confirmation did not show")
+        confirm.tap()
         XCTAssertTrue(app.staticTexts["Noch nichts gesucht"].waitForExistence(timeout: 5))
     }
 

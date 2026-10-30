@@ -10,7 +10,7 @@ public struct MapScreen: View {
     /// How far the search bar sits above the screen's bottom edge.
     let bottomBar: CGFloat
     let onReplayOnboarding: () -> Void
-    @State private var map = MapModel()
+    @State var map = MapModel()
     @State private var sheet: MapSheet?
     /// Counts long presses, for the haptic tap when a pin drops.
     @State private var drops = 0
@@ -23,27 +23,9 @@ public struct MapScreen: View {
     @State private var showsLayers = false
     @State private var toast: Text?
     @AppStorage("map.showsStops") private var showsStops = true
-    @AppStorage("map.showsVehicles") private var showsVehicles = true
+    @AppStorage("map.showsVehicles") var showsVehicles = true
     /// Buses and trains where the timetable puts them now (offline, no live feed).
-    @State private var vehicles: [VehiclePosition] = []
-
-    /// What the sheet over the map shows.
-    enum MapSheet: Identifiable, Hashable {
-        case search
-        /// Mehr (with Favoriten), from Seeri.
-        case menu
-        case station(Int)
-        case place(SavedTarget)
-
-        var id: String {
-            switch self {
-            case .search: "search"
-            case .menu: "menu"
-            case let .station(id): "station-\(id)"
-            case let .place(target): "place-\(target.name)-\(target.coordinate.latitude)-\(target.coordinate.longitude)"
-            }
-        }
-    }
+    @State var vehicles: [VehiclePosition] = []
 
     public init(services: AppServices, bottomBar: CGFloat, onReplayOnboarding: @escaping () -> Void = {}) {
         self.services = services
@@ -127,6 +109,12 @@ public struct MapScreen: View {
             }
         }
         .onChange(of: services.router.homeCount) { _, _ in sheet = nil }
+        // Saved stops and places, widget links and departures open here, in the map's own sheet.
+        .onChange(of: services.sheetRequest) { _, request in
+            guard let request else { return }
+            services.sheetRequest = nil
+            sheet = request
+        }
         .onChange(of: sheet) { _, new in services.showsMenu = new == .menu }
         .onChange(of: services.showsMenu) { _, shows in
             if !shows, sheet == .menu { sheet = nil }
@@ -267,11 +255,10 @@ public struct MapScreen: View {
         case .search:
             MapSearchSheet(services: services, listens: listens) { pick($0) }
         case .menu:
-            MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
-                .presentationBackground(.thinMaterial)
-                .presentationDetents([.fraction(0.5), .large])
-                .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.5)))
-                .presentationDragIndicator(.visible)
+            FoldingSheet(detent: $detent, title: String(localized: "Mehr", bundle: .module), onClose: { self.sheet = nil }) {
+                MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
+            }
+            .presentationBackground(.thinMaterial)
         case let .station(id):
             if let station = transit.station(id: id) {
                 FoldingSheet(detent: $detent, title: station.shortName, onClose: { self.sheet = nil }) {
@@ -282,6 +269,14 @@ public struct MapScreen: View {
         case let .place(target):
             FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
                 PlaceSheet(services: services, target: target) { self.sheet = nil }
+            }
+        case let .trip(tripID, day, fromStation):
+            if let ride = TripScreen.ride(services: services, tripID: tripID, day: day, fromStation: fromStation) {
+                FoldingSheet(detent: $detent, title: "\(ride.line.name) · \(ride.headsign)",
+                             onClose: { self.sheet = nil }) {
+                    TripPanel(services: services, ride: ride, onBack: { self.sheet = .station(fromStation) },
+                              onClose: { self.sheet = nil })
+                }
             }
         }
     }
@@ -307,8 +302,8 @@ public struct MapScreen: View {
         }
         map.onTapMap = {
             switch sheet {
-            case .station, .place: withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded }
-            case .menu: sheet = nil
+            case .station, .place, .trip, .menu:
+                withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded }
             default: break
             }
         }
@@ -335,6 +330,7 @@ public struct MapScreen: View {
         switch new {
         case let .station(id):
             map.pins = []
+            map.lines = []
             withAnimation(KGMotion.sheet) { map.selectedStationID = id }
             map.insets.bottom = half
             if let station = transit.station(id: id) {
@@ -342,37 +338,27 @@ public struct MapScreen: View {
             }
         case let .place(target):
             map.selectedStationID = nil
+            map.lines = []
             map.pins = [MapPin(id: "place", coordinate: target.coordinate)]
             map.insets.bottom = half
             map.move(CameraMove(center: target.coordinate, zoom: 16))
+        case let .trip(tripID, day, fromStation):
+            map.selectedStationID = nil
+            if let ride = TripScreen.ride(services: services, tripID: tripID, day: day, fromStation: fromStation) {
+                map.lines = Journey(legs: [.ride(ride)]).mapLines
+                map.pins = [MapPin(id: "place", coordinate: ride.alighting.platform.coordinate)]
+                map.insets.bottom = half
+                map.move(.fitting(ride.stops.map(\.platform.coordinate)))
+            }
         case .search, .menu:
             break
         case nil:
             withAnimation(KGMotion.sheet) { map.selectedStationID = nil }
             map.pins = []
+            map.lines = []
             // Nothing open: the user's position goes in the middle of the screen; the search bar floats over
             // the map's bottom edge.
             map.insets.bottom = 0
-        }
-    }
-
-    private static func pinID(_ vehicle: VehiclePosition) -> String { "vehicle-\(vehicle.tripID)" }
-
-    /// Four times a second: where every bus and train is by the timetable, so they glide along their routes.
-    /// Paused while a screen is open over the map.
-    private func moveVehicles() async {
-        let tracker = services.transit.tracker
-        while !Task.isCancelled {
-            if showsVehicles, services.router.path.isEmpty {
-                let now = Date.now
-                let found = await Task.detached(priority: .utility) { (try? tracker.positions(at: now)) ?? [] }.value
-                vehicles = found.filter { MapRegion.contains($0.coordinate) }
-            } else if !showsVehicles, !vehicles.isEmpty {
-                vehicles = []
-            }
-            map.pins = map.pins.filter { !$0.id.hasPrefix("vehicle-") }
-                + vehicles.map { MapPin(id: Self.pinID($0), coordinate: $0.coordinate) }
-            try? await Task.sleep(for: .milliseconds(250))
         }
     }
 
@@ -401,6 +387,30 @@ public struct MapScreen: View {
     }
 }
 
+
+// MARK: - Moving buses and trains
+
+extension MapScreen {
+    static func pinID(_ vehicle: VehiclePosition) -> String { "vehicle-\(vehicle.tripID)" }
+
+    /// Four times a second: where every bus and train is by the timetable, so they glide along their routes.
+    /// Paused while a screen is open over the map.
+    func moveVehicles() async {
+        let tracker = services.transit.tracker
+        while !Task.isCancelled {
+            if showsVehicles, services.router.path.isEmpty {
+                let now = Date.now
+                let found = await Task.detached(priority: .utility) { (try? tracker.positions(at: now)) ?? [] }.value
+                vehicles = found.filter { MapRegion.contains($0.coordinate) }
+            } else if !showsVehicles, !vehicles.isEmpty {
+                vehicles = []
+            }
+            map.pins = map.pins.filter { !$0.id.hasPrefix("vehicle-") }
+                + vehicles.map { MapPin(id: Self.pinID($0), coordinate: $0.coordinate) }
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+    }
+}
 
 /// "Offline bereit", orange "Fahrplan endet bald" in the last 14 days of the timetable (S4.2).
 private struct OfflinePill: View {
@@ -468,6 +478,28 @@ private struct DroppedPin: View {
             }
             withAnimation(.spring(response: 0.42, dampingFraction: 0.55)) { landed = true }
             withAnimation(.easeOut(duration: 0.9).delay(0.25)) { ripple = true }
+        }
+    }
+}
+
+/// What the sheet over the map shows. Every list opened from the map is one of these, so all of them fold to
+/// a bar on a map tap, swipe between half and full height, and close the same way.
+enum MapSheet: Identifiable, Hashable {
+    case search
+    /// Mehr (with Favoriten), from Seeri.
+    case menu
+    case station(Int)
+    case place(SavedTarget)
+    /// A departure picked at a stop: the bus's stops ahead.
+    case trip(tripID: Int, day: ServiceDay, fromStation: Int)
+
+    var id: String {
+        switch self {
+        case .search: "search"
+        case .menu: "menu"
+        case let .station(id): "station-\(id)"
+        case let .place(target): "place-\(target.name)-\(target.coordinate.latitude)-\(target.coordinate.longitude)"
+        case let .trip(tripID, day, station): "trip-\(tripID)-\(day)-\(station)"
         }
     }
 }

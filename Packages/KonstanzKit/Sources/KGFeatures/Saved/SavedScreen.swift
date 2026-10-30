@@ -141,7 +141,8 @@ struct SavedScreen: View {
 
     private var recentLink: some View {
         let count = { _ = services.userVersion; return (try? services.user?.recent().count) ?? 0 }()
-        return Button { services.router.open(.recent); services.selectTab?(.map) } label: {
+        // Inside the menu's own stack, so it stays in the sheet.
+        return NavigationLink(value: MoreRoute.recent) {
             HStack(spacing: KGSpace.medium) {
                 KGIconView(.history, size: 18).foregroundStyle(KGColor.ink)
                     .frame(width: 32, height: 32).background(KGColor.pressed, in: .circle)
@@ -248,10 +249,7 @@ private struct QuickCard: View {
     }
 
     private func go(to favorite: Favorite) {
-        let start = services.here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module), coordinate: MapRegion.center)
-        services.selectTab?(.map)
-        services.router.open(.routes(PlanQuery(from: start, to: Endpoint(name: favorite.displayName,
-                                                                         coordinate: favorite.target.coordinate))))
+        services.openOnMap(favorite.target)
     }
 
     private var title: Text {
@@ -296,7 +294,7 @@ private struct FavoriteStopRow: View {
 
     var body: some View {
         let next = (try? services.transit.departures(at: stationID, from: now, limit: 2)) ?? []
-        Button { services.selectTab?(.map); services.router.open(.stop(stationID)) } label: {
+        Button { services.openOnMap(favorite.target) } label: {
             VStack(alignment: .leading, spacing: KGSpace.small) {
                 HStack {
                     Text(verbatim: favorite.displayName).kgFont(.bodyStrong.weighted(KGFont.extraBold))

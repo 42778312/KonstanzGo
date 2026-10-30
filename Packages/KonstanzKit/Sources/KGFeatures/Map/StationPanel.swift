@@ -115,8 +115,8 @@ struct StationPanel: View {
                 }
                 ForEach(Array(departures.enumerated()), id: \.element.id) { index, departure in
                     Button {
-                        services.router.open(.trip(tripID: departure.tripID, day: ServiceDay(departure.scheduled),
-                                                   fromStation: station.id))
+                        services.sheetRequest = .trip(tripID: departure.tripID, day: ServiceDay(departure.scheduled),
+                                                      fromStation: station.id)
                     } label: {
                         row(departure)
                     }

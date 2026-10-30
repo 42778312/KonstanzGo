@@ -61,18 +61,8 @@ struct TripScreen: View {
         .padding(.top, KGSpace.xxs)
     }
 
-    /// The trip from the chosen stop to its end. Trips after midnight belong to the day before, so that day is
-    /// tried too.
     private func load() async {
-        for candidate in [day, day.adding(days: -1)] {
-            guard let trip = try? services.transit.trip(id: tripID, on: candidate),
-                  let start = trip.stops.firstIndex(where: { $0.station.id == fromStation }),
-                  trip.stops.count - start >= 2 else { continue }
-            let stops = Array(trip.stops[start...])
-            ride = RideLeg(tripID: trip.id, line: trip.line, headsign: trip.headsign, stops: stops,
-                           path: trip.shape)
-            break
-        }
+        ride = Self.ride(services: services, tripID: tripID, day: day, fromStation: fromStation)
         while !Task.isCancelled {
             now = .now
             try? await Task.sleep(for: .seconds(20))
@@ -81,7 +71,22 @@ struct TripScreen: View {
 }
 
 /// The white card: big badge, "Bus 9A", direction; departure time and platform big; status and duration.
-private struct DepartureCard: View {
+extension TripScreen {
+    /// The trip from the chosen stop to its end. Trips after midnight belong to the day before, so that day is
+    /// tried too.
+    static func ride(services: AppServices, tripID: Int, day: ServiceDay, fromStation: Int) -> RideLeg? {
+        for candidate in [day, day.adding(days: -1)] {
+            guard let trip = try? services.transit.trip(id: tripID, on: candidate),
+                  let start = trip.stops.firstIndex(where: { $0.station.id == fromStation }),
+                  trip.stops.count - start >= 2 else { continue }
+            return RideLeg(tripID: trip.id, line: trip.line, headsign: trip.headsign,
+                           stops: Array(trip.stops[start...]), path: trip.shape)
+        }
+        return nil
+    }
+}
+
+struct DepartureCard: View {
     let ride: RideLeg
     let now: Date
 

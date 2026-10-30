@@ -208,7 +208,6 @@ struct PlaceSheet: View {
             HStack {
                 KGTextButton(Text("Spätere Verbindungen", bundle: .module)) { later() }
                 Spacer()
-                KGTextButton(Text("Alle Details", bundle: .module)) { services.router.open(.routes(query)) }
             }
         }
     }

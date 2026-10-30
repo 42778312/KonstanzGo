@@ -6,6 +6,7 @@ import SwiftUI
 /// after asking (plan S16.5).
 struct RecentScreen: View {
     let services: AppServices
+    let onBack: () -> Void
     @State private var confirmingClear = false
     @State private var undo: RecentItem?
 
@@ -17,7 +18,7 @@ struct RecentScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button { services.router.back() } label: {
+                Button(action: onBack) {
                     HStack(spacing: 2) {
                         KGIconView(.back, size: 22)
                         Text("Zurück", bundle: .module).kgFont(.bodyMedium)

@@ -12,7 +12,7 @@ struct RouteScreen: View {
         case .search:
             SearchScreen(services: services)
         case .recent:
-            RecentScreen(services: services)
+            RecentScreen(services: services) { services.router.back() }
         case let .stop(id):
             StopScreen(services: services, stationID: id)
         case let .place(place):

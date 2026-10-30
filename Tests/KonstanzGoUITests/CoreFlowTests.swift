@@ -55,16 +55,21 @@ final class CoreFlowTests: XCTestCase {
         let departure = element(labelContains: "laut Fahrplan")
         guard departure.waitForExistence(timeout: 3) else { return } // nothing runs at this hour
         departure.tap()
-        XCTAssertTrue(app.staticTexts["HALTESTELLEN"].waitForExistence(timeout: 5) ||
-                      app.staticTexts["Haltestellen"].exists, "departure details did not open")
-        XCTAssertFalse(app.buttons["Auf der Karte"].exists, "the map button was removed")
-        app.buttons["Zurück"].firstMatch.tap()
+        // The departure opens in the same sheet over the map, and folds like the stop.
+        let back = app.buttons["tripBack"]
+        XCTAssertTrue(back.waitForExistence(timeout: 5), "departure details did not open")
+        XCTAssertTrue(app.buttons["closeTrip"].exists)
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.2)).tap()
+        XCTAssertTrue(app.buttons["foldedBar"].waitForExistence(timeout: 3), "the trip did not fold")
+        app.buttons["foldedBar"].tap()
+        XCTAssertTrue(back.waitForExistence(timeout: 3))
+        back.tap()
         XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "the stop's sheet should come back")
     }
 
     @MainActor
     func testAlarmDialog() {
-        // Alarms are set on a stop's screen, opened from Favoriten.
+        // Alarms are set on a departure, here reached from the stop saved in Favoriten.
         search("Bahnhof")
         element(labelContains: "Bahnhof").tap()
         let star = app.buttons["Favorit"].firstMatch
@@ -78,6 +83,10 @@ final class CoreFlowTests: XCTestCase {
             .firstMatch
         XCTAssertTrue(saved.waitForExistence(timeout: 5))
         saved.tap()
+        XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "the saved stop did not open on the map")
+        let departure = element(labelContains: "laut Fahrplan")
+        guard departure.waitForExistence(timeout: 3) else { return } // no departures at this hour
+        departure.tap()
         let alarm = app.buttons["setAlarm"]
         guard alarm.waitForExistence(timeout: 5) else { return } // no departures at this hour
         alarm.tap()

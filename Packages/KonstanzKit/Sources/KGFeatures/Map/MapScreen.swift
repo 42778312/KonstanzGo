@@ -112,7 +112,6 @@ public struct MapScreen: View {
         .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles) }
         .task { await moveVehicles() }
         .onAppear(perform: appear)
-        .onDisappear { location.stop() }
         .onChange(of: location.coordinate) { old, point in
             map.userLocation = point
             // The first fix: look at where the user is.
@@ -313,7 +312,10 @@ public struct MapScreen: View {
             default: break
             }
         }
+        // Ask once if nobody has yet (e.g. "Später" in onboarding), so the blue dot can show.
+        if location.access == .unknown { location.requestAccess() }
         location.start()
+        map.userLocation = location.coordinate
         if let point = location.coordinate, MapRegion.contains(point), sheet == nil {
             map.move(CameraMove(center: point, zoom: MapRegion.userZoom, animated: false))
         }

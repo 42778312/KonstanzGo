@@ -2,8 +2,9 @@ import CoreLocation
 import KGCore
 import Observation
 
-/// The user's position for the map and "In deiner Nähe" (plan M6). Updates run only while a screen asks for
-/// them (`start` / `stop`), so nothing tracks in the background (plan T10).
+/// The user's position for the map and every screen with a map (plan M6). GPS needs no internet, so the blue
+/// dot works offline; the phone's last known position shows at once while a fresh fix comes in. Updates run
+/// while the app is open and stop in the background (plan T10).
 @MainActor
 @Observable
 public final class LocationModel: NSObject, CLLocationManagerDelegate {
@@ -25,6 +26,10 @@ public final class LocationModel: NSObject, CLLocationManagerDelegate {
 
     public func start() {
         guard access == .allowed else { return }
+        // The last known position right away: a cold GPS fix without network help can take a while.
+        if coordinate == nil, let last = manager.location {
+            coordinate = Coordinate(latitude: last.coordinate.latitude, longitude: last.coordinate.longitude)
+        }
         manager.startUpdatingLocation()
         #if os(iOS)
         if CLLocationManager.headingAvailable() { manager.startUpdatingHeading() }

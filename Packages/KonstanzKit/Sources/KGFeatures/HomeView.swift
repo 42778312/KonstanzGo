@@ -13,6 +13,7 @@ public struct HomeView: View {
     @State private var services: AppServices?
     @State private var notifications: AlarmNotificationRouter?
     @State private var location = LocationModel()
+    @Environment(\.scenePhase) private var scenePhase
     /// A link that arrived before the offline data was open (the app was started by it).
     @State private var pendingURL: URL?
 
@@ -27,6 +28,11 @@ public struct HomeView: View {
 
     public var body: some View {
         mapTab
+        // The position keeps coming on every screen while the app is open (the trip and route maps show it
+        // too), and stops in the background.
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            if phase == .active { location.start() } else if phase == .background { location.stop() }
+        }
         .onOpenURL { open($0) }
         .onReceive(NotificationCenter.default.publisher(for: .kgDeepLink)) { note in
             if let url = note.object as? URL { open(url) }

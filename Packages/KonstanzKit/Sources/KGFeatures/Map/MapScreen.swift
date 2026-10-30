@@ -350,7 +350,9 @@ public struct MapScreen: View {
         case nil:
             withAnimation(KGMotion.sheet) { map.selectedStationID = nil }
             map.pins = []
-            map.insets.bottom = barSpace
+            // Nothing open: the user's position goes in the middle of the screen; the search bar floats over
+            // the map's bottom edge.
+            map.insets.bottom = 0
         }
     }
 

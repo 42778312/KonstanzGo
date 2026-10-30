@@ -11,9 +11,11 @@ public enum MapRegion {
     public static let maxZoom = 18.0
     /// The start view without a location: the old town between Bahnhof and Sternenplatz.
     public static let center = Coordinate(latitude: 47.6615, longitude: 9.1745)
-    public static let startZoom = 14.6
-    /// Close enough to see stops and their names around the user.
-    public static let userZoom = 15.6
+    /// A little way out, so more of the town shows (changed after testing on a phone).
+    public static let startZoom = 13.8
+    /// The user and the streets and stops around them, with room to see where to go (stops still show
+    /// their bus tiles from 14.5).
+    public static let userZoom = 14.6
 
     public static func contains(_ point: Coordinate) -> Bool {
         (south...north).contains(point.latitude) && (west...east).contains(point.longitude)

@@ -7,6 +7,11 @@ public enum MapRegion {
     public static let north = 47.725
     public static let west = 9.08
     public static let east = 9.23
+    /// How far the map itself reaches (the bundled tiles): the view stops here, with no empty space beyond.
+    static let mapSouth = 47.63
+    static let mapNorth = 47.74
+    static let mapWest = 9.05
+    static let mapEast = 9.26
     public static let minZoom = 12.0
     public static let maxZoom = 18.0
     /// The start view without a location: the old town between Bahnhof and Sternenplatz.

@@ -30,6 +30,10 @@ public struct KGMapView: UIViewRepresentable {
         map.delegate = context.coordinator
         map.minimumZoomLevel = MapRegion.minZoom
         map.maximumZoomLevel = MapRegion.maxZoom
+        // The view slides along the edge of the map instead of a move being refused, which froze it there.
+        map.maximumScreenBounds = MLNCoordinateBounds(
+            sw: CLLocationCoordinate2D(latitude: MapRegion.mapSouth, longitude: MapRegion.mapWest),
+            ne: CLLocationCoordinate2D(latitude: MapRegion.mapNorth, longitude: MapRegion.mapEast))
         map.setCenter(MapRegion.center.location, zoomLevel: MapRegion.startZoom, animated: false)
         map.preferredFramesPerSecond = .maximum
         map.logoView.isHidden = true
@@ -304,12 +308,6 @@ public struct KGMapView: UIViewRepresentable {
         }
 
         // MARK: Camera
-
-        /// Keeps the centre inside Konstanz while panning (plan M3).
-        public func mapView(_ mapView: MLNMapView, shouldChangeFrom oldCamera: MLNMapCamera,
-                            to newCamera: MLNMapCamera) -> Bool {
-            MapRegion.contains(Coordinate(newCamera.centerCoordinate))
-        }
 
         public func mapViewRegionIsChanging(_ mapView: MLNMapView) {
             reportOverlayPoints(mapView)

@@ -69,6 +69,9 @@ public struct KGMapView: UIViewRepresentable {
         if map.contentInset != insets {
             map.setContentInset(insets, animated: true, completionHandler: nil)
         }
+        // Read these before the style has loaded too: SwiftUI only calls this again for what it saw read here,
+        // and an update that stops early at "style not ready" would never hear of new buses.
+        _ = (model.stations, model.closedStations, model.vehicles)
         coordinator.updateStops(on: map)
         coordinator.updateClosedStops(on: map)
         coordinator.updateVehicles(on: map)

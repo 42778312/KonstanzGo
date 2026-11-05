@@ -2364,12 +2364,12 @@
         }
       }
     },
-    "Neue Fahrpläne kommen mit App-Updates. Die App lädt nie selbst etwas aus dem Netz.": {
+    "Neue Fahrpläne kommen mit App-Updates. Aus dem Netz holt die App nur Wetter, Meldungen und Verspätungen.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "New timetables come with app updates. The app never downloads anything itself."
+            "value": "New timetables come with app updates. From the internet the app only gets the weather, notices and delays."
           }
         }
       }

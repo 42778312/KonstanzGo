@@ -91,7 +91,7 @@ struct MoreScreen: View {
                 .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
-            .background(Color.clear)
+            .kgClearNavigation()
             .kgHideNavigationBar()
             .navigationDestination(for: MoreRoute.self) { route in
                 Group {
@@ -110,6 +110,7 @@ struct MoreScreen: View {
                     case .about: AboutScreen(info: services.transit.timetableInfo) { path.removeLast() }
                     }
                 }
+                .kgClearNavigation()
                 .kgHideNavigationBar()
             }
         }
@@ -297,13 +298,12 @@ struct OfflineDataScreen: View {
                 .padding(.horizontal, KGSpace.screen)
                 .frame(minHeight: 62)
                 .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
-                Text("Neue Fahrpläne kommen mit App-Updates. Die App lädt nie selbst etwas aus dem Netz.", bundle: .module)
+                Text("Neue Fahrpläne kommen mit App-Updates. Aus dem Netz holt die App nur Wetter, Meldungen und Verspätungen.", bundle: .module)
                     .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink3)
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .background(Color.clear)
     }
 }
 
@@ -340,7 +340,6 @@ struct PrivacyScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .background(Color.clear)
         .confirmationDialog(Text("Suchverlauf und Fahrten löschen?", bundle: .module), isPresented: $confirming,
                             titleVisibility: .visible) {
             Button(role: .destructive) {
@@ -401,6 +400,7 @@ private struct PolicyText: View {
                 }
                 .padding(KGSpace.large)
             }
+            .kgClearNavigation()
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button { dismiss() } label: { Text("Fertig", bundle: .module) }
@@ -442,7 +442,6 @@ struct AboutScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .background(Color.clear)
     }
 
     private func source(_ title: Text, _ detail: String) -> some View {

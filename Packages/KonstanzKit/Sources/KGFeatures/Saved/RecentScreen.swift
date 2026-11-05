@@ -58,7 +58,7 @@ struct RecentScreen: View {
                 .listStyle(.plain)
             }
         }
-        .background(KGColor.surface.ignoresSafeArea())
+        .scrollContentBackground(.hidden)
         .overlay(alignment: .bottom) {
             if let undo {
                 KGToast(Text("„\(undo.target.name)“ gelöscht", bundle: .module)) {

@@ -83,7 +83,7 @@ struct MapSearchSheet: View {
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
         // See-through like the stop sheet, even pulled up to full height.
-        .presentationBackground(.thinMaterial)
+        .kgGlassSheet()
         .task {
             voice.hints = services.transit.stations.map(\.shortName)
             // From the microphone: listen straight away.

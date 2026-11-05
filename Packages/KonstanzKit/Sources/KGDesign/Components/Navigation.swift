@@ -25,7 +25,7 @@ extension View {
             .presentationBackgroundInteraction(.enabled(upThrough: KGSheetDetent.medium))
             .presentationCornerRadius(KGRadius.card)
             .presentationDragIndicator(.hidden)
-            .presentationBackground(KGColor.surface)
+            .kgGlassSheet()
             .interactiveDismissDisabled()
         }
     }

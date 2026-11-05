@@ -110,7 +110,7 @@ struct RescueSheet: View {
         .scrollIndicators(.hidden)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-        .presentationBackground(.thinMaterial)
+        .kgGlassSheet()
     }
 }
 

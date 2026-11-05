@@ -36,6 +36,34 @@ extension View {
     public func kgGlass<S: Shape>(in shape: S) -> some View {
         modifier(KGGlassModifier(shape: shape))
     }
+
+    /// Every sheet in the app: glass at every height. (A system sheet turns opaque at full height otherwise.)
+    public func kgGlassSheet() -> some View {
+        modifier(KGGlassSheet())
+    }
+
+    /// A navigation stack inside a glass sheet: its screens let the glass through.
+    public func kgClearNavigation() -> some View {
+        containerBackground(.clear, for: .navigation)
+    }
+}
+
+/// The same glass as a half-height sheet, at every height, and without the system's dimming of what's behind,
+/// so the map keeps showing through. Below iOS 26: a blur material.
+private struct KGGlassSheet: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, macOS 26, *) {
+            content
+                .presentationBackgroundInteraction(.enabled)
+                .presentationBackground {
+                    Color.clear.glassEffect(.regular, in: .rect)
+                }
+        } else {
+            content
+                .presentationBackgroundInteraction(.enabled)
+                .presentationBackground(.ultraThinMaterial)
+        }
+    }
 }
 
 private struct KGGlassModifier<S: Shape>: ViewModifier {

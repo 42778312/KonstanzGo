@@ -59,7 +59,7 @@ public struct KGButtonStyle: ButtonStyle {
     private var background: Color {
         switch kind {
         case .primary: KGColor.coral
-        case .secondary, .outline: KGColor.surface
+        case .secondary, .outline: KGColor.glassFill
         }
     }
 
@@ -187,7 +187,7 @@ public struct KGRoundIconButton: View {
     }
 
     private var side: CGFloat { surface == .mapSquare ? KGSize.mapButton : KGSize.touch }
-    private var fill: Color { surface == .plain ? KGColor.card : KGColor.surface }
+    private var fill: Color { surface == .plain ? KGColor.glassFill : KGColor.surface }
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: surface == .mapSquare ? KGRadius.large : side / 2, style: .continuous)
     }
@@ -237,7 +237,7 @@ public struct KGChip: View {
             .foregroundStyle(isOn ? KGColor.surface : KGColor.ink)
             .padding(.horizontal, icon == nil ? KGSpace.screen : KGSpace.medium)
             .frame(minHeight: 36)
-            .background(isOn ? KGColor.ink : KGColor.surface, in: .capsule)
+            .background(isOn ? KGColor.ink : KGColor.glassFill, in: .capsule)
             .frame(minHeight: KGSize.touch)
             .contentShape(.capsule)
         }

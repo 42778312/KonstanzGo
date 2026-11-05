@@ -78,7 +78,7 @@ public struct KGSearchField: View {
             }
             .padding(.horizontal, KGSpace.compact)
             .frame(minHeight: height)
-            .background(KGColor.card, in: .kgRounded(KGRadius.medium))
+            .background(KGColor.glassFill, in: .kgRounded(KGRadius.medium))
             KGTextButton(Text("Abbrechen", bundle: .kgDesign), style: .bodyMedium.weighted(KGFont.regular),
                          action: onCancel)
         }

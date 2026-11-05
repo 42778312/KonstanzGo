@@ -66,6 +66,7 @@ struct WhenSheet: View {
         .padding(.top, KGSpace.large)
         .padding(.bottom, KGSpace.compact)
         .presentationDetents([.large])
+        .kgGlassSheet()
         .presentationCornerRadius(KGRadius.card)
         .onChange(of: mode) { _, new in
             if new != .now, date < .now { date = Self.rounded(.now) }

@@ -37,7 +37,7 @@ public struct KGSegmentedControl<Value: Hashable>: View {
                         .background {
                             if selected {
                                 RoundedRectangle(cornerRadius: thumbRadius, style: .continuous)
-                                    .fill(KGColor.surface)
+                                    .fill(KGColor.pressed)
                                     .shadow(color: .black.opacity(0.12), radius: size == .small ? 2 : 3,
                                             y: size == .small ? 1 : 2)
                                     .matchedGeometryEffect(id: "thumb", in: thumb)
@@ -50,7 +50,7 @@ public struct KGSegmentedControl<Value: Hashable>: View {
             }
         }
         .padding(inset)
-        .background(KGColor.card, in: .kgRounded(size == .small ? KGRadius.compact : KGRadius.medium))
+        .background(KGColor.glassFill, in: .kgRounded(size == .small ? KGRadius.compact : KGRadius.medium))
         .frame(minHeight: KGSize.touch)
         .sensoryFeedback(KGHaptic.selection, trigger: selection)
         .accessibilityElement(children: .contain)
@@ -256,7 +256,7 @@ public struct KGOptionCard: View {
             }
             .padding(.horizontal, KGSpace.mediumLarge)
             .frame(minHeight: 58)
-            .background(isSelected ? KGColor.card : KGColor.surface, in: .kgRounded(KGRadius.option))
+            .background(isSelected ? KGColor.pressed : KGColor.glassFill, in: .kgRounded(KGRadius.option))
             .overlay {
                 RoundedRectangle(cornerRadius: KGRadius.option, style: .continuous)
                     .strokeBorder(isSelected ? KGColor.ink : KGColor.line, lineWidth: 2)

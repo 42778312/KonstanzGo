@@ -275,6 +275,7 @@ private struct TimeSheet: View {
         }
         .padding(KGSpace.large)
         .presentationDetents([.height(380)])
+        .kgGlassSheet()
         .presentationCornerRadius(KGRadius.card)
     }
 }

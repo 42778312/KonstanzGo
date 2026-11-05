@@ -270,7 +270,7 @@ public struct KGTag: View {
         switch tone {
         case .line: KGColor.lineTint
         case .live: KGColor.liveTint
-        case .neutral: KGColor.card
+        case .neutral: KGColor.glassFill
         }
     }
 }

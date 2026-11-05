@@ -48,7 +48,7 @@ struct EndpointPicker: View {
         }
         .presentationDetents([.large])
         .presentationCornerRadius(KGRadius.card)
-        .presentationBackground(.thinMaterial)
+        .kgGlassSheet()
         .onChange(of: query) { _, text in
             let trimmed = text.trimmingCharacters(in: .whitespaces)
             results = trimmed.isEmpty ? [] : Array(services.transit.search(trimmed, near: services.anchor).prefix(25))

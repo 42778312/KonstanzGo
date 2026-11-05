@@ -201,7 +201,7 @@ public struct MapScreen: View {
             FoldingSheet(detent: $detent, title: String(localized: "Mehr", bundle: .module), onClose: { self.sheet = nil }) {
                 MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
             }
-            .presentationBackground(.thinMaterial)
+            .kgGlassSheet()
         case let .station(id):
             if let station = transit.station(id: id) {
                 FoldingSheet(detent: $detent, title: station.shortName, onClose: { self.sheet = nil }) {
@@ -213,7 +213,7 @@ public struct MapScreen: View {
         case .notices:
             NoticesPanel(services: services, onStation: { self.sheet = .station($0) }, onClose: { self.sheet = nil })
                 .presentationDetents([FoldingSheet<EmptyView>.half, .large])
-                .presentationBackgroundInteraction(.enabled(upThrough: FoldingSheet<EmptyView>.half))
+                .kgGlassSheet()
                 .presentationDragIndicator(.visible)
         case let .place(target):
             FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
@@ -588,6 +588,7 @@ private struct LayersSheet: View {
         }
         .padding(KGSpace.large)
         .presentationDetents([.height(250)])
+        .kgGlassSheet()
         .presentationCornerRadius(KGRadius.card)
     }
 }

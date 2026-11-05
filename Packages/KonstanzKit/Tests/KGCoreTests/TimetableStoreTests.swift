@@ -64,6 +64,27 @@ struct TimetableStoreTests {
         #expect(latest != nil)
     }
 
+    /// At 23:30 the next day's service is already in view: the S14 at 00:09 on 6 Nov belongs to the 6th.
+    @Test func lateInTheEveningTheNextServiceDaysDeparturesShow() throws {
+        let from = at(20261105, 23, 30)
+        let departures = try store.departures(at: 15, from: from, limit: 60)
+        #expect(departures.contains { $0.line.name == "S14" && $0.scheduled == at(20261106, 0, 9) })
+        #expect(departures.allSatisfy { $0.scheduled >= from })
+        #expect(departures.map(\.scheduled) == departures.map(\.scheduled).sorted())
+    }
+
+    @Test func nextDirectBusLooksAtTonightsTripsOfTomorrow() throws {
+        let kreuzlingen = 108
+        let next = try #require(try store.nextDirectDeparture(from: 15, to: kreuzlingen, after: at(20261106, 0, 0).addingTimeInterval(-60)))
+        #expect(next.departure.scheduled == at(20261106, 0, 9))
+    }
+
+    @Test func middayStillListsOnlyWhatIsInTheWindow() throws {
+        let departures = try store.departures(at: 15, from: at(20261105, 12, 0), limit: 400, within: 2)
+        #expect(!departures.isEmpty)
+        #expect(departures.allSatisfy { $0.scheduled < at(20261105, 14, 0) })
+    }
+
     @Test func noDeparturesAfterTheTimetableEnds() throws {
         #expect(try store.departures(at: sternenplatz, from: at(20261220, 12, 0)).isEmpty)
     }

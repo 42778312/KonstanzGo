@@ -84,7 +84,7 @@ public final class TimetableStore: Sendable {
             """
         var result: [Departure] = []
         try queue.read { db in
-            for (day, minutes) in clock.runningDays(at: date) {
+            for (day, minutes) in clock.upcomingDays(at: date) where minutes + hours * 60 > 0 {
                 var arguments: [any DatabaseValueConvertible] = [day.yyyymmdd]
                 arguments += platformIDs
                 arguments += [minutes, minutes + hours * 60, limit]
@@ -163,7 +163,7 @@ public final class TimetableStore: Sendable {
     }
 
     /// The next bus from `date` on that goes directly from one station to another, with its arrival
-    /// ("Nach Hause" widget). Looks at today's and yesterday's service (night buses).
+    /// ("Nach Hause" widget). Looks at today's and yesterday's service, and tomorrow's night buses.
     public func nextDirectDeparture(from fromStation: Int, to toStation: Int,
                                     after date: Date) throws -> (departure: Departure, arrival: Date)? {
         let from = platforms(of: fromStation).map(\.id), to = platforms(of: toStation).map(\.id)
@@ -171,16 +171,17 @@ public final class TimetableStore: Sendable {
         let fromList = from.map { _ in "?" }.joined(separator: ","), toList = to.map { _ in "?" }.joined(separator: ",")
         var best: (departure: Departure, arrival: Date)?
         try queue.read { db in
-            for (day, minutes) in clock.runningDays(at: date) {
+            for (day, minutes) in clock.upcomingDays(at: date) {
+                let before = minutes < 0 ? ServiceClock.nightMinutes : Int.max
                 guard let row = try Row.fetchOne(db, sql: """
                     SELECT a.trip_id, a.departure, a.platform_id, b.arrival, t.headsign, t.route_id
                     FROM stop_time a
                     JOIN stop_time b ON b.trip_id = a.trip_id AND b.seq > a.seq AND b.platform_id IN (\(toList))
                     JOIN trip t ON t.id = a.trip_id
                     JOIN service_date sd ON sd.service_id = t.service_id AND sd.date = ?
-                    WHERE a.platform_id IN (\(fromList)) AND a.departure >= ?
+                    WHERE a.platform_id IN (\(fromList)) AND a.departure >= ? AND a.departure < ?
                     ORDER BY b.arrival LIMIT 1
-                    """, arguments: StatementArguments(to + [day.yyyymmdd] + from + [minutes])),
+                    """, arguments: StatementArguments(to + [day.yyyymmdd] + from + [minutes, before])),
                     let line = linesByID[row["route_id"]], let platform = platformsByID[row["platform_id"]]
                 else { continue }
                 let departure = Departure(tripID: row["trip_id"], line: line,

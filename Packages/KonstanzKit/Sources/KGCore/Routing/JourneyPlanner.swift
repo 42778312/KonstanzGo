@@ -176,18 +176,23 @@ public final class JourneyPlanner: Sendable {
         if let cached = cache.withLock({ $0 }), cached.day == day { return cached.scan }
         var connections: [Connection] = []
         try queue.read { db in
-            connections += try Self.connections(db, runningOn: day, yesterday: false)
-            // Yesterday's trips still running after midnight: negative ids, times shifted by a day.
-            connections += try Self.connections(db, runningOn: day.previous, yesterday: true)
+            connections += try Self.connections(db, runningOn: day, dayOffset: 0)
+            // Yesterday's trips still running after midnight, and tomorrow's first night trips.
+            connections += try Self.connections(db, runningOn: day.previous, dayOffset: -1)
+            connections += try Self.connections(db, runningOn: day.next, dayOffset: 1)
         }
         let scan = ConnectionScan(connections: connections, footpaths: footpaths)
         cache.withLock { $0 = (day, scan) }
         return scan
     }
 
-    /// Rides between consecutive stops of every trip running on `day`.
-    private static func connections(_ db: Database, runningOn day: ServiceDay, yesterday: Bool) throws -> [Connection] {
-        let sign = yesterday ? -1 : 1, shift = yesterday ? -ServiceClock.minutesPerDay : 0
+    /// Tomorrow's trips in a scan: their ids are offset by this; yesterday's are negative.
+    private static let tomorrowTrips = 1_000_000
+
+    /// Rides between consecutive stops of every trip running on `day`, in the minutes of the day being planned.
+    private static func connections(_ db: Database, runningOn day: ServiceDay, dayOffset: Int) throws -> [Connection] {
+        let shift = dayOffset * ServiceClock.minutesPerDay
+        let scanID = { (trip: Int) in dayOffset < 0 ? -trip : dayOffset > 0 ? trip + tomorrowTrips : trip }
         let rows = try Row.fetchCursor(db, sql: """
             SELECT st.trip_id, p.station_id, st.arrival, st.departure
             FROM stop_time st
@@ -200,8 +205,9 @@ public final class JourneyPlanner: Sendable {
         var previous: Connection?  // the last call read, as trip / station / departure
         while let row = try rows.next() {
             let trip: Int = row["trip_id"], station: Int = row["station_id"], arrival: Int = row["arrival"]
-            if let last = previous, last.trip == trip, last.departure + shift >= 0 {
-                result.append(Connection(trip: sign * trip, from: last.from, to: station,
+            if let last = previous, last.trip == trip, last.departure + shift >= 0,
+               dayOffset <= 0 || last.departure < ServiceClock.nightMinutes {
+                result.append(Connection(trip: scanID(trip), from: last.from, to: station,
                                          departure: last.departure + shift, arrival: arrival + shift))
             }
             previous = Connection(trip: trip, from: station, to: station, departure: row["departure"], arrival: arrival)
@@ -244,15 +250,17 @@ public final class JourneyPlanner: Sendable {
 
     /// The stops ridden on one trip, from boarding to alighting, with the matching piece of its shape.
     private func rideLeg(trip: Int, from: Int, to: Int, minutes: ClosedRange<Int>, day: ServiceDay) throws -> RideLeg? {
-        // Negative ids are the previous service day's trips (see `connections`).
-        guard let full = try store.trip(id: abs(trip), on: trip < 0 ? day.previous : day) else { return nil }
+        // Yesterday's and tomorrow's trips have their own ids (see `connections`).
+        let id = abs(trip) % Self.tomorrowTrips
+        let service = trip < 0 ? day.previous : trip > Self.tomorrowTrips ? day.next : day
+        guard let full = try store.trip(id: id, on: service) else { return nil }
         let start = clock.date(day, minutes: minutes.lowerBound), end = clock.date(day, minutes: minutes.upperBound)
         guard let first = full.stops.firstIndex(where: { $0.station.id == from && $0.departure == start }),
               let last = full.stops[first...].firstIndex(where: { $0.station.id == to && $0.arrival == end })
         else { return nil }
         let stops = Array(full.stops[first...last])
         let path = Self.slice(full.shape, along: stops.map(\.platform.coordinate))
-        return RideLeg(tripID: abs(trip), line: full.line, headsign: full.headsign, stops: stops, path: path)
+        return RideLeg(tripID: id, line: full.line, headsign: full.headsign, stops: stops, path: path)
     }
 
     /// Walking from one station to another to change buses, starting when the previous ride ends.

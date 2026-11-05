@@ -49,6 +49,8 @@ public struct ServiceDay: Sendable, Hashable, Comparable, Codable, CustomStringC
 /// A time that does not exist (02:30 when the clocks go forward) becomes the next valid one (03:30).
 public struct ServiceClock: Sendable {
     public static let minutesPerDay = 24 * 60
+    /// How far into tomorrow's service "the next bus" looks: its night trips, not the next morning's first bus.
+    public static let nightMinutes = 3 * 60
 
     public var calendar: Calendar
 
@@ -79,6 +81,13 @@ public struct ServiceClock: Sendable {
         let parts = calendar.dateComponents([.hour, .minute], from: date)
         let minutes = (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
         return [(today, minutes), (today.previous, minutes + Self.minutesPerDay)]
+    }
+
+    /// The service days with departures still to come at `date`: the running ones and tomorrow, whose first
+    /// trips leave soon after midnight. Tomorrow's minutes are negative: at 23:30 → -30, so its 00:09 (9) is later.
+    public func upcomingDays(at date: Date) -> [(day: ServiceDay, minutes: Int)] {
+        let running = runningDays(at: date)
+        return running + [(running[0].day.next, running[0].minutes - Self.minutesPerDay)]
     }
 
     /// "14:05" for a timetable time (hours wrap after midnight: 1510 → "01:10").

@@ -45,6 +45,21 @@ struct JourneyPlannerTests {
         }
     }
 
+    /// Just before midnight the next service day's night train is an option, with the right stops and time.
+    @Test func justBeforeMidnightTheNextServiceDaysTripsCount() throws {
+        let kreuzlingen = try endpoint(station: 108)
+        let journeys = try planner.plan(PlanRequest(from: bahnhof, to: kreuzlingen, time: at(20261105, 23, 59)))
+        let ride = try #require(journeys.flatMap(\.rides).first { $0.start == at(20261106, 0, 9) })
+        #expect(ride.line.name == "S14")
+        #expect(ride.stops.last?.station.id == 108)
+    }
+
+    /// The next morning's first bus is not a "next bus" late at night: that's screen 23's job.
+    @Test func tomorrowsMorningIsNotPlannedTonight() throws {
+        let journeys = try planner.plan(PlanRequest(from: sternenplatz, to: universitaet, time: at(20261105, 23, 59)))
+        #expect(journeys.flatMap(\.rides).allSatisfy { $0.start < at(20261106, 3, 0) })
+    }
+
     @Test func sternenplatzToUniversityOnAWednesdayAfternoon() throws {
         let leave = at(20261028, 14, 0)
         let journeys = try planner.plan(PlanRequest(from: sternenplatz, to: universitaet, time: leave))

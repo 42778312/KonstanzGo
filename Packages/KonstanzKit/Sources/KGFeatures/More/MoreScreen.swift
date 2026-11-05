@@ -189,15 +189,18 @@ private struct OfflineCard: View {
     }
 }
 
-/// "Fahrplan bis 12. Dez. 2026 · bereit ohne Netz", or the warning in the last 14 days.
+/// "Fahrplan bis 12. Dez. 2026 · bereit ohne Netz", the warning in the last 14 days, or that it has ended.
 struct OfflineStatusText: View {
     let info: TimetableInfo?
 
     var body: some View {
         if let info, let end = Calendar.konstanz.date(from: info.validUntil) {
-            if end.timeIntervalSinceNow < 14 * 86_400 {
+            switch info.validity() {
+            case .ended:
+                Text("Fahrplan abgelaufen · Bitte App aktualisieren", bundle: .module)
+            case .endingSoon:
                 Text("Fahrplan endet bald · Bitte App aktualisieren", bundle: .module)
-            } else {
+            case .current:
                 Text("Fahrplan bis \(end, format: .dateTime.day().month().year()) · bereit ohne Netz", bundle: .module)
             }
         } else {
@@ -248,8 +251,12 @@ struct OfflineDataScreen: View {
                         .frame(width: 104, height: 104)
                         .overlay(Circle().stroke(KGColor.live, lineWidth: 8).padding(4))
                         VStack(alignment: .leading, spacing: KGSpace.xxs) {
-                            KGTag(Text("Alles aktuell", bundle: .module), tone: .live)
-                            Text("Bereit ohne Netz", bundle: .module).kgFont(.bodyStrong.weighted(KGFont.extraBold))
+                            if services.transit.timetableInfo?.validity() == .ended {
+                                KGTag(Text("Abgelaufen", bundle: .module), tone: .neutral)
+                            } else {
+                                KGTag(Text("Alles aktuell", bundle: .module), tone: .live)
+                                Text("Bereit ohne Netz", bundle: .module).kgFont(.bodyStrong.weighted(KGFont.extraBold))
+                            }
                             OfflineStatusText(info: services.transit.timetableInfo)
                                 .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
                         }

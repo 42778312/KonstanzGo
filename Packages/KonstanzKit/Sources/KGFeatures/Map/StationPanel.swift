@@ -109,7 +109,9 @@ struct StationPanel: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 if departures.isEmpty {
-                    Text("Keine Abfahrt in den nächsten Stunden.", bundle: .module)
+                    (services.transit.timetableInfo?.validity() == .ended
+                        ? Text("Der Fahrplan ist abgelaufen", bundle: .module)
+                        : Text("Keine Abfahrt in den nächsten Stunden.", bundle: .module))
                         .kgFont(.body).foregroundStyle(KGColor.ink2)
                         .frame(maxWidth: .infinity, minHeight: 80)
                 }

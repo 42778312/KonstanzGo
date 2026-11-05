@@ -65,4 +65,12 @@ struct DaysLeftTests {
         #expect(info.daysLeft(from: date(2026, 10, 24)) == 49)
         #expect(info.daysLeft(from: date(2026, 10, 26)) == 47)
     }
+
+    @Test func validityFollowsTheLastDay() throws {
+        let info = try TimetableInfo.read(from: repoData.timetable)
+        #expect(info.validity(on: date(2026, 11, 28)) == .current)
+        #expect(info.validity(on: date(2026, 11, 29)) == .endingSoon)
+        #expect(info.validity(on: date(2026, 12, 12, hour: 23)) == .endingSoon)
+        #expect(info.validity(on: date(2026, 12, 13)) == .ended)
+    }
 }

@@ -33,6 +33,14 @@ public struct TimetableInfo: Sendable, Equatable {
         guard let end = calendar.date(from: validUntil) else { return 0 }
         return calendar.dateComponents([.day], from: calendar.startOfDay(for: today), to: end).day ?? 0
     }
+
+    /// Whether the app's timetable still covers `today`. After it ends, no bus shows anywhere.
+    public enum Validity: Sendable { case current, endingSoon, ended }
+
+    public func validity(on today: Date = .now, calendar: Calendar = .konstanz) -> Validity {
+        let left = daysLeft(from: today, calendar: calendar)
+        return left < 0 ? .ended : left < 14 ? .endingSoon : .current
+    }
 }
 
 extension TimetableInfo {

@@ -113,7 +113,11 @@ struct StopScreen: View {
     // MARK: Lists
 
     @ViewBuilder private func departureList(_ station: Station) -> some View {
-        if departures.isEmpty {
+        if departures.isEmpty, services.transit.timetableInfo?.validity() == .ended {
+            KGEmptyState(.sleepy, title: Text("Der Fahrplan ist abgelaufen", bundle: .module),
+                         message: Text("Bitte aktualisiere die App, dann fahren die Busse wieder.", bundle: .module))
+                .padding(.top, KGSpace.xl)
+        } else if departures.isEmpty {
             KGEmptyState(.sleepy, title: Text("Heute fährt hier nichts mehr", bundle: .module),
                          message: firstBusText)
                 .padding(.top, KGSpace.xl)

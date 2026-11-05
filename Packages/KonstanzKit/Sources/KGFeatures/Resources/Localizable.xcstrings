@@ -231,6 +231,16 @@
         }
       }
     },
+    "Abgelaufen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ended"
+          }
+        }
+      }
+    },
     "Adresse festlegen": {
       "localizations": {
         "en": {
@@ -551,6 +561,16 @@
         }
       }
     },
+    "Bitte aktualisiere die App, dann fahren die Busse wieder.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please update the app and the buses will run again."
+          }
+        }
+      }
+    },
     "Bitte installiere die App neu.": {
       "localizations": {
         "en": {
@@ -727,6 +747,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "The app's timetable only runs until %@. Please update the app."
+          }
+        }
+      }
+    },
+    "Der Fahrplan ist abgelaufen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The timetable has ended"
           }
         }
       }
@@ -959,6 +989,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Timetable"
+          }
+        }
+      }
+    },
+    "Fahrplan abgelaufen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable has ended"
+          }
+        }
+      }
+    },
+    "Fahrplan abgelaufen · Bitte App aktualisieren": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable has ended · Please update the app"
           }
         }
       }

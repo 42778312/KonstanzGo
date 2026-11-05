@@ -429,7 +429,7 @@ extension MapScreen {
 }
 
 /// The map's top corner: the weather, or orange "Fahrplan endet bald" in the last 14 days of the timetable
-/// (S4.2). Nothing before the first reading (a first start without internet). Asks for fresh weather while
+/// and "Fahrplan abgelaufen" after it (S4.2). Nothing before the first reading (a first start without internet). Asks for fresh weather while
 /// the map is open.
 private struct StatusCorner: View {
     let info: TimetableInfo?
@@ -437,8 +437,9 @@ private struct StatusCorner: View {
 
     var body: some View {
         ZStack(alignment: .leading) {
-            if let end = info.flatMap({ Calendar.konstanz.date(from: $0.validUntil) }),
-               end.timeIntervalSinceNow < 14 * 24 * 3600 {
+            if info?.validity() == .ended {
+                KGStatusPill(Text("Fahrplan abgelaufen", bundle: .module), isWarning: true)
+            } else if info?.validity() == .endingSoon {
                 KGStatusPill(Text("Fahrplan endet bald", bundle: .module), isWarning: true)
             } else if let reading = weather.reading {
                 WeatherChip(reading: reading)

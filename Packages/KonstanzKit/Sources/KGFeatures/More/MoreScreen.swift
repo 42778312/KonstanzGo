@@ -370,9 +370,14 @@ private struct PolicyText: View {
                 VStack(alignment: .leading, spacing: KGSpace.medium) {
                     Text("Datenschutzerklärung", bundle: .module).kgFont(.titleL)
                     Text("""
-                        KonstanzGo arbeitet vollständig offline. Fahrpläne, Karte und Suche sind in der App enthalten.
+                        KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.
 
-                        Wir erheben, speichern und übertragen keine personenbezogenen Daten. Es gibt keine Werbung, \
+                        Nur das Wetter auf der Karte kommt aus dem Internet: Die App lädt die Messwerte der \
+                        Wetterstation Konstanz vom Deutschen Wetterdienst (DWD). Dabei sieht der DWD die IP-Adresse \
+                        deines iPhones und speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird \
+                        dabei nicht übertragen.
+
+                        Wir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, \
                         keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.
 
                         Dein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege \

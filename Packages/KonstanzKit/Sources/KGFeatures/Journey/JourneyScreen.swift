@@ -14,7 +14,8 @@ struct JourneyScreen: View {
     @State private var rescueOptions: [RescueOption] = []
     @State private var showsRescue = false
     @State private var isSearching = false
-    /// The user started near the route's start, so their position says something about it.
+    /// The route starts where the user is, so their position says something about it. Otherwise another
+    /// route is looked for from the route itself, not from wherever the phone happens to be.
     @State private var startedNearby = false
     /// What Seeri says just after a rescue.
     @State private var rerouted: Text?
@@ -94,9 +95,7 @@ struct JourneyScreen: View {
             }
         }
         .onAppear {
-            if let here = services.location.coordinate, let first = journey.allPoints.first {
-                startedNearby = here.distance(to: first) < 1_500
-            }
+            startedNearby = journey.startsNear(services.location.coordinate)
             #if DEBUG
             if CommandLine.arguments.contains("-KGCancelFirstRide"), let first = journey.firstRide {
                 services.live.simulateCancelled(trip: first.tripID)

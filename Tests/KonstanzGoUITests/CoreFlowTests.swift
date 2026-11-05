@@ -103,6 +103,35 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["2 Min. vorher"].exists)
     }
 
+    /// The Von the user chose is still there after opening a route and coming back.
+    @MainActor
+    func testChosenStartSurvivesOpeningARoute() {
+        search("Dingelsdorf")
+        let place = element(labelContains: "Dingelsdorf")
+        XCTAssertTrue(place.waitForExistence(timeout: 5))
+        place.tap()
+        let from = app.buttons["placeFrom"]
+        XCTAssertTrue(from.waitForExistence(timeout: 5), "place sheet did not open")
+        from.tap()
+        let field = app.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        field.tap()
+        field.typeText("Sternenpl")
+        let stop = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Sternenplatz'")).firstMatch
+        XCTAssertTrue(stop.waitForExistence(timeout: 5))
+        stop.tap()
+        XCTAssertTrue(from.waitForExistence(timeout: 5))
+        XCTAssertTrue(from.label.contains("Sternenplatz"), from.label)
+        let card = app.buttons["routeCard"].firstMatch
+        guard card.waitForExistence(timeout: 15) else { return } // nothing runs at this hour
+        card.tap()
+        let end = app.buttons["endJourney"]
+        XCTAssertTrue(end.waitForExistence(timeout: 5), "journey did not open")
+        end.tap()
+        XCTAssertTrue(from.waitForExistence(timeout: 5), "did not return to the connections")
+        XCTAssertTrue(from.label.contains("Sternenplatz"), "the chosen start was lost: \(from.label)")
+    }
+
     @MainActor
     func testPlaceRouteToJourney() {
         search("Konzil")

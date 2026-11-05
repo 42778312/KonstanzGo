@@ -9,6 +9,8 @@ struct PlaceSheet: View {
     let services: AppServices
     let target: SavedTarget
     let onClose: () -> Void
+    /// Tells the map the current Von, Nach and time, which outlive this view while a route is open on top.
+    let onQuery: (PlanQuery) -> Void
     @State private var query: PlanQuery
     @State private var journeys: [Journey] = []
     @State private var tags: [String: Set<JourneyTag>] = [:]
@@ -23,14 +25,17 @@ struct PlaceSheet: View {
         var id: Self { self }
     }
 
-    init(services: AppServices, target: SavedTarget, onClose: @escaping () -> Void) {
+    /// `saved`: what the user had chosen before opening a route, to come back to. Without it, from where they are.
+    init(services: AppServices, target: SavedTarget, saved: PlanQuery? = nil, onQuery: @escaping (PlanQuery) -> Void = { _ in },
+         onClose: @escaping () -> Void) {
         self.services = services
         self.target = target
         self.onClose = onClose
+        self.onQuery = onQuery
         let start = services.here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module),
                                               coordinate: MapRegion.center)
-        _query = State(initialValue: PlanQuery(from: start, to: Endpoint(name: target.name,
-                                                                         coordinate: target.coordinate)))
+        _query = State(initialValue: saved ?? PlanQuery(from: start, to: Endpoint(name: target.name,
+                                                                                  coordinate: target.coordinate)))
     }
 
     var body: some View {
@@ -52,6 +57,7 @@ struct PlaceSheet: View {
         }
         .scrollIndicators(.hidden)
         .task(id: query) { await plan() }
+        .onChange(of: query) { _, new in onQuery(new) }
         .task {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(30))

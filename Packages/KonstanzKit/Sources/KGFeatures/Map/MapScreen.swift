@@ -31,6 +31,9 @@ public struct MapScreen: View {
     /// Redraws the open sheet once after it replaced another: iOS brings that one up at full height
     /// until its height is applied again.
     @State private var sheetRedraws = 0
+    /// The Von, Nach and time chosen in the place sheet: it goes away while a route is open over the map, and
+    /// comes back with them. A new sheet starts afresh.
+    @State private var placeQuery: PlanQuery?
     /// How far the search bar is being pulled up, towards the menu.
     @State private var barLift: CGFloat = 0
     @AppStorage("map.showsStops") private var showsStops = true
@@ -189,7 +192,9 @@ public struct MapScreen: View {
                 .presentationDragIndicator(.visible)
         case let .place(target):
             FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
-                PlaceSheet(services: services, target: target) { self.sheet = nil }
+                PlaceSheet(services: services, target: target, saved: placeQuery, onQuery: { placeQuery = $0 }) {
+                    self.sheet = nil
+                }
             }
         case let .trip(tripID, day, fromStation):
             if let ride = TripScreen.ride(services: services, tripID: tripID, day: day, fromStation: fromStation) {
@@ -264,6 +269,7 @@ public struct MapScreen: View {
     private func sheetChanged(_ new: MapSheet?) {
         let half = height * 0.5
         detent = FoldingSheet<EmptyView>.half
+        placeQuery = nil
         Task {
             try? await Task.sleep(for: .milliseconds(350))
             sheetRedraws &+= 1

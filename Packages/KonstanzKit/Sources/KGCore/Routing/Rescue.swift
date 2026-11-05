@@ -177,6 +177,18 @@ extension JourneyPlanner {
 }
 
 extension Journey {
+    /// Whether the route starts where the user is. If they planned it from somewhere else, their position says
+    /// nothing about it: a route from Sternenplatz planned at home is still a route from Sternenplatz.
+    public func startsNear(_ location: Coordinate?) -> Bool {
+        guard let location else { return false }
+        let first: Coordinate? = switch legs.first {
+        case let .walk(walk): walk.path.first
+        case let .ride(ride): ride.boarding.platform.coordinate
+        case nil: nil
+        }
+        return first.map { $0.distance(to: location) < 150 } ?? false
+    }
+
     /// Where the journey ends.
     var target: Endpoint? {
         switch legs.last {

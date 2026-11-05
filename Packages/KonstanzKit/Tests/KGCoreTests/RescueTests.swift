@@ -30,6 +30,14 @@ struct RescueTests {
         return Journey(legs: [])
     }
 
+    func firstPoint(_ journey: Journey) -> Coordinate? {
+        switch journey.legs.first {
+        case let .walk(walk): walk.path.first
+        case let .ride(ride): ride.boarding.platform.coordinate
+        case nil: nil
+        }
+    }
+
     func margin(_ journey: Journey) -> Double {
         journey.rides[1].start.timeIntervalSince(journey.rides[0].end)
     }
@@ -148,6 +156,24 @@ struct RescueTests {
             #expect(option.getOffAt == nil)
             #expect(!option.journey.rides.contains { $0.tripID == journey.rides[0].tripID })
             #expect(option.journey.start >= now.addingTimeInterval(-60))
+        }
+    }
+
+    @Test("a route planned from somewhere else searches from the route, not from the phone")
+    func rescueFromTheRoute() throws {
+        let journey = try journeyWithChange()
+        let start = try #require(firstPoint(journey))
+        #expect(journey.startsNear(start))
+        #expect(!journey.startsNear(nil))
+        let elsewhere = try #require(store.stations.first { $0.coordinate.distance(to: start) > 500 })
+        #expect(!journey.startsNear(elsewhere.coordinate))
+        // Without a position it starts at the stop the route uses.
+        let live = LiveState(cancelled: [journey.rides[0].tripID])
+        let options = try planner.rescue(journey, at: journey.start, live: live, location: nil)
+        let boarding = journey.rides[0].boarding.station.coordinate
+        for option in options {
+            let from = try #require(firstPoint(option.journey))
+            #expect(from.distance(to: boarding) < 1_300, "searched from somewhere else")
         }
     }
 

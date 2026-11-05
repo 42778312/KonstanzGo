@@ -140,6 +140,7 @@ struct DepartureCard: View {
 struct StopsTimeline: View {
     let ride: RideLeg
     let now: Date
+    @Environment(\.stopClosures) private var closures
 
     var body: some View {
         let progress = TripProgress(ride: ride, at: now)
@@ -147,7 +148,8 @@ struct StopsTimeline: View {
             VStack(spacing: 0) {
                 ForEach(Array(ride.stops.enumerated()), id: \.offset) { index, stop in
                     KGTimelineStop(stop.station.shortName, time: index == 0 ? stop.departure : stop.arrival,
-                                   state: state(index, progress: progress))
+                                   state: state(index, progress: progress),
+                                   isSkipped: closures.isClosed(station: stop.station.id, line: ride.line.name))
                 }
             }
         }

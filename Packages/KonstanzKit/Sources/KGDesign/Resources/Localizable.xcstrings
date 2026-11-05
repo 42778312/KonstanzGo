@@ -311,6 +311,16 @@
         }
       }
     },
+    "hält nicht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no stop"
+          }
+        }
+      }
+    },
     "in %lld Minuten": {
       "localizations": {
         "en": {

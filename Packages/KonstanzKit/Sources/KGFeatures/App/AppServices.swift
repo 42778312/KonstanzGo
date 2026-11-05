@@ -15,6 +15,8 @@ public final class AppServices {
     public let router = Router()
     /// The weather in the map's corner: DWD's Konstanz station when online, the last reading offline.
     public let weather = WeatherModel()
+    /// Disruptions and delays: read when online, kept for offline.
+    public let live: LiveModel
     /// Switches home's tab (set by HomeView), so Favoriten and links can open screens on the map's stack.
     public var selectTab: ((HomeTab) -> Void)?
     /// A sheet for the map to open (saved things, links, a departure); the map clears it.
@@ -32,7 +34,20 @@ public final class AppServices {
         self.data = data
         self.transit = transit
         self.location = location
+        live = Self.makeLive(transit)
         user = try? UserStore.shared()
+    }
+
+    private static func makeLive(_ transit: OfflineTransit) -> LiveModel {
+        #if DEBUG
+        // UI tests: a fixed closure instead of whatever the operator says today.
+        if CommandLine.arguments.contains("-KGLiveSample") {
+            let file = URL.temporaryDirectory.appending(path: "live-sample-\(UUID().uuidString).json")
+            return LiveModel(store: transit.store, file: file, fetch: { _ in LiveSample.answer },
+                             onChange: { transit.update(notices: $0) })
+        }
+        #endif
+        return LiveModel(store: transit.store, onChange: { transit.update(notices: $0) })
     }
 
     /// Opens a saved or searched thing on the map tab: stop → 09, place → 15, point → 16.

@@ -93,8 +93,11 @@ public struct KGVehicleMarker: View {
     let isTrain: Bool
     let isKreuzlingen: Bool
     let heading: Angle?
+    let isLive: Bool
 
-    public init(line: String, isTrain: Bool = false, isKreuzlingen: Bool = false, heading: Angle? = nil) {
+    public init(line: String, isTrain: Bool = false, isKreuzlingen: Bool = false, heading: Angle? = nil,
+                isLive: Bool = false) {
+        self.isLive = isLive
         self.line = line
         self.isTrain = isTrain
         self.isKreuzlingen = isKreuzlingen
@@ -124,6 +127,15 @@ public struct KGVehicleMarker: View {
             .background(fill, in: .capsule)
             .overlay(Capsule().strokeBorder(KGColor.white, lineWidth: 1.5))
             .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+            .overlay(alignment: .topTrailing) {
+                // The operator reports this bus: its position follows its real delay.
+                if isLive {
+                    Circle().fill(KGColor.live)
+                        .overlay(Circle().strokeBorder(KGColor.white, lineWidth: 1.5))
+                        .frame(width: 10, height: 10)
+                        .offset(x: 3, y: -3)
+                }
+            }
         }
         .environment(\.colorScheme, .light)
         .accessibilityElement(children: .ignore)

@@ -10,6 +10,8 @@ public final class MapModel {
     /// Stops drawn as a map layer (plan M4).
     public var stations: [Station] = []
     public var selectedStationID: Int?
+    /// Stops the operator says aren't served: drawn with an X.
+    public var closedStations: [Station] = []
     /// Route lines (plan M7): bus parts coral with a white casing, walking parts dotted.
     public var lines: [MapLine] = []
     /// Points that SwiftUI draws over the map (buses, start and end markers), by id.

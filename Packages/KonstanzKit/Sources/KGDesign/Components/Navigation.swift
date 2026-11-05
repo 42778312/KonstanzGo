@@ -159,9 +159,12 @@ public struct KGTimelineStop: View {
     let name: String
     let time: Date
     let state: State
+    /// The bus doesn't stop here at the moment (a closed stop): an X, the name struck through.
+    let isSkipped: Bool
     @SwiftUI.State private var pulsing = false
 
-    public init(_ name: String, time: Date, state: State) {
+    public init(_ name: String, time: Date, state: State, isSkipped: Bool = false) {
+        self.isSkipped = isSkipped
         self.name = name
         self.time = time
         self.state = state
@@ -169,15 +172,25 @@ public struct KGTimelineStop: View {
 
     public var body: some View {
         HStack(spacing: KGSpace.mediumLarge) {
-            marker.frame(width: 22, height: 22)
+            Group {
+                if isSkipped {
+                    KGIconView(.close, size: 11).foregroundStyle(KGColor.white)
+                        .frame(width: 20, height: 20)
+                        .background(KGColor.coralDeep, in: .kgRounded(6))
+                } else {
+                    marker
+                }
+            }
+            .frame(width: 22, height: 22)
             Text(verbatim: name)
                 .kgFont(bold ? .body.weighted(KGFont.bold) : .body)
-                .foregroundStyle(state == .past ? KGColor.ink3 : KGColor.ink)
+                .strikethrough(isSkipped)
+                .foregroundStyle(state == .past || isSkipped ? KGColor.ink3 : KGColor.ink)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            timeText
+            (isSkipped ? Text("hält nicht", bundle: .kgDesign) : timeText)
                 .kgFont(.footnote.weighted(bold ? KGFont.bold : KGFont.regular))
                 .monospacedDigit()
-                .foregroundStyle(timeColor)
+                .foregroundStyle(isSkipped ? KGColor.ink2 : timeColor)
         }
         .frame(minHeight: 38)
         .accessibilityElement(children: .combine)

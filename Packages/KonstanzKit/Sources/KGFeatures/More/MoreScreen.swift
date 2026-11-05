@@ -379,10 +379,10 @@ private struct PolicyText: View {
                     Text("""
                         KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.
 
-                        Nur das Wetter auf der Karte kommt aus dem Internet: Die App lädt die Messwerte der \
-                        Wetterstation Konstanz vom Deutschen Wetterdienst (DWD). Dabei sieht der DWD die IP-Adresse \
-                        deines iPhones und speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird \
-                        dabei nicht übertragen.
+                        Mit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie \
+                        Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse \
+                        deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort \
+                        wird dabei nicht übertragen.
 
                         Wir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, \
                         keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.
@@ -432,6 +432,7 @@ struct AboutScreen: View {
                 source(Text("Fahrplan", bundle: .module),
                        "\(info?.attribution ?? "Datensatz der NVBW GmbH"), Datenlizenz Deutschland – Namensnennung – Version 2.0")
                 source(Text("Karte, Orte und Wege", bundle: .module), "© OpenStreetMap contributors (ODbL), via Protomaps")
+                source(Text("Meldungen und Echtzeit", bundle: .module), "EFA-BW, NVBW GmbH")
                 source(Text("Wetter", bundle: .module), "Deutscher Wetterdienst, Station Konstanz – CC BY 4.0")
                 KGSectionHeader(Text("Software", bundle: .module))
                 source(Text("Schrift", bundle: .module), "Figtree – SIL Open Font License 1.1")

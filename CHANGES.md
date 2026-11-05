@@ -9,8 +9,17 @@ Each change maps to a finding in `REVIEW.md`.
 | R-03 | See git log | Privacy text in German and English names DWD and the IP address | The text said the app sends no personal data | `testMoreOfflineAndPrivacy` |
 | R-05 | See git log | `TimetableInfo.validity`; map, stop sheets and offline screen say the timetable has ended | The app said "ends soon" and "all up to date" with empty lists | `validityFollowsTheLastDay`, simulator run with an expired timetable, `SavedAndMoreTests` |
 
+## Live data and disruptions
+
+| Finding | What changed | Why | Checked by |
+|---|---|---|---|
+| R-07 | `LiveModel` and `EFADepartures`: stop sheets show live times, late buses move on the map, cancelled ones disappear | The app only knew the timetable | `LiveTests`, real data in the simulator |
+| R-08 | `LiveModel` and `EFANotices`: notices are read when online and kept on the phone. Closed stops get an X, leave the planner and are crossed out in stop lists. Seeri announces new notices once; a pill and sheet list them with alternatives | The app knew nothing about disruptions | `LiveTests`, `LiveNoticesTests`, real closure in the simulator |
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).
-- **R-06, R-07, R-08:** timetable updates, live delays and disruptions wait for your decisions on the host and the live source.
+- **R-06:** a whole new timetable still needs an app release. Waiting for your decision on the host.
+- **R-22:** written permission or proper access from NVBW or MobiData BW, before release.
+- **R-23:** real detour streets for buses.
 - **P2 and P3 findings:** still open.

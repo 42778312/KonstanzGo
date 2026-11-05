@@ -64,6 +64,7 @@ public struct KGMapView: UIViewRepresentable {
             map.setContentInset(insets, animated: true, completionHandler: nil)
         }
         coordinator.updateStops(on: map)
+        coordinator.updateClosedStops(on: map)
         coordinator.updateLines(on: map)
         if let step = model.takePendingZoom() {
             map.setZoomLevel(min(max(map.zoomLevel + step, MapRegion.minZoom), MapRegion.maxZoom), animated: true)
@@ -78,6 +79,7 @@ public struct KGMapView: UIViewRepresentable {
         let model: MapModel
         var dark = false
         private var shownStations: [Int] = []
+        private var shownClosed: [Int]?
         private var shownLines: [MapLine] = []
         private var styleReady = false
         /// A camera move waiting for the map to have a size and its style; fitting a route before that lands
@@ -107,6 +109,23 @@ public struct KGMapView: UIViewRepresentable {
         static let stopNamesLayer = "kg-stop-names"
         static let stopRingsLayer = "kg-stop-rings"
         static let stopTileName = "kg-stop-tile"
+        static let closedSource = "kg-closed-stops"
+        static let closedTileName = "kg-closed-tile"
+
+        /// A closed stop on the map: a white X on deep red, the size of the stop tile.
+        static func closedTileImage() -> UIImage? {
+            let tile = KGIconView(.close, size: 15)
+                .foregroundStyle(KGColor.white)
+                .frame(width: 28, height: 28)
+                .background(KGColor.coralDeep, in: .kgRounded(8))
+                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(KGColor.white, lineWidth: 2))
+                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                .padding(4)
+                .environment(\.colorScheme, .light)
+            let renderer = ImageRenderer(content: tile)
+            renderer.scale = 3
+            return renderer.uiImage
+        }
 
         /// The stop marker as an image for the map: 28 pt coral rounded square, white bus, white edge, shadow.
         static func stopTileImage() -> UIImage? {
@@ -287,12 +306,41 @@ public struct KGMapView: UIViewRepresentable {
             style.addLayer(names)
         }
 
+        /// Closed stops: an X on top of the stop, at every zoom, tappable through to the stop below.
+        func updateClosedStops(on map: MLNMapView) {
+            guard styleReady, let style = map.style else { return }
+            let ids = model.closedStations.map(\.id)
+            guard ids != shownClosed else { return }
+            shownClosed = ids
+            let shape = MLNShapeCollectionFeature(shapes: model.closedStations.map { station in
+                let feature = MLNPointFeature()
+                feature.coordinate = station.coordinate.location
+                return feature
+            })
+            if let source = style.source(withIdentifier: Self.closedSource) as? MLNShapeSource {
+                source.shape = shape
+                return
+            }
+            let source = MLNShapeSource(identifier: Self.closedSource, shape: shape, options: nil)
+            style.addSource(source)
+            if let tile = Self.closedTileImage() { style.setImage(tile, forName: Self.closedTileName) }
+            let layer = MLNSymbolStyleLayer(identifier: Self.closedSource, source: source)
+            layer.iconImageName = NSExpression(forConstantValue: Self.closedTileName)
+            layer.iconAllowsOverlap = NSExpression(forConstantValue: true)
+            layer.iconIgnoresPlacement = NSExpression(forConstantValue: true)
+            layer.iconScale = NSExpression(forMLNInterpolating: .zoomLevelVariable, curveType: .linear, parameters: nil,
+                                           stops: NSExpression(forConstantValue: [12: 0.6, 15: 1.0]))
+            style.addLayer(layer)
+        }
+
         public func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
             styleReady = true
             shownStations = []
+            shownClosed = nil
             shownLines = []
             updateLines(on: mapView)
             updateStops(on: mapView)
+            updateClosedStops(on: mapView)
             runQueuedMove(on: mapView)
         }
 

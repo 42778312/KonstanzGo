@@ -24,6 +24,8 @@ public struct MapScreen: View {
     @State private var height: CGFloat = 800
     @State private var showsLayers = false
     @State private var toast: Text?
+    /// Seeri is telling the user about a new notice.
+    @State private var seeriSpeaks = false
     @AppStorage("map.showsStops") private var showsStops = true
     @AppStorage("map.showsVehicles") var showsVehicles = true
     /// Buses and trains where the timetable puts them now (offline, no live feed).
@@ -66,6 +68,7 @@ public struct MapScreen: View {
                 .ignoresSafeArea(edges: .bottom)
             // While a stop or place is open its sheet (or folded bar) takes the bottom.
             if sheet == nil {
+                noticesLayer
                 searchBar
                     .padding(.horizontal, KGSpace.screen)
                     .padding(.bottom, bottomBar)
@@ -95,6 +98,11 @@ public struct MapScreen: View {
         .sheet(item: presented) { sheet in sheetContent(sheet) }
         .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles) }
         .task { await moveVehicles() }
+        .task { await followBuses() }
+        .onChange(of: services.live.closures.stations, initial: true) { _, closed in
+            map.closedStations = closed.compactMap { transit.station(id: $0) }
+        }
+        .environment(\.stopClosures, services.live.closures)
         .onAppear(perform: appear)
         .onChange(of: location.coordinate) { old, point in
             map.userLocation = point
@@ -147,7 +155,8 @@ public struct MapScreen: View {
             ForEach(vehicles) { vehicle in
                 if let point = map.pinPoints[Self.pinID(vehicle)] {
                     KGVehicleMarker(line: vehicle.line.name, isTrain: vehicle.line.mode == .train,
-                                    isKreuzlingen: vehicle.line.isYellowBus, heading: .degrees(vehicle.heading))
+                                    isKreuzlingen: vehicle.line.isYellowBus, heading: .degrees(vehicle.heading),
+                                    isLive: !vehicle.isEstimated)
                         .position(point)
                         .allowsHitTesting(false)
                 }
@@ -157,10 +166,17 @@ public struct MapScreen: View {
                     .position(point)
                     .allowsHitTesting(false)
             }
-            if let point = map.selectedPoint, map.selectedStation != nil {
-                KGStopMarker("", isSelected: true, showsName: false)
-                    .position(point)
-                    .allowsHitTesting(false)
+            if let point = map.selectedPoint, let selected = map.selectedStation {
+                Group {
+                    if map.closedStations.contains(selected) {
+                        ClosedStopMark(size: 44)
+                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(KGColor.white, lineWidth: 3))
+                    } else {
+                        KGStopMarker("", isSelected: true, showsName: false)
+                    }
+                }
+                .position(point)
+                .allowsHitTesting(false)
             }
             if let point = map.pinPoints["place"], let pinned = map.pins.first(where: { $0.id == "place" }) {
                 DroppedPin()
@@ -170,86 +186,6 @@ public struct MapScreen: View {
             }
         }
         .ignoresSafeArea()
-    }
-
-    /// One glass bar: magnifier and "Wohin möchtest du?" open the search, the microphone opens it listening,
-    /// Seeri at the end opens the menu.
-    private var searchBar: some View {
-        HStack(spacing: KGSpace.xs) {
-            Button {
-                listens = false
-                open(.search)
-            } label: {
-                HStack(spacing: KGSpace.medium) {
-                    KGIconView(.search, size: 24).foregroundStyle(KGColor.ink)
-                    Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium.sized(19)).foregroundStyle(KGColor.ink2)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.85)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(.leading, KGSpace.large)
-                .frame(maxHeight: .infinity)
-                .contentShape(.rect)
-            }
-            .buttonStyle(KGPressStyle())
-            .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
-            .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
-            .accessibilityIdentifier("mapSearch")
-            .tourSpot(.search)
-            Button {
-                listens = true
-                open(.search)
-            } label: {
-                KGIconView(.mic, size: 23).foregroundStyle(KGColor.ink2)
-                    .frame(width: 44, height: 44)
-                    .contentShape(.rect)
-            }
-            .buttonStyle(KGPressStyle())
-            .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
-            .accessibilityIdentifier("mapVoiceSearch")
-            .tourSpot(.mic)
-            Button { open(.menu) } label: {
-                SeeriAlive(.happy, detail: .compact)
-                    .frame(width: 46, height: 50)
-                    .frame(width: 54, height: 54)
-                    .contentShape(.rect)
-            }
-            .buttonStyle(KGPressStyle())
-            .accessibilityLabel(Text("Mehr", bundle: .module))
-            .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
-            .accessibilityIdentifier("seeriMenu")
-            .tourSpot(.seeri)
-            .padding(.trailing, KGSpace.xs)
-        }
-        .frame(height: Self.searchBarHeight)
-        .kgGlass(in: Capsule())
-        .kgShadow(.search, in: Capsule())
-    }
-
-    /// Layers and my location, one glass column.
-    private var controls: some View {
-        VStack(spacing: 0) {
-            controlButton(.layers, label: Text("Kartenebenen", bundle: .module), tint: KGColor.ink) {
-                showsLayers = true
-            }
-            Rectangle().fill(KGColor.line).frame(width: 26, height: 1)
-            controlButton(.locate, label: Text("Mein Standort", bundle: .module), tint: KGColor.location) {
-                locate()
-            }
-        }
-        .kgGlass(in: Capsule())
-        .kgShadow(.floating, in: Capsule())
-        .tourSpot(.controls)
-    }
-
-    private func controlButton(_ icon: KGIcon, label: Text, tint: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            KGIconView(icon, size: 21).foregroundStyle(tint)
-                .frame(width: KGSize.mapButton, height: KGSize.mapButton)
-                .contentShape(.rect)
-        }
-        .buttonStyle(KGPressStyle())
-        .accessibilityLabel(label)
     }
 
     @ViewBuilder private func sheetContent(_ sheet: MapSheet) -> some View {
@@ -264,9 +200,16 @@ public struct MapScreen: View {
         case let .station(id):
             if let station = transit.station(id: id) {
                 FoldingSheet(detent: $detent, title: station.shortName, onClose: { self.sheet = nil }) {
-                    StationPanel(services: services, station: station) { self.sheet = nil }
+                    StationPanel(services: services, station: station, onClose: { self.sheet = nil },
+                                 onStation: { self.sheet = .station($0) })
                         .padding(.top, KGSpace.large)
                 }
+            }
+        case .notices:
+            FoldingSheet(detent: $detent, title: String(localized: "Meldungen", bundle: .module),
+                         onClose: { self.sheet = nil }) {
+                NoticesPanel(services: services, onStation: { self.sheet = .station($0) },
+                             onClose: { self.sheet = nil })
             }
         case let .place(target):
             FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
@@ -365,7 +308,7 @@ public struct MapScreen: View {
                 map.insets.bottom = half
                 map.move(.fitting(ride.stops.map(\.platform.coordinate)))
             }
-        case .search, .menu:
+        case .search, .menu, .notices:
             break
         case nil:
             closedAt = .now
@@ -404,10 +347,135 @@ public struct MapScreen: View {
 }
 
 
+// MARK: - Controls
+
+extension MapScreen {
+    /// Seeri's message over the search bar, and the pill that stays while something's going on.
+    fileprivate var noticesLayer: some View {
+        VStack(alignment: .leading, spacing: KGSpace.small) {
+            if !services.live.active.isEmpty {
+                NoticesPill(count: services.live.active.count) { open(.notices) }
+                    .transition(.opacity)
+            }
+            if !touring {
+                SeeriNoticeBubble(services: services, isSpeaking: $seeriSpeaks) { open(.notices) }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, KGSpace.screen)
+        .padding(.bottom, barSpace + KGSpace.large + 12)
+        .frame(maxHeight: .infinity, alignment: .bottom)
+        .ignoresSafeArea(edges: .bottom)
+        .task { await services.live.keepFresh() }
+    }
+
+    /// One glass bar: magnifier and "Wohin möchtest du?" open the search, the microphone opens it listening,
+    /// Seeri at the end opens the menu.
+    fileprivate var searchBar: some View {
+        HStack(spacing: KGSpace.xs) {
+            Button {
+                listens = false
+                open(.search)
+            } label: {
+                HStack(spacing: KGSpace.medium) {
+                    KGIconView(.search, size: 24).foregroundStyle(KGColor.ink)
+                    Text("Wohin möchtest du?", bundle: .module).kgFont(.bodyMedium.sized(19)).foregroundStyle(KGColor.ink2)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.leading, KGSpace.large)
+                .frame(maxHeight: .infinity)
+                .contentShape(.rect)
+            }
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
+            .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
+            .accessibilityIdentifier("mapSearch")
+            .tourSpot(.search)
+            Button {
+                listens = true
+                open(.search)
+            } label: {
+                KGIconView(.mic, size: 23).foregroundStyle(KGColor.ink2)
+                    .frame(width: 44, height: 44)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
+            .accessibilityIdentifier("mapVoiceSearch")
+            .tourSpot(.mic)
+            Button { open(.menu) } label: {
+                SeeriAlive(seeriSpeaks ? .excited : .happy, detail: .compact)
+                    .frame(width: 46, height: 50)
+                    .scaleEffect(seeriSpeaks ? 1.12 : 1, anchor: .bottom)
+                    .animation(KGMotion.pop, value: seeriSpeaks)
+                    .frame(width: 54, height: 54)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(KGPressStyle())
+            .accessibilityLabel(Text("Mehr", bundle: .module))
+            .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
+            .accessibilityIdentifier("seeriMenu")
+            .tourSpot(.seeri)
+            .padding(.trailing, KGSpace.xs)
+        }
+        .frame(height: Self.searchBarHeight)
+        .kgGlass(in: Capsule())
+        .kgShadow(.search, in: Capsule())
+    }
+
+    /// Layers and my location, one glass column.
+    fileprivate var controls: some View {
+        VStack(spacing: 0) {
+            controlButton(.layers, label: Text("Kartenebenen", bundle: .module), tint: KGColor.ink) {
+                showsLayers = true
+            }
+            Rectangle().fill(KGColor.line).frame(width: 26, height: 1)
+            controlButton(.locate, label: Text("Mein Standort", bundle: .module), tint: KGColor.location) {
+                locate()
+            }
+        }
+        .kgGlass(in: Capsule())
+        .kgShadow(.floating, in: Capsule())
+        .tourSpot(.controls)
+    }
+
+    private func controlButton(_ icon: KGIcon, label: Text, tint: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            KGIconView(icon, size: 21).foregroundStyle(tint)
+                .frame(width: KGSize.mapButton, height: KGSize.mapButton)
+                .contentShape(.rect)
+        }
+        .buttonStyle(KGPressStyle())
+        .accessibilityLabel(label)
+    }
+}
+
 // MARK: - Moving buses and trains
 
 extension MapScreen {
     static func pinID(_ vehicle: VehiclePosition) -> String { "vehicle-\(vehicle.tripID)" }
+
+    /// The busiest stops, once a minute: most buses pass them, and their reports move the buses on the map.
+    func followBuses() async {
+        let transit = services.transit, live = services.live
+        while !Task.isCancelled {
+            if showsVehicles, services.router.path.isEmpty {
+                for hub in Self.hubs {
+                    let now = Date.now
+                    let departures = await Task.detached(priority: .utility) {
+                        (try? transit.store.departures(at: hub, from: now, limit: 60, within: 2)) ?? []
+                    }.value
+                    await live.followHub(station: hub, departures: departures, at: now)
+                }
+            }
+            try? await Task.sleep(for: .seconds(60))
+        }
+    }
+
+    /// Konstanz Bahnhof and Sternenplatz.
+    private static let hubs = [15, 99]
 
     /// Four times a second: where every bus and train is by the timetable, so they glide along their routes.
     /// Paused while a screen is open over the map.
@@ -416,7 +484,10 @@ extension MapScreen {
         while !Task.isCancelled {
             if showsVehicles, services.router.path.isEmpty {
                 let now = Date.now
-                let found = await Task.detached(priority: .utility) { (try? tracker.positions(at: now)) ?? [] }.value
+                let delays = services.live.tripDelays, cancelled = services.live.cancelledTrips
+                let found = await Task.detached(priority: .utility) {
+                    (try? tracker.positions(at: now, delays: delays, cancelled: cancelled)) ?? []
+                }.value
                 vehicles = found.filter { MapRegion.contains($0.coordinate) }
             } else if !showsVehicles, !vehicles.isEmpty {
                 vehicles = []
@@ -513,6 +584,8 @@ enum MapSheet: Identifiable, Hashable {
     case search
     /// Mehr (with Favoriten), from Seeri.
     case menu
+    /// What the operator says is going on.
+    case notices
     case station(Int)
     case place(SavedTarget)
     /// A departure picked at a stop: the bus's stops ahead.
@@ -529,6 +602,7 @@ enum MapSheet: Identifiable, Hashable {
         switch self {
         case .search: "search"
         case .menu: "menu"
+        case .notices: "notices"
         case let .station(id): "station-\(id)"
         case let .place(target): "place-\(target.name)-\(target.coordinate.latitude)-\(target.coordinate.longitude)"
         case let .trip(tripID, day, station): "trip-\(tripID)-\(day)-\(station)"

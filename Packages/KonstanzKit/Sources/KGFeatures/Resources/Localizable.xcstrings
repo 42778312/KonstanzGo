@@ -51,6 +51,16 @@
         }
       }
     },
+    "%lld Meldungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld notices"
+          }
+        }
+      }
+    },
     "%lld Min.": {
       "localizations": {
         "en": {
@@ -91,6 +101,16 @@
         }
       }
     },
+    "%lld neue Meldungen zu den Bussen. Schau kurz rein.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld new notices about the buses. Have a quick look."
+          }
+        }
+      }
+    },
     "%lld von %lld Haltestellen": {
       "localizations": {
         "en": {
@@ -107,6 +127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld× change · from %2$@"
+          }
+        }
+      }
+    },
+    "1 Meldung": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 notice"
           }
         }
       }
@@ -241,6 +271,26 @@
         }
       }
     },
+    "Achtung, gerade kein Halt: %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heads up, no stop right now: %@."
+          }
+        }
+      }
+    },
+    "Achtung, gerade kein Halt: %@. Mehr in den Meldungen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heads up, no stop right now: %@. More in the notices."
+          }
+        }
+      }
+    },
     "Adresse festlegen": {
       "localizations": {
         "en": {
@@ -357,6 +407,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "All set"
+          }
+        }
+      }
+    },
+    "Alles läuft nach Plan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything's running to plan"
           }
         }
       }
@@ -557,6 +617,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prefer"
+          }
+        }
+      }
+    },
+    "Bis %@, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Until %1$@, %2$@"
           }
         }
       }
@@ -1183,6 +1253,16 @@
         }
       }
     },
+    "Fällt aus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelled"
+          }
+        }
+      }
+    },
     "Für Linie %@ nach %@ um %@": {
       "localizations": {
         "en": {
@@ -1259,6 +1339,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Measured at %@"
+          }
+        }
+      }
+    },
+    "Gerade gibt es keine Meldungen zu den Bussen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no notices about the buses right now."
           }
         }
       }
@@ -1564,6 +1654,16 @@
         }
       }
     },
+    "Hält hier gerade nicht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not stopping here right now"
+          }
+        }
+      }
+    },
     "Ich höre zu …": {
       "localizations": {
         "en": {
@@ -1694,6 +1794,16 @@
         }
       }
     },
+    "Kein Halt: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No stop: %@"
+          }
+        }
+      }
+    },
     "Kein Netz? Kein Problem.": {
       "localizations": {
         "en": {
@@ -1774,12 +1884,12 @@
         }
       }
     },
-    "KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nNur das Wetter auf der Karte kommt aus dem Internet: Die App lädt die Messwerte der Wetterstation Konstanz vom Deutschen Wetterdienst (DWD). Dabei sieht der DWD die IP-Adresse deines iPhones und speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird dabei nicht übertragen.\n\nWir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Er verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Mehr › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
+    "KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nMit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird dabei nicht übertragen.\n\nWir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Er verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Mehr › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "KonstanzGo works offline. Timetables, map and search are part of the app.\n\nOnly the weather on the map comes from the internet: the app downloads the readings of the Konstanz weather station from the Deutscher Wetterdienst (DWD). DWD sees your iPhone's IP address and says it stores it for at most 7 days. Your location is not sent.\n\nWe ourselves don't collect or store any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour location is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under More › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
+            "value": "KonstanzGo works offline. Timetables, map and search are part of the app.\n\nWith internet the app also gets the weather from the Deutscher Wetterdienst (DWD), and notices and delays from NVBW's EFA-BW. These services see your iPhone's IP address; DWD says it stores it for at most 7 days. Your location is not sent.\n\nWe ourselves don't collect or store any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour location is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under More › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
           }
         }
       }
@@ -1894,6 +2004,16 @@
         }
       }
     },
+    "Live": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live"
+          }
+        }
+      }
+    },
     "Los": {
       "localizations": {
         "en": {
@@ -1974,6 +2094,16 @@
         }
       }
     },
+    "Mehrere Linien": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Several lines"
+          }
+        }
+      }
+    },
     "Mein Standort": {
       "localizations": {
         "en": {
@@ -2000,6 +2130,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "My places"
+          }
+        }
+      }
+    },
+    "Meldungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notices"
+          }
+        }
+      }
+    },
+    "Meldungen und Echtzeit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notices and live times"
           }
         }
       }
@@ -2104,6 +2254,26 @@
         }
       }
     },
+    "Neue Meldung zu Linie %@. Schau kurz rein.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New notice about line %@. Have a quick look."
+          }
+        }
+      }
+    },
+    "Neue Meldung zu den Bussen. Schau kurz rein.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New notice about the buses. Have a quick look."
+          }
+        }
+      }
+    },
     "Nichts gefunden für „%@“": {
       "localizations": {
         "en": {
@@ -2180,6 +2350,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No address yet"
+          }
+        }
+      }
+    },
+    "Noch keine Daten. Dafür braucht die App einmal Internet.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data yet. The app needs internet once for this."
           }
         }
       }
@@ -2270,6 +2450,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Saved offline"
+          }
+        }
+      }
+    },
+    "Offline · letzter Stand: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · last update: %@"
           }
         }
       }
@@ -2664,6 +2854,16 @@
         }
       }
     },
+    "Stand: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updated: %@"
+          }
+        }
+      }
+    },
     "Standort": {
       "localizations": {
         "en": {
@@ -2720,6 +2920,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Swap start and destination"
+          }
+        }
+      }
+    },
+    "Stattdessen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instead"
           }
         }
       }
@@ -3164,6 +3374,16 @@
         }
       }
     },
+    "Wird nicht angefahren": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not being served"
+          }
+        }
+      }
+    },
     "Wo arbeitest du?": {
       "localizations": {
         "en": {
@@ -3430,6 +3650,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Opens the list again"
+          }
+        }
+      }
+    },
+    "Öffnet die Meldungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the notices"
           }
         }
       }

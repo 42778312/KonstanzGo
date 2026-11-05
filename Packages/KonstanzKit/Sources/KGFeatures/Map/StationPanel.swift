@@ -8,6 +8,8 @@ struct StationPanel: View {
     let services: AppServices
     let station: Station
     let onClose: () -> Void
+    /// Opens another stop (the alternatives to a closed one).
+    var onStation: (Int) -> Void = { _ in }
     @State private var lines: [Line] = []
     @State private var line: Line.ID?
     @State private var from = Date.now
@@ -17,6 +19,9 @@ struct StationPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
+            if let closure = services.live.notices(forStation: station.id).first(where: \.closesStops) {
+                ClosureBanner(services: services, notice: closure, onStation: onStation).padding(.top, KGSpace.small)
+            }
             lineChips.padding(.top, KGSpace.medium)
             HStack {
                 Button { choosingTime = true } label: {
@@ -34,8 +39,17 @@ struct StationPanel: View {
                 .accessibilityIdentifier("stationTime")
                 Spacer()
                 // Honest about what the times are (plan 0.3).
-                Label { Text("Fahrplanzeiten", bundle: .module) } icon: { KGIconView(.timer, size: 13) }
-                    .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.ink2)
+                if departures.contains(where: \.status.isLive) {
+                    HStack(spacing: KGSpace.xxs) {
+                        Circle().fill(KGColor.live).frame(width: 8, height: 8)
+                        Text("Live", bundle: .module)
+                    }
+                    .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.live)
+                    .accessibilityIdentifier("liveTimes")
+                } else {
+                    Label { Text("Fahrplanzeiten", bundle: .module) } icon: { KGIconView(.timer, size: 13) }
+                        .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.ink2)
+                }
             }
             .padding(.top, KGSpace.medium)
             list
@@ -45,10 +59,8 @@ struct StationPanel: View {
             lines = (try? services.transit.lines(at: station.id)) ?? []
             line = nil
             from = .now
-            load()
         }
-        .onChange(of: line) { _, _ in load() }
-        .onChange(of: from) { _, _ in load() }
+        .task(id: "\(station.id)|\(line ?? -1)|\(from.timeIntervalSince1970)") { await followDepartures() }
         .sheet(isPresented: $choosingTime) { TimeSheet(date: $from) }
     }
 
@@ -136,12 +148,14 @@ struct StationPanel: View {
 
     private func row(_ departure: Departure) -> some View {
         HStack(spacing: KGSpace.medium) {
-            Text(verbatim: KGStrings.clock(departure.expected)).kgFont(.minutes).foregroundStyle(KGColor.ink)
-                .frame(minWidth: 50, alignment: .leading)
+            DepartureTime(departure: departure).frame(minWidth: 50, alignment: .leading)
             KGLineBadge(departure.line.name, size: .small)
             VStack(alignment: .leading, spacing: 1) {
-                Text(verbatim: departure.headsign).kgFont(.bodyStrong).foregroundStyle(KGColor.ink).lineLimit(1)
-                if let detail = detail(departure) {
+                Text(verbatim: departure.headsign).kgFont(.bodyStrong)
+                    .foregroundStyle(departure.isOff ? KGColor.ink2 : KGColor.ink).lineLimit(1)
+                if let reason = departure.offReason {
+                    reason.kgFont(.caption).foregroundStyle(KGColor.coral).lineLimit(1)
+                } else if let detail = detail(departure) {
                     Text(verbatim: detail).kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
                         .lineLimit(1)
                 }
@@ -177,9 +191,55 @@ struct StationPanel: View {
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
-    private func load() {
-        let all = (try? services.transit.departures(at: station.id, from: from, limit: 60)) ?? []
-        departures = Array(all.filter { line == nil || $0.line.id == line }.prefix(30))
+    private func load() -> [Departure] {
+        let start = max(from, min(.now, from.addingTimeInterval(3600)))
+        let all = (try? services.transit.departures(at: station.id, from: start, limit: 60)) ?? []
+        return Array(all.filter { line == nil || $0.line.id == line }.prefix(30))
+    }
+
+    /// The timetable at once; then, for departures around now, what's really happening, every 30 s.
+    private func followDepartures() async {
+        departures = load()
+        guard abs(from.timeIntervalSinceNow) < 3600 else { return }
+        while !Task.isCancelled {
+            let shown = await services.live.live(load(), atStation: station.id)
+            guard !Task.isCancelled else { return }
+            withAnimation(KGMotion.pop) { departures = shown }
+            try? await Task.sleep(for: .seconds(30))
+        }
+    }
+}
+
+extension Departure {
+    /// This bus won't come to this stop.
+    var isOff: Bool { status == .stopClosed || status == .cancelled }
+
+    var offReason: Text? {
+        switch status {
+        case .stopClosed: Text("Hält hier gerade nicht", bundle: .module)
+        case .cancelled: Text("Fällt aus", bundle: .module)
+        case .scheduled, .live: nil
+        }
+    }
+}
+
+/// When the bus comes: the timetable time, struck through under the real one when it's late.
+private struct DepartureTime: View {
+    let departure: Departure
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(verbatim: KGStrings.clock(departure.expected)).kgFont(.minutes)
+                .strikethrough(departure.isOff)
+                .foregroundStyle(departure.isOff ? KGColor.ink3
+                    : departure.status.delayMinutes > 0 ? KGColor.warn
+                    : departure.status.isLive ? KGColor.live : KGColor.ink)
+                .contentTransition(.numericText())
+            if departure.status.delayMinutes > 0 {
+                Text(verbatim: KGStrings.clock(departure.scheduled)).kgFont(.caption.weighted(KGFont.regular))
+                    .strikethrough().foregroundStyle(KGColor.ink3)
+            }
+        }
     }
 }
 

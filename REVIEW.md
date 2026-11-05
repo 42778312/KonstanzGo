@@ -17,7 +17,10 @@ Fixes so far are on `review/brief`; see `CHANGES.md`.
 | R-04 | **Fixed**, in departure lists, the next direct bus and the planner |
 | R-05 | **Fixed.** Checked in the simulator with a copy of the app holding an expired timetable. The widgets aren't changed |
 | R-01 | **Blocked:** NVBW hasn't published a newer file yet, and shipping needs a paid Apple account |
-| R-06, R-07, R-08 | **Deferred:** waiting for your decisions on the host and the live source |
+| R-06 | **Open:** a whole new timetable still needs a release. Waiting for your decision on the host |
+| R-07 | **Built with EFA-BW:** live times on the stop sheet, and reported delays on the map's buses. The trip card and the route list still show timetable times. See R-22 |
+| R-08 | **Built with EFA-BW:** X on the map, Seeri's message, notices list, alternatives, planner avoids closed stops, auto-clear at the end time. Real detour streets aren't available: see R-23. See R-22 |
+| R-15, R-18 | **Fixed:** contact in the `User-Agent`; buses with a live report get a green dot |
 
 ## Findings
 
@@ -47,6 +50,15 @@ Severity: `P0` data loss, crash, wrong times, or broken offline · `P1` correctn
 | R-20 | P3 | Data | Leftover Android table `room_master_table` in the iOS database, and seconds are dropped from times. Both harmless today. | `.schema`; `import_gtfs.py:57-59` | Drop the table at the next rebuild; keep minutes. | S |
 | R-21 | P3 | Text | The About screen credit is in English ("© OpenStreetMap contributors") where the brief wants "© OpenStreetMap-Mitwirkende". A real-time credit will be needed with R-07. | `MoreScreen.swift:422` | Update the text. | S |
 
+### Found while building live data
+
+| ID | Severity | Area | Finding | Evidence | Fix | Effort |
+|---|---|---|---|---|---|---|
+| R-22 | P1 | Live | Live data depends on EFA-BW, called directly from every phone. It's public but undocumented, with no guarantee and no written permission for this use. If it changes or blocks the app, the app falls back to timetable times and the last notices. | `KGCore/Live/LiveModel.swift`; `KGCore/Live/ServiceNotice.swift` | Before release, ask NVBW or MobiData BW for permission or proper GTFS-RT access. Only `LiveModel` and the two parsers would change. | M |
+| R-23 | P2 | Map | A bus on a diversion is still drawn on its normal road, and route lines still pass the closed stop. The feed says which stops are closed but not which streets the bus takes instead. | Feed sample of 5 Nov 2026; `KGCore/Vehicles/VehicleTracker.swift` | Needs detour geometry, for example from GTFS-RT shapes or the operator. | L |
+| R-24 | P2 | Text | `ems-1014946` (line 6) says "this stop" without naming one, so it's only listed and draws no X. Text rules decide whether a named stop is closed, and could miss other wordings. | `saysClosed` in `ServiceNotice.swift` | Fails safe by listing the notice. Review the wordings as more notices appear. | S |
+| R-25 | P3 | Data | `departuresByLine` and `StopScreen` aren't marked for closures or live times; the map's stop sheet is. | `KGCore/TransitService.swift` | Mark them too, if `StopScreen` stays in use. | S |
+
 ## Top 5 fixes, in order
 
 1. **R-02 stable numbers:** must come first, because every later data update would otherwise break saved stops and alarms.
@@ -64,10 +76,10 @@ R-07 and R-08 are the largest features, and they need your decision on the live 
 | A1 | Full timetable offline | ✅ Partly verified | The weather is the only network code and fails safely. **Not tested in real airplane mode:** the simulator shares the Mac's network, so this needs one check on your iPhone. |
 | A2 | Refresh at most once per 24 h | ❌ | R-06 |
 | A3 | Manual refresh, single-flight | ❌ | R-06 |
-| A4 | Live delays when online | ❌ | R-07 |
-| A5 | Disruptions on the map | ❌ | R-08 |
-| A6 | Disruption detail, auto-clear | ❌ | R-08 |
-| A7 | Offline shows no fake live data | ⚠️ Partly | Departures are honest. Weather age R-10, map buses R-18. |
+| A4 | Live delays when online | ✅ | Via EFA-BW; checked on real data on 5 Nov 2026 |
+| A5 | Disruptions on the map | ✅ | Via EFA-BW, for notices that name stops |
+| A6 | Disruption detail, auto-clear | ✅ | Tested at the end time and when the operator lifts a notice |
+| A7 | Offline shows no fake live data | ⚠️ Partly | Delays are never kept. Weather age is still R-10. |
 | A8 | New data without a release | ❌ | R-06 |
 | A9 | Usable in under 1 s | ❌ | R-09 |
 | A10 | Data version visible | ⚠️ Partly | R-17 |

@@ -6,6 +6,19 @@ Audit against `CLAUDE.md`, on branch `review/brief` at `725d79b`, 5 Nov 2026. No
 
 **Baseline:** the build succeeds; 143 KGCore tests pass. Paths below are relative to the repo; `KGCore/` and `KGFeatures/` are in `Packages/KonstanzKit/Sources/`.
 
+## Status
+
+Fixes so far are on `review/brief`; see `CHANGES.md`.
+
+| ID | Status |
+|---|---|
+| R-02 | **Fixed.** Stop numbers kept in `station_ids.json`. Alarms match on trip number and time, rather than the GTFS trip ID proposed below, because GTFS trip IDs also change between feeds |
+| R-03 | **Fixed** in the app. The App Store privacy answers still need checking when you fill them in |
+| R-04 | **Fixed**, in departure lists, the next direct bus and the planner |
+| R-05 | **Fixed.** Checked in the simulator with a copy of the app holding an expired timetable. The widgets aren't changed |
+| R-01 | **Blocked:** NVBW hasn't published a newer file yet, and shipping needs a paid Apple account |
+| R-06, R-07, R-08 | **Deferred:** waiting for your decisions on the host and the live source |
+
 ## Findings
 
 Severity: `P0` data loss, crash, wrong times, or broken offline · `P1` correctness or offline failure · `P2` UX or performance · `P3` polish. Effort: S under 2 h · M up to a day · L several days.

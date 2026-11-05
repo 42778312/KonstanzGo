@@ -225,8 +225,13 @@ final class UserJourneyTests: XCTestCase {
             XCTAssertTrue(app.staticTexts["Deine Daten bleiben bei dir"].waitForExistence(timeout: 5))
             app.buttons["backLink"].firstMatch.tap()
         }
-        step("21 Menü mit einem Tipp auf die Karte schließen") {
-            app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.03)).tap()
+        step("21 Menü herunterziehen und mit einem Tipp auf die Karte schließen") {
+            // Pulled up full there's no map to tap: drag it down first. It then rests on its bar, or at half.
+            let window = app.windows.firstMatch
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.065))
+                .press(forDuration: 0.1, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6)))
+            sleep(1)
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
             XCTAssertTrue(app.buttons["mapVoiceSearch"].waitForExistence(timeout: 5))
         }
         step("22 Sprachsuche öffnen") {

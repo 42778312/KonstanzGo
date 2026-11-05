@@ -36,6 +36,9 @@ public final class AppServices {
         self.location = location
         live = Self.makeLive(transit)
         user = try? UserStore.shared()
+        #if KGMETER && canImport(UIKit)
+        FrameMeter.start()
+        #endif
     }
 
     private static func makeLive(_ transit: OfflineTransit) -> LiveModel {

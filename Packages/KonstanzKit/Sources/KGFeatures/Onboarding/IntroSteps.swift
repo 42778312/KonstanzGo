@@ -34,8 +34,12 @@ struct IntroSteps: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            #if canImport(MapLibre) && canImport(UIKit)
             KGMapView(data: services.data, model: map)
                 .ignoresSafeArea()
+            #else
+            KGColor.mapLand
+            #endif
             MapOverlays(map: map)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)

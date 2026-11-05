@@ -50,7 +50,7 @@ final class SavedAndMoreTests: XCTestCase {
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Sternenplatz'")).firstMatch
             .waitForExistence(timeout: 3), "saved stop missing from the search's categories")
         app.buttons["closeSearch"].tap()
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
         app.buttons["openFavorites"].tap()
         XCTAssertTrue(app.buttons["favoriteStop"].firstMatch.waitForExistence(timeout: 5))
@@ -68,7 +68,7 @@ final class SavedAndMoreTests: XCTestCase {
     func testRecentSearchesAndDeleteAll() {
         openStop("Bahnhof")
         closeStop()
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
         app.buttons["openFavorites"].tap()
         let link = app.buttons["recentLink"]
@@ -86,7 +86,7 @@ final class SavedAndMoreTests: XCTestCase {
 
     @MainActor
     func testMoreOfflineAndPrivacy() {
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         let offline = app.buttons["offlineCard"]
         XCTAssertTrue(offline.waitForExistence(timeout: 5))
         XCTAssertTrue(element(labelContains: "Fahrplan bis").exists, "offline status missing")

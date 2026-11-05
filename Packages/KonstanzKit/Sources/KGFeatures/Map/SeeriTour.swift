@@ -3,7 +3,7 @@ import KGDesign
 import SwiftUI
 
 /// The parts of the map screen the tour points at.
-enum TourSpot: Hashable, Sendable { case search, mic, seeri, controls }
+enum TourSpot: Hashable, Sendable { case search, mic, seeri, controls, more }
 
 /// Where each part is on screen, for the tour's spotlight.
 struct TourAnchors: PreferenceKey {
@@ -59,8 +59,10 @@ struct SeeriTour: View {
              text: Text("Die roten Busse fahren nach Fahrplan mit. Die gelben fahren nach Kreuzlingen.", bundle: .module)),
         Step(spot: .controls, seeri: .happy,
              text: Text("Hier findest du dich selbst und schaltest Busse und Haltestellen an und aus.", bundle: .module)),
-        Step(spot: .seeri, seeri: .joyful,
-             text: Text("Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an.", bundle: .module)),
+        Step(spot: .seeri, seeri: .excited,
+             text: Text("Und hier wohne ich. Wenn mein Blaulicht blinkt, ist was los: Tipp mich an für die Meldungen.", bundle: .module)),
+        Step(spot: .more, seeri: .joyful,
+             text: Text("Zieh die Suchleiste nach oben: Favoriten und Einstellungen.", bundle: .module)),
         Step(seeri: .joyful, text: Text("Fertig. Gute Fahrt durch Konstanz.", bundle: .module)),
     ]
 

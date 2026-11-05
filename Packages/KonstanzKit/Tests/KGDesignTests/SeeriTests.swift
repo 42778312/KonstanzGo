@@ -22,4 +22,10 @@ struct SeeriTests {
     @Test func everyExpressionFromTheDesign() {
         #expect(Seeri.Expression.allCases.count == 8)
     }
+
+    @Test func theSirenAlternatesRedAndBlue() {
+        #expect(SeeriSiren.isRed(at: 0.1))
+        #expect(!SeeriSiren.isRed(at: 0.5))
+        #expect(SeeriSiren.isRed(at: 0.8))
+    }
 }

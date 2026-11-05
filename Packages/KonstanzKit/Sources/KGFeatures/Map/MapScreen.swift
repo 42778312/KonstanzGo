@@ -26,6 +26,10 @@ public struct MapScreen: View {
     @State private var toast: Text?
     /// Seeri is telling the user about a new notice.
     @State private var seeriSpeaks = false
+    /// The notices the user has looked at; the siren flashes until then.
+    @AppStorage("live.openedNotices") private var openedNotices = ""
+    /// How far the search bar is being pulled up, towards the menu.
+    @State private var barLift: CGFloat = 0
     @AppStorage("map.showsStops") private var showsStops = true
     @AppStorage("map.showsVehicles") var showsVehicles = true
     /// Buses and trains where the timetable puts them now (offline, no live feed).
@@ -207,11 +211,10 @@ public struct MapScreen: View {
                 }
             }
         case .notices:
-            FoldingSheet(detent: $detent, title: String(localized: "Meldungen", bundle: .module),
-                         onClose: { self.sheet = nil }) {
-                NoticesPanel(services: services, onStation: { self.sheet = .station($0) },
-                             onClose: { self.sheet = nil })
-            }
+            NoticesPanel(services: services, onStation: { self.sheet = .station($0) }, onClose: { self.sheet = nil })
+                .presentationDetents([FoldingSheet<EmptyView>.half, .large])
+                .presentationBackgroundInteraction(.enabled(upThrough: FoldingSheet<EmptyView>.half))
+                .presentationDragIndicator(.visible)
         case let .place(target):
             FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
                 PlaceSheet(services: services, target: target) { self.sheet = nil }
@@ -248,8 +251,11 @@ public struct MapScreen: View {
         }
         map.onTapMap = {
             switch sheet {
-            case .station, .place, .trip, .menu:
+            case .station, .place, .trip:
                 withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded }
+            case .menu, .notices:
+                // These aren't about a place on the map: looking at the map ends them.
+                sheet = nil
             default: break
             }
         }
@@ -354,12 +360,8 @@ extension MapScreen {
     /// Seeri's message over the search bar, and the pill that stays while something's going on.
     fileprivate var noticesLayer: some View {
         VStack(alignment: .leading, spacing: KGSpace.small) {
-            if !services.live.active.isEmpty {
-                NoticesPill(count: services.live.active.count) { open(.notices) }
-                    .transition(.opacity)
-            }
             if !touring {
-                SeeriNoticeBubble(services: services, isSpeaking: $seeriSpeaks) { open(.notices) }
+                SeeriNoticeBubble(services: services, isSpeaking: $seeriSpeaks, onOpen: openNotices)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -369,8 +371,21 @@ extension MapScreen {
         .ignoresSafeArea(edges: .bottom)
     }
 
+    /// Whether Seeri's police light flashes: there's a notice the user hasn't opened. Nil: nothing going on.
+    private var sirenFlashing: Bool? {
+        let active = services.live.active
+        guard !active.isEmpty else { return nil }
+        let opened = Set(openedNotices.split(separator: "\n").map(String.init))
+        return active.contains { !opened.contains($0.seenKey) }
+    }
+
+    private func openNotices() {
+        openedNotices = services.live.active.map(\.seenKey).joined(separator: "\n")
+        open(.notices)
+    }
+
     /// One glass bar: magnifier and "Wohin möchtest du?" open the search, the microphone opens it listening,
-    /// Seeri at the end opens the menu.
+    /// Seeri at the end tells about notices. Pulled up by its handle (or anywhere), it opens the menu.
     fileprivate var searchBar: some View {
         HStack(spacing: KGSpace.xs) {
             Button {
@@ -405,8 +420,9 @@ extension MapScreen {
             .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
             .accessibilityIdentifier("mapVoiceSearch")
             .tourSpot(.mic)
-            Button { open(.menu) } label: {
-                SeeriAlive(seeriSpeaks ? .excited : .happy, detail: .compact)
+            Button(action: openNotices) {
+                SeeriAlive(seeriSpeaks || sirenFlashing == true ? .excited : .happy, detail: .compact,
+                           sirenFlashing: sirenFlashing)
                     .frame(width: 46, height: 50)
                     .scaleEffect(seeriSpeaks ? 1.12 : 1, anchor: .bottom)
                     .animation(KGMotion.pop, value: seeriSpeaks)
@@ -414,8 +430,8 @@ extension MapScreen {
                     .contentShape(.rect)
             }
             .buttonStyle(KGPressStyle())
-            .accessibilityLabel(Text("Mehr", bundle: .module))
-            .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
+            .accessibilityLabel(Text("Meldungen", bundle: .module))
+            .accessibilityValue(services.live.active.isEmpty ? Text(verbatim: "") : Text(verbatim: "\(services.live.active.count)"))
             .accessibilityIdentifier("seeriMenu")
             .tourSpot(.seeri)
             .padding(.trailing, KGSpace.xs)
@@ -423,6 +439,36 @@ extension MapScreen {
         .frame(height: Self.searchBarHeight)
         .kgGlass(in: Capsule())
         .kgShadow(.search, in: Capsule())
+        .overlay(alignment: .top) { moreHandle }
+        .offset(y: barLift)
+        .simultaneousGesture(pullUp)
+    }
+
+    /// The bar's handle, like a sheet's: says it can be pulled up. A tap works too.
+    private var moreHandle: some View {
+        Button { open(.menu) } label: {
+            Capsule().fill(KGColor.ink2).frame(width: 38, height: 5)
+                .frame(width: 96, height: 24, alignment: .center)
+                .contentShape(.rect)
+        }
+        .buttonStyle(KGPressStyle())
+        .offset(y: -12)
+        .accessibilityLabel(Text("Mehr", bundle: .module))
+        .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
+        .accessibilityIdentifier("moreHandle")
+        .tourSpot(.more)
+    }
+
+    /// The bar follows the finger up with some resistance; far enough and the menu rises out of it.
+    private var pullUp: some Gesture {
+        DragGesture(minimumDistance: 14)
+            .onChanged { drag in
+                barLift = drag.translation.height < 0 ? -pow(-drag.translation.height, 0.8) : 0
+            }
+            .onEnded { drag in
+                if drag.translation.height < -45 || drag.predictedEndTranslation.height < -140 { open(.menu) }
+                withAnimation(KGMotion.pop) { barLift = 0 }
+            }
     }
 
     /// Layers and my location, one glass column.

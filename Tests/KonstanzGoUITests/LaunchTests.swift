@@ -27,11 +27,11 @@ final class LaunchTests: XCTestCase {
     }
 
     @MainActor
-    func testSeeriOpensTheMenu() {
+    func testHandleOpensTheMenu() {
         let app = launch(language: "de", locale: "de_DE")
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["Karte"].exists, "the tab bar was removed")
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         XCTAssertTrue(app.buttons["replayOnboarding"].waitForExistence(timeout: 3))
         app.buttons["openFavorites"].tap()
         XCTAssertTrue(app.staticTexts["SCHNELL LOS"].waitForExistence(timeout: 3) ||
@@ -48,7 +48,7 @@ final class LaunchTests: XCTestCase {
         let app = launch(language: "de", locale: "de_DE")
         XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
         // From the menu: every stop, then "Los geht's".
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         let start = app.buttons["startTour"]
         XCTAssertTrue(start.waitForExistence(timeout: 3))
         start.tap()
@@ -62,7 +62,7 @@ final class LaunchTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(seen.count, 8, "expected every step: \(seen)")
         XCTAssertTrue(next.waitForNonExistence(timeout: 3), "the tour did not end")
         // Again, and skip straight away.
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         XCTAssertTrue(start.waitForExistence(timeout: 3))
         start.tap()
         let skip = app.buttons["tourSkip"]

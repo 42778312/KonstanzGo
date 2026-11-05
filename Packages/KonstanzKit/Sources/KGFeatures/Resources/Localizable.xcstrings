@@ -51,16 +51,6 @@
         }
       }
     },
-    "%lld Meldungen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld notices"
-          }
-        }
-      }
-    },
     "%lld Min.": {
       "localizations": {
         "en": {
@@ -157,16 +147,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "+%lld min"
-          }
-        }
-      }
-    },
-    "1 Meldung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1 notice"
           }
         }
       }
@@ -3354,12 +3334,12 @@
         }
       }
     },
-    "Und hier wohne ich: Favoriten und Einstellungen. Tipp mich ruhig an.": {
+    "Und hier wohne ich. Wenn mein Blaulicht blinkt, ist was los: Tipp mich an für die Meldungen.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "And this is where I live: favourites and settings. Go on, tap me."
+            "value": "And this is me. When my blue light flashes, something's up: tap me for the notices."
           }
         }
       }
@@ -3630,6 +3610,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Shows the stops"
+          }
+        }
+      }
+    },
+    "Zieh die Suchleiste nach oben: Favoriten und Einstellungen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pull the search bar up for favourites and settings."
           }
         }
       }

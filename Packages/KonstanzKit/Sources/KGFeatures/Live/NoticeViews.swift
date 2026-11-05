@@ -115,30 +115,7 @@ private struct BubbleTail: Shape {
     }
 }
 
-/// The pill over the map while something's going on: stays after Seeri has spoken, and opens the list.
-struct NoticesPill: View {
-    let count: Int
-    let onOpen: () -> Void
-
-    var body: some View {
-        Button(action: onOpen) {
-            HStack(spacing: KGSpace.xs) {
-                KGIconView(.bell, size: 14).foregroundStyle(KGColor.warn)
-                (count == 1 ? Text("1 Meldung", bundle: .module) : Text("\(count) Meldungen", bundle: .module))
-                    .kgFont(.footnote).foregroundStyle(KGColor.ink)
-            }
-            .padding(.horizontal, KGSpace.compact)
-            .frame(minHeight: 34)
-            .contentShape(.rect)
-        }
-        .buttonStyle(KGPressStyle())
-        .kgGlass(in: Capsule())
-        .kgShadow(.floating, in: Capsule())
-        .accessibilityIdentifier("noticesPill")
-    }
-}
-
-/// Every running notice, in the map's sheet: what's affected, until when, and where to go instead.
+/// Every running notice, in a sheet over the map (a tap on the map closes it): what's affected, until when, and where to go instead.
 struct NoticesPanel: View {
     let services: AppServices
     let onStation: (Int) -> Void
@@ -164,8 +141,17 @@ struct NoticesPanel: View {
                             .accessibilityIdentifier("noticesStatus")
                     }
                     Spacer()
-                    KGRoundIconButton(.close, label: Text("Schließen", bundle: .module), surface: .plain, action: onClose)
-                        .accessibilityIdentifier("closeNotices")
+                    // Seeri brought the news, and tapping Seeri again puts them away.
+                    Button(action: onClose) {
+                        SeeriAlive(notices.isEmpty ? .happy : .focused, detail: .compact,
+                                   sirenFlashing: notices.isEmpty ? nil : false)
+                            .frame(width: 46, height: 50)
+                            .frame(width: 54, height: 58)
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(KGPressStyle())
+                    .accessibilityLabel(Text("Schließen", bundle: .module))
+                    .accessibilityIdentifier("closeNotices")
                 }
                 if notices.isEmpty {
                     KGEmptyState(.happy, title: Text("Alles läuft nach Plan", bundle: .module),

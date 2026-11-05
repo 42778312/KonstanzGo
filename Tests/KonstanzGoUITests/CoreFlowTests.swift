@@ -85,7 +85,7 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(star.waitForExistence(timeout: 5))
         if !star.isSelected { star.tap() }
         app.buttons["closePlace"].tap()
-        app.buttons["seeriMenu"].tap()
+        app.buttons["moreHandle"].tap()
         XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
         app.buttons["openFavorites"].tap()
         let saved = app.buttons.matching(NSPredicate(format: "identifier == 'favoriteStop' AND label CONTAINS 'Bahnhof'"))

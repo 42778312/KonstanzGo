@@ -32,11 +32,31 @@ final class LiveNoticesTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Döbelestraße"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["closureBanner"].exists, "the alternative isn't closed")
         app.buttons["closeStation"].tap()
-        // It stays reachable after Seeri has spoken, and isn't announced twice.
-        let pill = app.buttons["noticesPill"]
-        XCTAssertTrue(pill.waitForExistence(timeout: 5))
+        // Seeri on the map opens the list again; it isn't announced twice.
         XCTAssertFalse(bubble.waitForExistence(timeout: 3), "announced twice")
-        pill.tap()
-        XCTAssertTrue(app.buttons["closeNotices"].waitForExistence(timeout: 5))
+        let seeri = app.buttons["seeriMenu"]
+        XCTAssertTrue(seeri.waitForExistence(timeout: 5))
+        seeri.tap()
+        // Seeri in the list closes it.
+        let close = app.buttons["closeNotices"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        close.tap()
+        XCTAssertTrue(close.waitForNonExistence(timeout: 3), "Seeri didn't close the list")
+        // A tap on the map closes it too.
+        XCTAssertTrue(seeri.waitForExistence(timeout: 3))
+        seeri.tap()
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.08)).tap()
+        XCTAssertTrue(close.waitForNonExistence(timeout: 3), "a tap on the map didn't close the list")
+    }
+
+    /// The menu now rises out of the search bar: pull it up, or tap its handle.
+    @MainActor
+    func testPullingUpTheSearchBarOpensTheMenu() {
+        let bar = app.buttons["mapSearch"]
+        XCTAssertTrue(bar.waitForExistence(timeout: 10))
+        let from = bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        from.press(forDuration: 0.05, thenDragTo: from.withOffset(CGVector(dx: 0, dy: -180)))
+        XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 5), "the menu didn't rise")
     }
 }

@@ -223,7 +223,7 @@ final class UserJourneyTests: XCTestCase {
             app.buttons["Schließen"].firstMatch.tap()
         }
         step("19 Menü über Seeri, Favoriten") {
-            app.buttons["seeriMenu"].tap()
+            app.buttons["moreHandle"].tap()
             XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
             app.buttons["openFavorites"].tap()
             XCTAssertTrue(element("Konzil").waitForExistence(timeout: 5), "the saved place is missing")
@@ -280,7 +280,7 @@ final class UserJourneyTests: XCTestCase {
         }
         step("EN 3 Menu") {
             app.buttons["closePlace"].tap()
-            app.buttons["seeriMenu"].tap()
+            app.buttons["moreHandle"].tap()
             XCTAssertTrue(element("Favourites").waitForExistence(timeout: 3))
             XCTAssertTrue(element("Tour with Seeri").exists)
         }
@@ -300,7 +300,7 @@ final class UserJourneyTests: XCTestCase {
         }
         step("AX 3 Menu") {
             app.buttons["closePlace"].tap()
-            app.buttons["seeriMenu"].tap()
+            app.buttons["moreHandle"].tap()
             XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 3))
         }
     }

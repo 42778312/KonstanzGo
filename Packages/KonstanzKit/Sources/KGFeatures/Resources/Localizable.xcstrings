@@ -891,6 +891,16 @@
         }
       }
     },
+    "Dein Bus durch Konstanz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your bus through Konstanz"
+          }
+        }
+      }
+    },
     "Deine Daten bleiben bei dir": {
       "localizations": {
         "en": {

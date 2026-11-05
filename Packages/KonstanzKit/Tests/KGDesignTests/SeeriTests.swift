@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import KGDesign
 
@@ -27,5 +28,18 @@ struct SeeriTests {
         #expect(SeeriSiren.isRed(at: 0.1))
         #expect(!SeeriSiren.isRed(at: 0.5))
         #expect(SeeriSiren.isRed(at: 0.8))
+    }
+
+    @Test func onlyWakesForBlinks() {
+        let start = Date(timeIntervalSinceReferenceDate: 4.2 * 100)
+        // During a blink: frames.
+        #expect(BlinkSchedule.next(after: start).timeIntervalSince(start) < 0.1)
+        // Between blinks: straight to the next one.
+        let later = start.addingTimeInterval(1)
+        #expect(abs(BlinkSchedule.next(after: later).timeIntervalSince(later) - 3.2) < 0.001)
+        let frames = Array(BlinkSchedule(isPaused: false).entries(from: start, mode: .normal).prefix(40))
+        #expect(frames.count == 40)
+        let cycles = (frames.last?.timeIntervalSince(start) ?? 0) / SeeriAlive.blinkCycle
+        #expect(cycles > 3, "too many frames per blink")
     }
 }

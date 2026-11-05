@@ -74,7 +74,7 @@ public struct KGBusMarker: View {
         .accessibilityLabel(Text("Bus \(line), geschätzte Position", bundle: .kgDesign))
     }
 
-    private struct Triangle: Shape {
+    struct Triangle: Shape {
         func path(in rect: CGRect) -> Path {
             Path { path in
                 path.move(to: CGPoint(x: rect.midX, y: rect.minY))
@@ -143,7 +143,7 @@ public struct KGVehicleMarker: View {
                                     : Text("Bus \(line), geschätzte Position", bundle: .kgDesign))
     }
 
-    private struct Nose: Shape {
+    struct Nose: Shape {
         func path(in rect: CGRect) -> Path {
             Path { path in
                 path.move(to: CGPoint(x: rect.midX, y: rect.minY))
@@ -154,6 +154,27 @@ public struct KGVehicleMarker: View {
         }
     }
 }
+
+/// The nose of `KGVehicleMarker` alone, for drawing on a map layer that turns it.
+public struct KGVehicleNose: View {
+    let isYellow: Bool
+
+    public init(isYellow: Bool) { self.isYellow = isYellow }
+
+    public var body: some View {
+        KGVehicleMarker.Nose().fill(isYellow ? KGColor.kreuzlingen : KGColor.coralDeep).frame(width: 9, height: 6)
+    }
+}
+
+/// The nose of `KGBusMarker` alone.
+public struct KGBusMarkerNose: View {
+    public init() {}
+
+    public var body: some View {
+        KGBusMarker.Triangle().fill(KGColor.coralDeep).frame(width: 12, height: 9)
+    }
+}
+
 
 /// The user's position (B29): blue 24 pt dot with a 4 pt white border and soft blue shadow, a ring that grows
 /// to 3.4× (2.4 s), and a cone when the heading is known.

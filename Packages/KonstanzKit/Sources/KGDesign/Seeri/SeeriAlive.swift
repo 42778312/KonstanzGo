@@ -27,7 +27,8 @@ public struct SeeriAlive: View {
     }
 
     public var body: some View {
-        TimelineView(.animation(minimumInterval: 1 / 30, paused: reduceMotion)) { timeline in
+        // Only wakes for the blinks: Seeri sits on the map screen all the time and shouldn't cost a frame.
+        TimelineView(BlinkSchedule(isPaused: reduceMotion)) { timeline in
             seeri(reduceMotion ? 0 : Self.blink(at: timeline.date.timeIntervalSinceReferenceDate))
         }
         .overlay(alignment: .top) {
@@ -48,6 +49,24 @@ public struct SeeriAlive: View {
 
 #Preview("Seeri, alive") {
     SeeriAlive(.excited, shadow: true).frame(height: 160)
+}
+
+/// The moments Seeri needs drawing: 30 times a second during a blink, then not until the next one.
+struct BlinkSchedule: TimelineSchedule {
+    let isPaused: Bool
+
+    func entries(from startDate: Date, mode: Mode) -> AnySequence<Date> {
+        guard !isPaused else { return AnySequence([startDate]) }
+        return AnySequence(sequence(first: startDate) { Self.next(after: $0) })
+    }
+
+    static func next(after date: Date) -> Date {
+        let phase = date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: SeeriAlive.blinkCycle)
+        // One more frame just past the blink, so the eyes end up open.
+        if phase <= SeeriAlive.blinkLength { return date.addingTimeInterval(1.0 / 30) }
+        // Never a tiny step: rounding could otherwise repeat the same moment for ever.
+        return date.addingTimeInterval(max(SeeriAlive.blinkCycle - phase, 1.0 / 30))
+    }
 }
 
 /// A police light for Seeri's roof: red and blue in turn with a glow while there's news, a calm blue while

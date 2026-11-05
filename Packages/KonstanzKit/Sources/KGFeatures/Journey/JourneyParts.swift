@@ -112,7 +112,6 @@ struct JourneyMap: View {
     /// A tap on the map away from any stop.
     var onTap: (() -> Void)?
     @State private var model = MapModel()
-    @State private var buses: [VehiclePosition] = []
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -121,27 +120,7 @@ struct JourneyMap: View {
             #else
             KGColor.mapLand
             #endif
-            if let point = model.userPoint {
-                KGUserDot(heading: services.location.heading.map { .degrees($0) }).position(point)
-            }
-            ForEach(buses) { bus in
-                if let point = model.pinPoints["bus-\(bus.tripID)"] {
-                    KGBusMarker(line: bus.line.name, heading: .degrees(bus.heading)).position(point)
-                }
-            }
-            if let point = model.pinPoints["start"] {
-                Circle().fill(KGColor.white).frame(width: 18, height: 18)
-                    .overlay(Circle().strokeBorder(KGColor.location, lineWidth: 5))
-                    .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
-                    .position(point)
-            }
-            if let point = model.pinPoints["end"] {
-                RoundedRectangle(cornerRadius: 4).fill(KGColor.ink)
-                    .frame(width: 16, height: 16).rotationEffect(.degrees(45))
-                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(KGColor.white, lineWidth: 3)
-                        .rotationEffect(.degrees(45)))
-                    .position(point)
-            }
+            JourneyEnds(model: model)
         }
         .allowsHitTesting(true)
         .ignoresSafeArea()
@@ -158,6 +137,7 @@ struct JourneyMap: View {
             model.move(.fitting(focus ?? journey.allPoints, animated: false))
         }
         .onChange(of: services.location.coordinate) { _, point in model.userLocation = point }
+        .onChange(of: services.location.heading, initial: true) { _, heading in model.userHeading = heading }
         .onChange(of: bottomInset) { _, inset in model.insets.bottom = inset }
         .task { await followBuses() }
     }
@@ -173,18 +153,38 @@ struct JourneyMap: View {
     private func followBuses() async {
         while !Task.isCancelled {
             let now = Date.now
-            buses = journey.rides.compactMap { ride in
+            model.vehicles = journey.rides.compactMap { ride in
                 for day in [ServiceDay(ride.start), ServiceDay(ride.start).adding(days: -1)] {
-                    if let position = try? services.transit.tracker.position(ofTrip: ride.tripID, on: day, at: now) {
-                        return position
+                    if let bus = try? services.transit.tracker.position(ofTrip: ride.tripID, on: day, at: now) {
+                        return MapVehicle(id: bus.tripID, line: bus.line.name, coordinate: bus.coordinate,
+                                          heading: bus.heading, look: .trip)
                     }
                 }
                 return nil
             }
-            var pins = model.pins.filter { !$0.id.hasPrefix("bus-") }
-            pins += buses.map { MapPin(id: "bus-\($0.tripID)", coordinate: $0.coordinate) }
-            model.pins = pins
             try? await Task.sleep(for: .seconds(1))
+        }
+    }
+}
+
+/// The start and end of the route over the map. In its own view: their positions change with every frame of
+/// a move and should redraw nothing else.
+private struct JourneyEnds: View {
+    let model: MapModel
+
+    var body: some View {
+        if let point = model.pinPoints["start"] {
+            Circle().fill(KGColor.white).frame(width: 18, height: 18)
+                .overlay(Circle().strokeBorder(KGColor.location, lineWidth: 5))
+                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                .position(point)
+        }
+        if let point = model.pinPoints["end"] {
+            RoundedRectangle(cornerRadius: 4).fill(KGColor.ink)
+                .frame(width: 16, height: 16).rotationEffect(.degrees(45))
+                .overlay(RoundedRectangle(cornerRadius: 4).stroke(KGColor.white, lineWidth: 3)
+                    .rotationEffect(.degrees(45)))
+                .position(point)
         }
     }
 }

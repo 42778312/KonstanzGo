@@ -16,13 +16,14 @@ public final class MapModel {
     public var lines: [MapLine] = []
     /// Points that SwiftUI draws over the map (buses, start and end markers), by id.
     public var pins: [MapPin] = []
+    /// Buses and trains, drawn as a map layer so they stay on the map while it moves.
+    public var vehicles: [MapVehicle] = []
     public private(set) var pinPoints: [String: CGPoint] = [:]
     /// The user's position, when known.
     public var userLocation: Coordinate?
     public var userHeading: Double?
 
     /// Where overlay views go, in the map's points; updated by the map as it moves.
-    public private(set) var userPoint: CGPoint?
     public private(set) var selectedPoint: CGPoint?
     /// Space the sheet and the search bar take, so the camera keeps things visible (plan M9).
     public var insets = MapInsets()
@@ -61,8 +62,7 @@ public final class MapModel {
         return pendingMove
     }
 
-    func setOverlayPoints(user: CGPoint?, selected: CGPoint?, pins: [String: CGPoint]) {
-        if userPoint != user { userPoint = user }
+    func setOverlayPoints(selected: CGPoint?, pins: [String: CGPoint]) {
         if selectedPoint != selected { selectedPoint = selected }
         if pinPoints != pins { pinPoints = pins }
     }
@@ -81,6 +81,48 @@ public struct MapInsets: Equatable, Sendable {
     public init(top: CGFloat = 0, bottom: CGFloat = 0) {
         self.top = top
         self.bottom = bottom
+    }
+}
+
+/// A bus or train on the map.
+public struct MapVehicle: Sendable, Hashable {
+    public enum Look: Sendable, Hashable {
+        /// On the map screen: red, or yellow for the Swiss buses, with a green dot when it reports live.
+        case vehicle(isTrain: Bool, isYellow: Bool, isLive: Bool)
+        /// The larger marker of a bus on the user's own trip.
+        case trip
+    }
+
+    public var id: Int
+    public var line: String
+    public var coordinate: Coordinate
+    /// Compass degrees.
+    public var heading: Double
+    public var look: Look
+
+    public init(id: Int, line: String, coordinate: Coordinate, heading: Double, look: Look) {
+        self.id = id
+        self.line = line
+        self.coordinate = coordinate
+        self.heading = heading
+        self.look = look
+    }
+
+    /// The name of its image in the map's style; one image per line and look, drawn once.
+    var imageName: String {
+        switch look {
+        case let .vehicle(isTrain, isYellow, isLive):
+            "kg-vehicle-\(line)-\(isTrain ? 1 : 0)\(isYellow ? 1 : 0)\(isLive ? 1 : 0)"
+        case .trip:
+            "kg-trip-\(line)"
+        }
+    }
+
+    var noseName: String {
+        switch look {
+        case let .vehicle(_, isYellow, _): isYellow ? "kg-nose-yellow" : "kg-nose-red"
+        case .trip: "kg-nose-trip"
+        }
     }
 }
 

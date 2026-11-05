@@ -44,7 +44,11 @@ extension View {
 
     /// A navigation stack inside a glass sheet: its screens let the glass through.
     public func kgClearNavigation() -> some View {
+        #if os(iOS)
         containerBackground(.clear, for: .navigation)
+        #else
+        self
+        #endif
     }
 }
 

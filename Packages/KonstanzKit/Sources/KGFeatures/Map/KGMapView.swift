@@ -5,8 +5,9 @@ import MapLibre
 import SwiftUI
 
 /// The offline map (MapLibre) with the bundled tiles and the design's style (plan M1–M4, M9). Follows light
-/// and dark mode without losing the camera, keeps to Konstanz, draws the stops as a map layer and reports
-/// taps on them. Overlay views (user dot, selected stop) are placed by SwiftUI at points this view reports.
+/// and dark mode without losing the camera, keeps to Konstanz, draws stops and buses as map layers and reports
+/// taps on stops. The user dot rides on the map too. Only the selected stop and dropped pins are placed by
+/// SwiftUI, at points this view reports while they exist, so a plain pan costs SwiftUI nothing.
 public struct KGMapView: UIViewRepresentable {
     let data: BundledData
     let model: MapModel
@@ -30,6 +31,7 @@ public struct KGMapView: UIViewRepresentable {
         map.minimumZoomLevel = MapRegion.minZoom
         map.maximumZoomLevel = MapRegion.maxZoom
         map.setCenter(MapRegion.center.location, zoomLevel: MapRegion.startZoom, animated: false)
+        map.preferredFramesPerSecond = .maximum
         map.logoView.isHidden = true
         map.compassView.compassVisibility = .hidden
         map.allowsTilting = false
@@ -65,6 +67,8 @@ public struct KGMapView: UIViewRepresentable {
         }
         coordinator.updateStops(on: map)
         coordinator.updateClosedStops(on: map)
+        coordinator.updateVehicles(on: map)
+        coordinator.updateUserDot(on: map)
         coordinator.updateLines(on: map)
         if let step = model.takePendingZoom() {
             map.setZoomLevel(min(max(map.zoomLevel + step, MapRegion.minZoom), MapRegion.maxZoom), animated: true)
@@ -79,9 +83,14 @@ public struct KGMapView: UIViewRepresentable {
         let model: MapModel
         var dark = false
         private var shownStations: [Int] = []
-        private var shownClosed: [Int]?
+        var shownClosed: [Int]?
+        var shownVehicles: [MapVehicle]?
+        var vehicleImages: Set<String> = []
+        let userAnnotation = MLNPointAnnotation()
+        var userDot: UserDotView?
+        var showsUserAnnotation = false
         private var shownLines: [MapLine] = []
-        private var styleReady = false
+        var styleReady = false
         /// A camera move waiting for the map to have a size and its style; fitting a route before that lands
         /// on the wrong place and zoom.
         var queuedMove: CameraMove?
@@ -110,37 +119,9 @@ public struct KGMapView: UIViewRepresentable {
         static let stopRingsLayer = "kg-stop-rings"
         static let stopTileName = "kg-stop-tile"
         static let closedSource = "kg-closed-stops"
+        static let vehiclesSource = "kg-vehicles"
         static let closedTileName = "kg-closed-tile"
 
-        /// A closed stop on the map: a white X on deep red, the size of the stop tile.
-        static func closedTileImage() -> UIImage? {
-            let tile = KGIconView(.close, size: 15)
-                .foregroundStyle(KGColor.white)
-                .frame(width: 28, height: 28)
-                .background(KGColor.coralDeep, in: .kgRounded(8))
-                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(KGColor.white, lineWidth: 2))
-                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
-                .padding(4)
-                .environment(\.colorScheme, .light)
-            let renderer = ImageRenderer(content: tile)
-            renderer.scale = 3
-            return renderer.uiImage
-        }
-
-        /// The stop marker as an image for the map: 28 pt coral rounded square, white bus, white edge, shadow.
-        static func stopTileImage() -> UIImage? {
-            let tile = KGIconView(.bus, size: 16)
-                .foregroundStyle(KGColor.white)
-                .frame(width: 28, height: 28)
-                .background(KGColor.coral, in: .kgRounded(8))
-                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(KGColor.white, lineWidth: 2))
-                .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
-                .padding(4)
-                .environment(\.colorScheme, .light)
-            let renderer = ImageRenderer(content: tile)
-            renderer.scale = 3
-            return renderer.uiImage
-        }
         static let routeSource = "kg-route"
 
         // MARK: Route lines (plan M7)
@@ -306,41 +287,19 @@ public struct KGMapView: UIViewRepresentable {
             style.addLayer(names)
         }
 
-        /// Closed stops: an X on top of the stop, at every zoom, tappable through to the stop below.
-        func updateClosedStops(on map: MLNMapView) {
-            guard styleReady, let style = map.style else { return }
-            let ids = model.closedStations.map(\.id)
-            guard ids != shownClosed else { return }
-            shownClosed = ids
-            let shape = MLNShapeCollectionFeature(shapes: model.closedStations.map { station in
-                let feature = MLNPointFeature()
-                feature.coordinate = station.coordinate.location
-                return feature
-            })
-            if let source = style.source(withIdentifier: Self.closedSource) as? MLNShapeSource {
-                source.shape = shape
-                return
-            }
-            let source = MLNShapeSource(identifier: Self.closedSource, shape: shape, options: nil)
-            style.addSource(source)
-            if let tile = Self.closedTileImage() { style.setImage(tile, forName: Self.closedTileName) }
-            let layer = MLNSymbolStyleLayer(identifier: Self.closedSource, source: source)
-            layer.iconImageName = NSExpression(forConstantValue: Self.closedTileName)
-            layer.iconAllowsOverlap = NSExpression(forConstantValue: true)
-            layer.iconIgnoresPlacement = NSExpression(forConstantValue: true)
-            layer.iconScale = NSExpression(forMLNInterpolating: .zoomLevelVariable, curveType: .linear, parameters: nil,
-                                           stops: NSExpression(forConstantValue: [12: 0.6, 15: 1.0]))
-            style.addLayer(layer)
-        }
-
         public func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
             styleReady = true
             shownStations = []
             shownClosed = nil
+            shownVehicles = nil
+            vehicleImages = []
+            // Labels appear at once rather than fading in behind the movement.
+            style.performsPlacementTransitions = false
             shownLines = []
             updateLines(on: mapView)
             updateStops(on: mapView)
             updateClosedStops(on: mapView)
+            updateVehicles(on: mapView)
             runQueuedMove(on: mapView)
         }
 
@@ -372,11 +331,13 @@ public struct KGMapView: UIViewRepresentable {
         }
 
         func reportOverlayPoints(_ map: MLNMapView) {
-            let user = model.userLocation.map { map.convert($0.location, toPointTo: map) }
+            // Nothing placed by SwiftUI: nothing to do on this frame.
+            guard model.selectedStationID != nil || !model.pins.isEmpty || model.selectedPoint != nil
+                || !model.pinPoints.isEmpty else { return }
             let selected = model.selectedStation.map { map.convert($0.coordinate.location, toPointTo: map) }
             var pins: [String: CGPoint] = [:]
             for pin in model.pins { pins[pin.id] = map.convert(pin.coordinate.location, toPointTo: map) }
-            model.setOverlayPoints(user: user, selected: selected, pins: pins)
+            model.setOverlayPoints(selected: selected, pins: pins)
         }
 
         // MARK: Taps

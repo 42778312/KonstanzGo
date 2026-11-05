@@ -28,12 +28,13 @@ public struct MapScreen: View {
     @State private var seeriSpeaks = false
     /// The notices the user has looked at; the siren flashes until then.
     @AppStorage("live.openedNotices") private var openedNotices = ""
+    /// Redraws the open sheet once after it replaced another: iOS brings that one up at full height
+    /// until its height is applied again.
+    @State private var sheetRedraws = 0
     /// How far the search bar is being pulled up, towards the menu.
     @State private var barLift: CGFloat = 0
     @AppStorage("map.showsStops") private var showsStops = true
     @AppStorage("map.showsVehicles") var showsVehicles = true
-    /// Buses and trains where the timetable puts them now (offline, no live feed).
-    @State var vehicles: [VehiclePosition] = []
 
     public init(services: AppServices, bottomBar: CGFloat, onReplayOnboarding: @escaping () -> Void = {}) {
         self.services = services
@@ -109,6 +110,7 @@ public struct MapScreen: View {
         }
         .environment(\.stopClosures, services.live.closures)
         .onAppear(perform: appear)
+        .onChange(of: location.heading, initial: true) { _, heading in map.userHeading = heading }
         .onChange(of: location.coordinate) { old, point in
             map.userLocation = point
             // The first fix: look at where the user is.
@@ -157,43 +159,13 @@ public struct MapScreen: View {
             #else
             KGColor.mapLand
             #endif
-            ForEach(vehicles) { vehicle in
-                if let point = map.pinPoints[Self.pinID(vehicle)] {
-                    KGVehicleMarker(line: vehicle.line.name, isTrain: vehicle.line.mode == .train,
-                                    isKreuzlingen: vehicle.line.isYellowBus, heading: .degrees(vehicle.heading),
-                                    isLive: !vehicle.isEstimated)
-                        .position(point)
-                        .allowsHitTesting(false)
-                }
-            }
-            if let point = map.userPoint {
-                KGUserDot(heading: location.heading.map { .degrees($0) })
-                    .position(point)
-                    .allowsHitTesting(false)
-            }
-            if let point = map.selectedPoint, let selected = map.selectedStation {
-                Group {
-                    if map.closedStations.contains(selected) {
-                        ClosedStopMark(size: 44)
-                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(KGColor.white, lineWidth: 3))
-                    } else {
-                        KGStopMarker("", isSelected: true, showsName: false)
-                    }
-                }
-                .position(point)
-                .allowsHitTesting(false)
-            }
-            if let point = map.pinPoints["place"], let pinned = map.pins.first(where: { $0.id == "place" }) {
-                DroppedPin()
-                    .id(pinned.coordinate)  // a new drop plays again
-                    .position(point)
-                    .allowsHitTesting(false)
-            }
+            MapOverlays(map: map)
         }
         .ignoresSafeArea()
     }
 
     @ViewBuilder private func sheetContent(_ sheet: MapSheet) -> some View {
+        let _ = sheetRedraws
         switch sheet {
         case .search:
             MapSearchSheet(services: services, listens: listens) { pick($0) }
@@ -292,6 +264,10 @@ public struct MapScreen: View {
     private func sheetChanged(_ new: MapSheet?) {
         let half = height * 0.5
         detent = FoldingSheet<EmptyView>.half
+        Task {
+            try? await Task.sleep(for: .milliseconds(350))
+            sheetRedraws &+= 1
+        }
         switch new {
         case let .station(id):
             map.pins = []
@@ -501,8 +477,6 @@ extension MapScreen {
 // MARK: - Moving buses and trains
 
 extension MapScreen {
-    static func pinID(_ vehicle: VehiclePosition) -> String { "vehicle-\(vehicle.tripID)" }
-
     /// The busiest stops, once a minute: most buses pass them, and their reports move the buses on the map.
     func followBuses() async {
         let transit = services.transit, live = services.live
@@ -534,13 +508,43 @@ extension MapScreen {
                 let found = await Task.detached(priority: .utility) {
                     (try? tracker.positions(at: now, delays: delays, cancelled: cancelled)) ?? []
                 }.value
-                vehicles = found.filter { MapRegion.contains($0.coordinate) }
-            } else if !showsVehicles, !vehicles.isEmpty {
-                vehicles = []
+                map.vehicles = found.filter { MapRegion.contains($0.coordinate) }.map { vehicle in
+                    MapVehicle(id: vehicle.tripID, line: vehicle.line.name, coordinate: vehicle.coordinate,
+                               heading: vehicle.heading,
+                               look: .vehicle(isTrain: vehicle.line.mode == .train, isYellow: vehicle.line.isYellowBus,
+                                              isLive: !vehicle.isEstimated))
+                }
+            } else if !showsVehicles, !map.vehicles.isEmpty {
+                map.vehicles = []
             }
-            map.pins = map.pins.filter { !$0.id.hasPrefix("vehicle-") }
-                + vehicles.map { MapPin(id: Self.pinID($0), coordinate: $0.coordinate) }
             try? await Task.sleep(for: .milliseconds(250))
+        }
+    }
+}
+
+/// What SwiftUI still draws over the map: the selected stop and a dropped pin. In its own view, so their
+/// positions, which change with every frame of a move, redraw nothing else.
+private struct MapOverlays: View {
+    let map: MapModel
+
+    var body: some View {
+        if let point = map.selectedPoint, let selected = map.selectedStation {
+            Group {
+                if map.closedStations.contains(selected) {
+                    ClosedStopMark(size: 44)
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(KGColor.white, lineWidth: 3))
+                } else {
+                    KGStopMarker("", isSelected: true, showsName: false)
+                }
+            }
+            .position(point)
+            .allowsHitTesting(false)
+        }
+        if let point = map.pinPoints["place"], let pinned = map.pins.first(where: { $0.id == "place" }) {
+            DroppedPin()
+                .id(pinned.coordinate)  // a new drop plays again
+                .position(point)
+                .allowsHitTesting(false)
         }
     }
 }

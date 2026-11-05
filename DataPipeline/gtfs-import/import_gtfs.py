@@ -2,7 +2,7 @@
 """
 Builds App/Resources/Data/timetable.db from the NVBW GTFS feed (Verkehrsverbund Hegau-Bodensee).
 
-    python3 DataPipeline/gtfs-import/import_gtfs.py [path/to/vhb.zip]
+    python3 DataPipeline/gtfs-import/import_gtfs.py [path/to/vhb.zip] [path/to/output.db]
 
 Keeps only the Konstanz area (BBOX): stops inside it and the trips calling at two or more of them.
 Tables are created from the schema in DataPipeline/gtfs-import/schema/<version>.json (first written by the Android app),
@@ -26,13 +26,15 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import l219_closure
+import station_ids
 
 ROOT = Path(__file__).resolve().parents[2]
 FEED = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "DataPipeline/gtfs-import/data/vhb.zip"
 # City of Konstanz stop register (optional): platform directions, surveyed positions, full names.
 CITY_STOPS = ROOT / "DataPipeline/gtfs-import/data/bushaltestellen_konstanz.geojson"
 SCHEMA_DIR = Path(__file__).resolve().parent / "schema"
-OUT = ROOT / "App/Resources/Data/timetable.db"
+SHIPPED = ROOT / "App/Resources/Data/timetable.db"
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else SHIPPED
 
 # Konstanz with Wollmatingen, Dettingen, Litzelstetten, Mainau, Staad and Kreuzlingen.
 SOUTH, NORTH, WEST, EAST = 47.645, 47.725, 9.08, 9.23
@@ -268,6 +270,16 @@ def create_schema(db):
     return schema["version"]
 
 
+def numbers_in_shipped_data(stops):
+    """The stop numbers already on phones, read once from the shipped database when station_ids.json is new."""
+    if not SHIPPED.exists():
+        return {}
+    db = sqlite3.connect(SHIPPED)
+    rows = db.execute("SELECT gtfs_id, station_id FROM platform").fetchall()
+    db.close()
+    return {station_key(stops[stop_id]): number for stop_id, number in rows if stop_id in stops}
+
+
 def main():
     zf = zipfile.ZipFile(FEED)
     feed_info = next(read(zf, "feed_info.txt"))
@@ -319,6 +331,8 @@ def main():
     used_services = sorted({trips[t]["service_id"] for t in calls})
     dates = service_dates(zf, set(used_services), start, end)
     dates.update(extra_dates)
+    numbers, known_ids = station_ids.assign([{station_key(m) for m in members} for _, _, members in stations],
+                                            station_ids.load() or numbers_in_shipped_data(stops))
 
     # --- write ---
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -330,7 +344,7 @@ def main():
     platform_id = {}
     pid = 0
     city_matched = 0
-    for sid, (key, name, members) in enumerate(stations, start=1):
+    for sid, (key, name, members) in zip(numbers, stations):
         short = name[len(TOWN_PREFIX):] if name.startswith(TOWN_PREFIX) else name
         platforms = []
         for m in sorted(members, key=lambda m: m["stop_id"]):
@@ -397,6 +411,7 @@ def main():
     }
     db.executemany("INSERT INTO meta VALUES (?,?)", meta.items())
     db.commit()
+    station_ids.save(known_ids)
     db.execute("VACUUM")
     db.close()
 
@@ -404,7 +419,7 @@ def main():
     print(f"schema v{version}: {len(stations)} stations, {pid} platforms, {len(used_routes)} routes, "
           f"{len(calls)} trips, {sum(len(c) for c in calls.values())} stop times, {len(shapes)} shapes, "
           f"{sum(len(dates[s]) for s in used_services)} service dates")
-    print(f"{OUT.relative_to(ROOT)}: {OUT.stat().st_size / 1e6:.1f} MB")
+    print(f"{OUT}: {OUT.stat().st_size / 1e6:.1f} MB")
 
 
 if __name__ == "__main__":

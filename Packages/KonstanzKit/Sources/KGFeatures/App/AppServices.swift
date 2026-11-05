@@ -41,11 +41,7 @@ public final class AppServices {
     public func openOnMap(_ target: SavedTarget) {
         selectTab?(.map)
         router.home()
-        if case let .station(id, _, _) = target {
-            sheetRequest = .station(id)
-        } else {
-            sheetRequest = .place(target)
-        }
+        sheetRequest = MapSheet.opening(target) { transit.station(id: $0) != nil }
     }
 
     /// Links from widgets, notifications and Siri: konstanzgo://stop/<id>, konstanzgo://route/home|work|uni,

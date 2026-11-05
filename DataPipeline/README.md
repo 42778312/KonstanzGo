@@ -30,7 +30,8 @@ feed does not contain yet. Remove it once a feed with the new lines is imported.
 
 1. Download the new `vhb.zip` into `gtfs-import/data/`.
 2. Run `DataPipeline/build.sh`.
-3. Commit the changed files in `App/Resources/Data/`.
+3. Commit the changed files in `App/Resources/Data/` and `gtfs-import/station_ids.json`. That file keeps
+   each stop's number across timetables, because favourites and alarms on phones store those numbers.
 
 ## Licences
 

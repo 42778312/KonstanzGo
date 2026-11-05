@@ -5,6 +5,7 @@ empty, and it is valid for at least 30 more days. Exits with an error otherwise.
     DataPipeline/.venv/bin/python DataPipeline/check.py
 """
 import datetime
+import json
 import sqlite3
 import sys
 from pathlib import Path
@@ -25,6 +26,12 @@ counts = {t: db.execute(f"SELECT count(*) FROM {t}").fetchone()[0]
 for table, n in counts.items():
     if n == 0:
         problems.append(f"table {table} is empty")
+
+# Saved stops on phones rely on these numbers (gtfs-import/station_ids.py).
+known_ids = json.loads((Path(__file__).parent / "gtfs-import/station_ids.json").read_text())
+unknown = {n for (n,) in db.execute("SELECT id FROM station")} - set(known_ids.values())
+if unknown:
+    problems.append(f"stops without a kept number: {sorted(unknown)}")
 
 end = datetime.datetime.strptime(meta["feed_end"], "%Y%m%d").date()
 days_left = (end - datetime.date.today()).days

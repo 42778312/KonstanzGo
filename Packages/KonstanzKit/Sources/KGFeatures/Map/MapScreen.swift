@@ -517,6 +517,13 @@ enum MapSheet: Identifiable, Hashable {
     /// A departure picked at a stop: the bus's stops ahead.
     case trip(tripID: Int, day: ServiceDay, fromStation: Int)
 
+    /// The sheet for a saved thing: a stop with its departures. A saved stop that has left the timetable
+    /// opens like a place, with the connections to where it was.
+    static func opening(_ target: SavedTarget, stationExists: (Int) -> Bool) -> MapSheet {
+        if case let .station(id, _, _) = target, stationExists(id) { return .station(id) }
+        return .place(target)
+    }
+
     var id: String {
         switch self {
         case .search: "search"

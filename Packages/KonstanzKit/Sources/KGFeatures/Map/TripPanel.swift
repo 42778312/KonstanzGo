@@ -48,7 +48,10 @@ struct TripPanel: View {
         }
         .scrollIndicators(.hidden)
         .task {
-            alarm = (try? services.user?.upcomingAlarms())?.first { $0.tripID == ride.tripID }
+            alarm = (try? services.user?.upcomingAlarms())?.first {
+                // With the time too: trip numbers change when a new timetable arrives.
+                $0.tripID == ride.tripID && $0.departure == ride.start
+            }
             while !Task.isCancelled {
                 now = .now
                 try? await Task.sleep(for: .seconds(20))

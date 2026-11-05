@@ -17,10 +17,10 @@ public protocol PermissionAsking: AnyObject {
 @Observable
 public final class OnboardingModel {
     public enum Step: Int, CaseIterable, Sendable {
-        case welcome = 1, offline, search, permissions, ready
+        case welcome = 1, permissions, ready
 
-        /// The progress bar counts the four steps before "Alles bereit".
-        public static let counted = 4
+        /// The progress bar counts the steps before "Alles bereit".
+        public static let counted = 2
     }
 
     public private(set) var step: Step

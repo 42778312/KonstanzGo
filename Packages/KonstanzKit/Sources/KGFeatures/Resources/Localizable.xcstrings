@@ -571,6 +571,16 @@
         }
       }
     },
+    "Auch ohne Netz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Even without signal"
+          }
+        }
+      }
+    },
     "Auf dem Sperrbildschirm": {
       "localizations": {
         "en": {
@@ -601,6 +611,16 @@
         }
       }
     },
+    "Auf der Karte, wo er gerade wirklich ist": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On the map, where it really is right now"
+          }
+        }
+      }
+    },
     "Automatisch": {
       "localizations": {
         "en": {
@@ -617,6 +637,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Edit"
+          }
+        }
+      }
+    },
+    "Bei Baustellen und gesperrten Haltestellen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About road works and closed stops"
           }
         }
       }
@@ -747,6 +777,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bus %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "Bus verpasst? Ein Tipp.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missed the bus? One tap."
           }
         }
       }
@@ -1183,6 +1223,16 @@
         }
       }
     },
+    "Fahrplan und Karte sind immer dabei": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timetable and map are always with you"
+          }
+        }
+      }
+    },
     "Fahrplanzeiten": {
       "localizations": {
         "en": {
@@ -1503,6 +1553,16 @@
         }
       }
     },
+    "Hallo, ich bin Seeri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi, I'm Seeri"
+          }
+        }
+      }
+    },
     "Hallo, ich bin Seeri und bring dich durch ganz Konstanz.": {
       "localizations": {
         "en": {
@@ -1744,12 +1804,32 @@
         }
       }
     },
+    "Ich finde sofort einen anderen Weg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'll find another way right away"
+          }
+        }
+      }
+    },
     "Ich höre zu …": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Listening …"
+          }
+        }
+      }
+    },
+    "Ich warne dich": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'll warn you"
           }
         }
       }
@@ -1790,6 +1870,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Every line, every timetable"
+          }
+        }
+      }
+    },
+    "Jeder Bus. Live.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every bus. Live."
           }
         }
       }
@@ -2754,12 +2844,12 @@
         }
       }
     },
-    "Sag mir, wohin du willst.": {
+    "Sag einfach, wohin": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tell me where you want to go."
+            "value": "Just say where"
           }
         }
       }
@@ -3254,6 +3344,16 @@
         }
       }
     },
+    "Tippen oder sprechen, auch ohne Internet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type or talk, even without internet"
+          }
+        }
+      }
+    },
     "Tippen zum Ändern": {
       "localizations": {
         "en": {
@@ -3330,16 +3430,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Change at %@"
-          }
-        }
-      }
-    },
-    "Und hier wohne ich. Wenn mein Blaulicht blinkt, ist was los: Tipp mich an für die Meldungen.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "And this is me. When my blue light flashes, something's up: tap me for the notices."
           }
         }
       }
@@ -3610,16 +3700,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Shows the stops"
-          }
-        }
-      }
-    },
-    "Zieh die Suchleiste nach oben: Favoriten und Einstellungen.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pull the search bar up for favourites and settings."
           }
         }
       }

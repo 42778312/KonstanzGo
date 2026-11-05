@@ -86,34 +86,20 @@ final class UserJourneyTests: XCTestCase {
 
         step("01 Start und Willkommen") {
             app.tap()  // the start screen skips on tap
-            let start = app.buttons["Los geht's"]
-            XCTAssertTrue(start.waitForExistence(timeout: 8), "welcome did not show")
-            XCTAssertTrue(element("Hallo, ich bin Seeri").exists)
+            XCTAssertTrue(app.buttons["introSkip"].waitForExistence(timeout: 8), "the film did not show")
+            XCTAssertTrue(element("Hallo, ich bin Seeri").waitForExistence(timeout: 3))
         }
         step("02 Onboarding bis Alles bereit") {
-            app.buttons["Los geht's"].tap()
-            XCTAssertTrue(app.buttons["Weiter"].waitForExistence(timeout: 3))
-            app.buttons["Weiter"].tap()
-            XCTAssertTrue(app.buttons["Weiter"].waitForExistence(timeout: 3))
-            app.buttons["Weiter"].tap()
+            app.buttons["introSkip"].tap()
             let allow = app.buttons["allowPermissions"]
             XCTAssertTrue(allow.waitForExistence(timeout: 3))
             allow.tap()
             XCTAssertTrue(app.staticTexts["Alles bereit"].waitForExistence(timeout: 5))
         }
-        step("03 Seeris Tour startet von selbst") {
+        step("03 Keine Tour, gleich die Karte") {
             app.buttons["finishOnboarding"].tap()
-            let next = app.buttons["tourNext"]
-            XCTAssertTrue(next.waitForExistence(timeout: 10), "the tour did not start after onboarding")
-            XCTAssertTrue(app.buttons["tourSkip"].exists)
-        }
-        step("04 Tour bis zum Ende") {
-            let next = app.buttons["tourNext"]
-            for _ in 0..<12 where next.exists { next.tap() }
-            XCTAssertTrue(next.waitForNonExistence(timeout: 3), "the tour did not end")
-            XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 3))
-            XCTAssertTrue(app.buttons["mapSearch"].isHittable, "map covered after the tour")
-            XCTAssertTrue(app.descendants(matching: .any)["weather"].waitForExistence(timeout: 15), "no weather in the corner")
+            XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons["mapSearch"].isHittable, "map covered")
         }
         step("05 Suche nach einem Ort") {
             search("Konzil")
@@ -239,14 +225,9 @@ final class UserJourneyTests: XCTestCase {
             XCTAssertTrue(app.staticTexts["Deine Daten bleiben bei dir"].waitForExistence(timeout: 5))
             app.buttons["backLink"].firstMatch.tap()
         }
-        step("21 Tour noch einmal und überspringen") {
-            let start = app.buttons["startTour"]
-            if !start.isHittable { app.swipeUp() }
-            start.tap()
-            let skip = app.buttons["tourSkip"]
-            XCTAssertTrue(skip.waitForExistence(timeout: 5))
-            skip.tap()
-            XCTAssertTrue(skip.waitForNonExistence(timeout: 3))
+        step("21 Menü mit einem Tipp auf die Karte schließen") {
+            app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.03)).tap()
+            XCTAssertTrue(app.buttons["mapVoiceSearch"].waitForExistence(timeout: 5))
         }
         step("22 Sprachsuche öffnen") {
             app.buttons["mapVoiceSearch"].tap()

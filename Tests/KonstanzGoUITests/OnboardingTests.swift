@@ -15,17 +15,37 @@ final class OnboardingTests: XCTestCase {
     }
 
     @MainActor
+    private func shot(_ app: XCUIApplication, _ name: String) {
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    /// The start screen skips on tap; the film has a skip button.
+    @MainActor
     private func walkToPermissions(_ app: XCUIApplication) {
-        // The start screen skips on tap.
         app.tap()
-        let first = app.buttons["Los geht's"]
-        XCTAssertTrue(first.waitForExistence(timeout: 5))
-        first.tap()
-        let next = app.buttons["Weiter"]
-        XCTAssertTrue(next.waitForExistence(timeout: 3))
+        let skip = app.buttons["introSkip"]
+        XCTAssertTrue(skip.waitForExistence(timeout: 5))
+        skip.tap()
+    }
+
+    /// The film plays by itself to its button; a picture of each scene is kept to check by eye.
+    @MainActor
+    func testFilmPlaysToTheEnd() {
+        let app = launch(permissions: "allow")
+        app.tap()
+        XCTAssertTrue(app.buttons["introSkip"].waitForExistence(timeout: 5))
+        for scene in 1...6 {
+            usleep(scene == 1 ? 2_100_000 : 2_700_000)
+            shot(app, "scene-\(scene)")
+        }
+        let next = app.buttons["introNext"]
+        XCTAssertTrue(next.waitForExistence(timeout: 8), "the film did not end")
+        XCTAssertFalse(app.buttons["introSkip"].exists)
         next.tap()
-        XCTAssertTrue(app.staticTexts["Sag mir, wohin du willst."].waitForExistence(timeout: 3))
-        app.buttons["Weiter"].tap()
+        XCTAssertTrue(app.buttons["allowPermissions"].waitForExistence(timeout: 3))
     }
 
     @MainActor

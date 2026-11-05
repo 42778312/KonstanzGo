@@ -14,7 +14,6 @@ public struct MapScreen: View {
     @State private var sheet: MapSheet?
     /// Counts long presses, for the haptic tap when a pin drops.
     @State private var drops = 0
-    @State private var touring = false
     /// When the last sheet closed: a new one can only open once its closing animation is over.
     @State private var closedAt = Date.distantPast
     /// The search was opened with the microphone: listen instead of typing.
@@ -89,17 +88,6 @@ public struct MapScreen: View {
                     .padding(.bottom, barSpace + KGSpace.large)
                     .ignoresSafeArea(edges: .bottom)
             }
-        }
-        .overlayPreferenceValue(TourAnchors.self) { anchors in
-            if touring {
-                SeeriTour(anchors: anchors) { withAnimation(.easeOut(duration: 0.3)) { touring = false } }
-            }
-        }
-        .onChange(of: services.wantsTour, initial: true) { _, wants in
-            guard wants else { return }
-            services.wantsTour = false
-            sheet = nil
-            withAnimation(.easeOut(duration: 0.3)) { touring = true }
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
         .sensoryFeedback(.impact(weight: .medium), trigger: drops)
@@ -350,9 +338,7 @@ extension MapScreen {
     /// Seeri's message over the search bar, and the pill that stays while something's going on.
     fileprivate var noticesLayer: some View {
         VStack(alignment: .leading, spacing: KGSpace.small) {
-            if !touring {
-                SeeriNoticeBubble(services: services, isSpeaking: $seeriSpeaks, onOpen: openNotices)
-            }
+            SeeriNoticeBubble(services: services, isSpeaking: $seeriSpeaks, onOpen: openNotices)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, KGSpace.screen)
@@ -397,7 +383,6 @@ extension MapScreen {
             .accessibilityLabel(Text("Wohin möchtest du?", bundle: .module))
             .accessibilityHint(Text("Öffnet die Suche", bundle: .module))
             .accessibilityIdentifier("mapSearch")
-            .tourSpot(.search)
             Button {
                 listens = true
                 open(.search)
@@ -409,7 +394,6 @@ extension MapScreen {
             .buttonStyle(KGPressStyle())
             .accessibilityLabel(Text("Per Sprache suchen", bundle: .module))
             .accessibilityIdentifier("mapVoiceSearch")
-            .tourSpot(.mic)
             Button(action: openNotices) {
                 SeeriAlive(seeriSpeaks || sirenFlashing == true ? .excited : .happy, detail: .compact,
                            sirenFlashing: sirenFlashing)
@@ -423,7 +407,6 @@ extension MapScreen {
             .accessibilityLabel(Text("Meldungen", bundle: .module))
             .accessibilityValue(services.live.active.isEmpty ? Text(verbatim: "") : Text(verbatim: "\(services.live.active.count)"))
             .accessibilityIdentifier("seeriMenu")
-            .tourSpot(.seeri)
             .padding(.trailing, KGSpace.xs)
         }
         .frame(height: Self.searchBarHeight)
@@ -446,7 +429,6 @@ extension MapScreen {
         .accessibilityLabel(Text("Mehr", bundle: .module))
         .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
         .accessibilityIdentifier("moreHandle")
-        .tourSpot(.more)
     }
 
     /// The bar follows the finger up with some resistance; far enough and the menu rises out of it.
@@ -474,7 +456,6 @@ extension MapScreen {
         }
         .kgGlass(in: Capsule())
         .kgShadow(.floating, in: Capsule())
-        .tourSpot(.controls)
     }
 
     private func controlButton(_ icon: KGIcon, label: Text, tint: Color, action: @escaping () -> Void) -> some View {

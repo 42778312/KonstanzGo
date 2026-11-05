@@ -117,6 +117,11 @@ public enum KGPalette {
     public static let witchHat = KGColorValue(0x3B1F5C)
 
     // MARK: Map (light and dark styles)
+    /// The intro film's night map, always dark.
+    public static let filmNight = KGColorValue(0x1B2536)
+    public static let filmWater = KGColorValue(0x1A2A63)
+    public static let filmPark = KGColorValue(0x12443F)
+    public static let filmRoad = KGColorValue(0x36445A)
     public static let mapLand = KGColorValue(0xF2F1ED, dark: 0x1E1E1E)
     public static let mapWater = KGColorValue(0xB9D8E8, dark: 0x182D38)
     public static let mapWaterLabel = KGColorValue(0x3F6FB0, dark: 0x6E9BD6)
@@ -152,6 +157,10 @@ public enum KGColor {
     public static let card = Color(KGPalette.card)
     /// Lists and cards on glass (the stop sheet's look): a light veil over whatever is behind, never solid black.
     public static let glassFill = Color.white.opacity(0.08)
+    public static let filmNight = Color(KGPalette.filmNight)
+    public static let filmWater = Color(KGPalette.filmWater)
+    public static let filmPark = Color(KGPalette.filmPark)
+    public static let filmRoad = Color(KGPalette.filmRoad)
     public static let pressed = Color(KGPalette.pressed)
     public static let line = Color(KGPalette.line)
     public static let switchOff = Color(KGPalette.switchOff)

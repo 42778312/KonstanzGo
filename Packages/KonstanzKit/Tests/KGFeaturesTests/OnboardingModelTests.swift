@@ -23,22 +23,17 @@ struct OnboardingModelTests {
     @Test func goesForwardAndBack() {
         let model = OnboardingModel(defaults: defaults, permissions: FixedPermissions(allow: true))
         model.next()
-        model.next()
-        #expect(model.step == .search)
-        model.back()
-        #expect(model.step == .offline)
-        #expect(!model.movedForward)
-        model.back()
+        #expect(model.step == .permissions)
         model.back()
         #expect(model.step == .welcome)
+        #expect(!model.movedForward)
     }
 
     @Test func comesBackToTheSameStepAfterARestart() {
         let first = OnboardingModel(defaults: defaults, permissions: FixedPermissions(allow: true))
         first.next()
-        first.next()
         let second = OnboardingModel(defaults: defaults, permissions: FixedPermissions(allow: true))
-        #expect(second.step == .search)
+        #expect(second.step == .permissions)
     }
 
     @Test func allowAsksForWhatIsSwitchedOn() async {

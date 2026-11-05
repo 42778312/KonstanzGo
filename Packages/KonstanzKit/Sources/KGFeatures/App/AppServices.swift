@@ -21,8 +21,6 @@ public final class AppServices {
     public var selectTab: ((HomeTab) -> Void)?
     /// A sheet for the map to open (saved things, links, a departure); the map clears it.
     var sheetRequest: MapSheet?
-    /// Set to start Seeri's tour of the map (after onboarding, or from Mehr); the map clears it.
-    public var wantsTour = false
     /// The menu (Seeri in the search bar) is open; screens it opens close it.
     public var showsMenu = false
     /// Set to open the map's search sheet (links and Favoriten); the map clears it.

@@ -1,4 +1,5 @@
 import Foundation
+import Synchronization
 
 /// Everything the screens ask about buses and places. `OfflineTransit` answers from the bundled data;
 /// `DesignSample` answers with the design's own examples, for previews and snapshot tests.
@@ -28,6 +29,7 @@ public final class OfflineTransit: TransitService {
     public let tracker: VehicleTracker
     public let timetableInfo: TimetableInfo?
     private let lookup: ReverseLookup
+    private let notices = Mutex<[ServiceNotice]>([])
 
     /// Opens every data file; about a second on a phone, so the app does it behind the start animation.
     public init(data: BundledData) throws {
@@ -40,6 +42,25 @@ public final class OfflineTransit: TransitService {
         timetableInfo = try? TimetableInfo.read(from: data.timetable)
     }
 
+    /// The operator's disruptions, from `LiveModel`: closed stops leave routes and departures.
+    public func update(notices new: [ServiceNotice]) {
+        notices.withLock { $0 = new }
+        planner.update(notices: new)
+    }
+
+    private func marked(_ departures: [Departure]) -> [Departure] {
+        let known = notices.withLock { $0 }
+        guard known.contains(where: \.closesStops) else { return departures }
+        return departures.map { departure in
+            var marked = departure
+            if StopClosures(notices: known, at: departure.scheduled)
+                .isClosed(station: departure.platform.stationID, line: departure.line.name) {
+                marked.status = .stopClosed
+            }
+            return marked
+        }
+    }
+
     public var stations: [Station] { store.stations }
     public func station(id: Int) -> Station? { store.station(id: id) }
 
@@ -48,7 +69,7 @@ public final class OfflineTransit: TransitService {
     }
 
     public func departures(at stationID: Int, from date: Date, limit: Int) throws -> [Departure] {
-        try store.departures(at: stationID, from: date, limit: limit)
+        marked(try store.departures(at: stationID, from: date, limit: limit))
     }
 
     public func departuresByLine(at stationID: Int, from date: Date) throws -> [LineDirection] {

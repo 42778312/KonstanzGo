@@ -9,8 +9,14 @@ public struct Connection: Sendable, Hashable {
     public var to: Int
     public var departure: Int
     public var arrival: Int
+    /// The bus doesn't stop at `from` or `to` during a closure: nobody gets on or off there, the trip goes on.
+    public var noBoarding: Bool
+    public var noAlighting: Bool
 
-    public init(trip: Int, from: Int, to: Int, departure: Int, arrival: Int) {
+    public init(trip: Int, from: Int, to: Int, departure: Int, arrival: Int, noBoarding: Bool = false,
+                noAlighting: Bool = false) {
+        self.noBoarding = noBoarding
+        self.noAlighting = noAlighting
         self.trip = trip
         self.from = from
         self.to = to
@@ -113,14 +119,14 @@ public struct ConnectionScan: Sendable {
             if let known = tripEntered[connection.trip] {
                 entered = known
             } else {
-                guard let at = earliest[connection.from] else { continue }
+                guard !connection.noBoarding, let at = earliest[connection.from] else { continue }
                 let ready = at + (arrivedByRide.contains(connection.from) ? minChange : 0)
                 guard ready <= connection.departure else { continue }
                 entered = index
                 tripEntered[connection.trip] = index
             }
 
-            guard connection.arrival < earliest[connection.to, default: .max] else { continue }
+            guard !connection.noAlighting, connection.arrival < earliest[connection.to, default: .max] else { continue }
             earliest[connection.to] = connection.arrival
             reached[connection.to] = .byRide(enter: entered, exit: index)
             arrivedByRide.insert(connection.to)

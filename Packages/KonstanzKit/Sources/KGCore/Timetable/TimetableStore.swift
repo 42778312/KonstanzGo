@@ -27,11 +27,11 @@ public final class TimetableStore: Sendable {
                         coordinate: Coordinate(latitude: $0["lat"], longitude: $0["lon"]))
             }
             let platforms = try Row.fetchAll(
-                db, sql: "SELECT id, station_id, code, lat, lon, direction FROM platform"
+                db, sql: "SELECT id, station_id, gtfs_id, code, lat, lon, direction FROM platform"
             ).map { row in
                 Platform(id: row["id"], stationID: row["station_id"], code: Self.nonEmpty(row["code"]),
                          coordinate: Coordinate(latitude: row["lat"], longitude: row["lon"]),
-                         direction: Self.nonEmpty(row["direction"]))
+                         direction: Self.nonEmpty(row["direction"]), gtfsID: Self.nonEmpty(row["gtfs_id"]))
             }
             let lines = try Row.fetchAll(db, sql: "SELECT id, short_name, long_name, is_city, type, agency FROM route").map {
                 Line(id: $0["id"], name: $0["short_name"], longName: $0["long_name"], isCity: $0["is_city"],
@@ -53,6 +53,19 @@ public final class TimetableStore: Sendable {
     public func platform(id: Int) -> Platform? { platformsByID[id] }
     public func platforms(of stationID: Int) -> [Platform] { platformsByStation[stationID] ?? [] }
     public func line(id: Int) -> Line? { linesByID[id] }
+
+    /// The stop for a stop area or platform id of the feed ("de:08335:11905").
+    public func stationID(stopArea: String) -> Int? {
+        platformsByID.values.first { platform in
+            platform.gtfsID == stopArea || platform.gtfsID?.hasPrefix(stopArea + ":") == true
+        }?.stationID
+    }
+
+    /// The feed's stop area of a stop ("de:08335:11905"), the one most of its platforms belong to.
+    public func stopArea(ofStation id: Int) -> String? {
+        let areas = platforms(of: id).compactMap { $0.gtfsID?.split(separator: ":").prefix(3).joined(separator: ":") }
+        return Dictionary(grouping: areas, by: { $0 }).max { ($0.value.count, $1.key) < ($1.value.count, $0.key) }?.key
+    }
 
     /// Stations within `metres` of a point, nearest first.
     public func stations(near point: Coordinate, within metres: Double, limit: Int = 10) -> [(Station, Double)] {

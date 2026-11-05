@@ -184,7 +184,7 @@ public final class WeatherModel {
 
     public nonisolated static func download() async throws -> Data {
         var request = URLRequest(url: DWDReport.konstanz, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 15)
-        request.setValue("KonstanzGo (iOS)", forHTTPHeaderField: "User-Agent")
+        request.setValue("KonstanzGo (iOS; konstant@werkflow.cc)", forHTTPHeaderField: "User-Agent")
         let (data, response) = try await URLSession.shared.data(for: request)
         guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
         return data

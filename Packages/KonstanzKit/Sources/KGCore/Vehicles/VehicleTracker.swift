@@ -46,15 +46,22 @@ public final class VehicleTracker: Sendable {
     }
 
     /// Every trip on the road at `date`, today's and yesterday's night trips. `cityOnly` keeps Konstanz lines.
-    public func positions(at date: Date, cityOnly: Bool = false) throws -> [VehiclePosition] {
+    /// `delays` (seconds per trip, from live reports) put late buses where they really are; `cancelled` trips
+    /// aren't on the road at all.
+    public func positions(at date: Date, cityOnly: Bool = false, delays: [Int: Double] = [:],
+                          cancelled: Set<Int> = []) throws -> [VehiclePosition] {
         var result: [VehiclePosition] = []
         // Trajectories run in wall-clock seconds of their own service day, like the timetable
         // (yesterday's night trips past 24:00), so each day is asked in its own seconds.
         for (day, minutes) in clock.runningDays(at: date) {
             let seconds = Double(minutes) * 60 + Self.secondsIntoMinute(date)
-            for trip in try trips(on: day) where trip.first <= minutes + 1 && trip.last >= minutes - 1 {
-                guard let line = store.line(id: trip.route), !cityOnly || line.isCity else { continue }
-                if let position = try trajectory(trip, line: line, day: day)?.position(at: seconds) {
+            for trip in try trips(on: day) where !cancelled.contains(trip.trip) {
+                let delay = delays[trip.trip] ?? 0
+                let late = Int((delay / 60).rounded(.up))
+                guard trip.first + late <= minutes + 1, trip.last + late >= minutes - 1,
+                      let line = store.line(id: trip.route), !cityOnly || line.isCity else { continue }
+                if var position = try trajectory(trip, line: line, day: day)?.position(at: seconds - delay) {
+                    if delays[trip.trip] != nil { position.isEstimated = false }
                     result.append(position)
                 }
             }

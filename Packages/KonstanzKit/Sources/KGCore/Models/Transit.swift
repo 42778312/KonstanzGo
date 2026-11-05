@@ -25,8 +25,12 @@ public struct Platform: Sendable, Hashable, Identifiable, Codable {
     public var coordinate: Coordinate
     /// Which way buses leave from here, from the city's stop register; nil when unknown.
     public var direction: String?
+    /// The feed's platform id ("de:08335:11882:0:1"), to match live reports.
+    public var gtfsID: String?
 
-    public init(id: Int, stationID: Int, code: String?, coordinate: Coordinate, direction: String?) {
+    public init(id: Int, stationID: Int, code: String?, coordinate: Coordinate, direction: String?,
+                gtfsID: String? = nil) {
+        self.gtfsID = gtfsID
         self.id = id
         self.stationID = stationID
         self.code = code
@@ -88,11 +92,13 @@ public struct Line: Sendable, Hashable, Identifiable, Codable {
     }
 }
 
-/// What the app knows about when a bus really comes. Today the app has only the timetable, so every
-/// departure is `.scheduled`; `.live` exists for a future realtime feed. Only `.live` may be shown green.
+/// What the app knows about when a bus really comes: the timetable, a live report (only `.live` may be
+/// shown green), a cancelled trip, or a stop the operator says isn't served.
 public enum DepartureStatus: Sendable, Hashable, Codable {
     case scheduled
     case live(delayMinutes: Int)
+    case cancelled
+    case stopClosed
 
     public var isLive: Bool {
         if case .live = self { return true }

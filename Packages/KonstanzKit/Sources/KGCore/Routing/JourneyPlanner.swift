@@ -57,7 +57,8 @@ public final class JourneyPlanner: Sendable {
     private let walker: WalkRouter?
     private let footpaths: [Int: [Access]]
     /// The scan for the most recent planning day; building it takes a few tens of ms.
-    private let cache = Mutex<(day: ServiceDay, scan: ConnectionScan)?>(nil)
+    private let cache = Mutex<(day: ServiceDay, closures: StopClosures, scan: ConnectionScan)?>(nil)
+    private let notices = Mutex<[ServiceNotice]>([])
 
     public init(store: TimetableStore, url: URL, walker: WalkRouter? = nil,
                 clock: ServiceClock = ServiceClock()) throws {
@@ -80,12 +81,18 @@ public final class JourneyPlanner: Sendable {
         footpaths = paths
     }
 
+    /// The operator's disruptions: during a closure buses don't stop at the closed stops.
+    public func update(notices new: [ServiceNotice]) {
+        notices.withLock { $0 = new }
+    }
+
     // MARK: Planning
 
     /// Journeys for a request, best first by the preference. Empty when nothing runs (screen 23).
     public func plan(_ request: PlanRequest) throws -> [Journey] {
         let day = ServiceDay(request.time, calendar: clock.calendar)
-        let scan = try scan(for: day)
+        let closures = StopClosures(notices: notices.withLock { $0 }, at: request.time)
+        let scan = try scan(for: day, closures: closures)
         let results = options(scan: scan, origins: access(near: request.from.coordinate),
                               destinations: access(near: request.to.coordinate),
                               time: minutes(of: request.time, on: day), arriveBy: request.arriveBy)
@@ -172,17 +179,17 @@ public final class JourneyPlanner: Sendable {
         clock.runningDays(at: date).first { $0.day == day }?.minutes ?? 0
     }
 
-    func scan(for day: ServiceDay) throws -> ConnectionScan {
-        if let cached = cache.withLock({ $0 }), cached.day == day { return cached.scan }
+    func scan(for day: ServiceDay, closures: StopClosures = StopClosures()) throws -> ConnectionScan {
+        if let cached = cache.withLock({ $0 }), cached.day == day, cached.closures == closures { return cached.scan }
         var connections: [Connection] = []
         try queue.read { db in
-            connections += try Self.connections(db, runningOn: day, dayOffset: 0)
+            connections += try Self.connections(db, runningOn: day, dayOffset: 0, closures: closures)
             // Yesterday's trips still running after midnight, and tomorrow's first night trips.
-            connections += try Self.connections(db, runningOn: day.previous, dayOffset: -1)
-            connections += try Self.connections(db, runningOn: day.next, dayOffset: 1)
+            connections += try Self.connections(db, runningOn: day.previous, dayOffset: -1, closures: closures)
+            connections += try Self.connections(db, runningOn: day.next, dayOffset: 1, closures: closures)
         }
         let scan = ConnectionScan(connections: connections, footpaths: footpaths)
-        cache.withLock { $0 = (day, scan) }
+        cache.withLock { $0 = (day, closures, scan) }
         return scan
     }
 
@@ -190,14 +197,16 @@ public final class JourneyPlanner: Sendable {
     private static let tomorrowTrips = 1_000_000
 
     /// Rides between consecutive stops of every trip running on `day`, in the minutes of the day being planned.
-    private static func connections(_ db: Database, runningOn day: ServiceDay, dayOffset: Int) throws -> [Connection] {
+    private static func connections(_ db: Database, runningOn day: ServiceDay, dayOffset: Int,
+                                    closures: StopClosures) throws -> [Connection] {
         let shift = dayOffset * ServiceClock.minutesPerDay
         let scanID = { (trip: Int) in dayOffset < 0 ? -trip : dayOffset > 0 ? trip + tomorrowTrips : trip }
         let rows = try Row.fetchCursor(db, sql: """
-            SELECT st.trip_id, p.station_id, st.arrival, st.departure
+            SELECT st.trip_id, p.station_id, st.arrival, st.departure, r.short_name
             FROM stop_time st
             JOIN platform p ON p.id = st.platform_id
             JOIN trip t ON t.id = st.trip_id
+            JOIN route r ON r.id = t.route_id
             JOIN service_date sd ON sd.service_id = t.service_id AND sd.date = ?
             ORDER BY st.trip_id, st.seq
             """, arguments: [day.yyyymmdd])
@@ -207,8 +216,11 @@ public final class JourneyPlanner: Sendable {
             let trip: Int = row["trip_id"], station: Int = row["station_id"], arrival: Int = row["arrival"]
             if let last = previous, last.trip == trip, last.departure + shift >= 0,
                dayOffset <= 0 || last.departure < ServiceClock.nightMinutes {
+                let line: String = row["short_name"]
                 result.append(Connection(trip: scanID(trip), from: last.from, to: station,
-                                         departure: last.departure + shift, arrival: arrival + shift))
+                                         departure: last.departure + shift, arrival: arrival + shift,
+                                         noBoarding: closures.isClosed(station: last.from, line: line),
+                                         noAlighting: closures.isClosed(station: station, line: line)))
             }
             previous = Connection(trip: trip, from: station, to: station, departure: row["departure"], arrival: arrival)
         }

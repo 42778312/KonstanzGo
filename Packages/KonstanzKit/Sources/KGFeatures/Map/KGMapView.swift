@@ -278,7 +278,7 @@ public struct KGMapView: UIViewRepresentable {
             style.addLayer(tiles)
 
             let names = MLNSymbolStyleLayer(identifier: Self.stopNamesLayer, source: source)
-            names.minimumZoomLevel = 16
+            names.minimumZoomLevel = Float(MapRegion.destinationZoom)
             names.text = NSExpression(forKeyPath: "name")
             names.textFontNames = NSExpression(forConstantValue: ["Noto Sans Medium"])
             names.textFontSize = NSExpression(forConstantValue: 12)

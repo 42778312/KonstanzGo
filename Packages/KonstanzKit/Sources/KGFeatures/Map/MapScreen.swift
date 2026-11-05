@@ -192,7 +192,7 @@ public struct MapScreen: View {
                 .presentationDragIndicator(.visible)
         case let .place(target):
             FoldingSheet(detent: $detent, title: target.name, onClose: { self.sheet = nil }) {
-                PlaceSheet(services: services, target: target, saved: placeQuery, onQuery: { placeQuery = $0 }) {
+                PlaceSheet(services: services, target: target, saved: placeQuery, onQuery: queryChanged) {
                     self.sheet = nil
                 }
             }
@@ -265,6 +265,14 @@ public struct MapScreen: View {
         }
     }
 
+    /// Remembers the place sheet's choices; a new "Nach" (or a swap) moves the pin and the map there.
+    private func queryChanged(_ query: PlanQuery) {
+        placeQuery = query
+        guard map.pins.first(where: { $0.id == "place" })?.coordinate != query.to.coordinate else { return }
+        map.pins = [MapPin(id: "place", coordinate: query.to.coordinate)]
+        map.move(CameraMove(center: query.to.coordinate, zoom: MapRegion.destinationZoom))
+    }
+
     /// Marks what the sheet is about on the map and keeps it in view above the sheet.
     private func sheetChanged(_ new: MapSheet?) {
         let half = height * 0.5
@@ -281,14 +289,14 @@ public struct MapScreen: View {
             withAnimation(KGMotion.sheet) { map.selectedStationID = id }
             map.insets.bottom = half
             if let station = transit.station(id: id) {
-                map.move(CameraMove(center: station.coordinate, zoom: max(MapRegion.userZoom, 16)))
+                map.move(CameraMove(center: station.coordinate, zoom: MapRegion.destinationZoom))
             }
         case let .place(target):
             map.selectedStationID = nil
             map.lines = []
             map.pins = [MapPin(id: "place", coordinate: target.coordinate)]
             map.insets.bottom = half
-            map.move(CameraMove(center: target.coordinate, zoom: 16))
+            map.move(CameraMove(center: target.coordinate, zoom: MapRegion.destinationZoom))
         case let .trip(tripID, day, fromStation):
             map.selectedStationID = nil
             if let ride = TripScreen.ride(services: services, tripID: tripID, day: day, fromStation: fromStation) {

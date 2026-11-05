@@ -54,7 +54,8 @@ final class CoreFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5), "stop sheet did not open")
         XCTAssertTrue(app.buttons["Alle Linien"].exists)
         // A tap on the map folds the sheet to a bar with the stop's name; the bar opens it again.
-        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.2)).tap()
+        // (On the Seerhein, north of the stop: no other stop there to hit.)
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
         let folded = app.buttons["foldedBar"]
         XCTAssertTrue(folded.waitForExistence(timeout: 3), "the stop sheet did not fold")
         XCTAssertTrue(folded.label.contains("Sternenplatz"), "folded bar should name the stop: \(folded.label)")

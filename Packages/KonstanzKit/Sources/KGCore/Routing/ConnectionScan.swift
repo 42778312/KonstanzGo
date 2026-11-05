@@ -87,7 +87,9 @@ public struct ConnectionScan: Sendable {
     // One pass of the published algorithm, kept in one piece so it can be checked against the paper.
     // swiftlint:disable cyclomatic_complexity function_body_length
     /// The best route leaving at `departAt` or later, or nil when no destination can be reached by bus.
-    public func route(origins: [Access], destinations: [Access], departAt: Int) -> RouteResult? {
+    /// `skipping`: trips not to use, in this scan's ids.
+    public func route(origins: [Access], destinations: [Access], departAt: Int,
+                      skipping: Set<Int> = []) -> RouteResult? {
         var earliest: [Int: Int] = [:]
         var reached: [Int: Reached] = [:]
         var arrivedByRide: Set<Int> = []
@@ -119,7 +121,8 @@ public struct ConnectionScan: Sendable {
             if let known = tripEntered[connection.trip] {
                 entered = known
             } else {
-                guard !connection.noBoarding, let at = earliest[connection.from] else { continue }
+                guard !connection.noBoarding, !skipping.contains(connection.trip),
+                      let at = earliest[connection.from] else { continue }
                 let ready = at + (arrivedByRide.contains(connection.from) ? minChange : 0)
                 guard ready <= connection.departure else { continue }
                 entered = index

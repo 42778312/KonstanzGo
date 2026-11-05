@@ -99,6 +99,7 @@ public struct MapScreen: View {
         .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles) }
         .task { await moveVehicles() }
         .task { await followBuses() }
+        .task { await services.live.keepFresh() }
         .onChange(of: services.live.closures.stations, initial: true) { _, closed in
             map.closedStations = closed.compactMap { transit.station(id: $0) }
         }
@@ -366,7 +367,6 @@ extension MapScreen {
         .padding(.bottom, barSpace + KGSpace.large + 12)
         .frame(maxHeight: .infinity, alignment: .bottom)
         .ignoresSafeArea(edges: .bottom)
-        .task { await services.live.keepFresh() }
     }
 
     /// One glass bar: magnifier and "Wohin möchtest du?" open the search, the microphone opens it listening,

@@ -89,13 +89,15 @@ public final class JourneyPlanner: Sendable {
     // MARK: Planning
 
     /// Journeys for a request, best first by the preference. Empty when nothing runs (screen 23).
-    public func plan(_ request: PlanRequest) throws -> [Journey] {
+    /// `avoiding`: trips not to use (a cancelled bus, one the user can't catch).
+    public func plan(_ request: PlanRequest, avoiding: Set<Int> = []) throws -> [Journey] {
         let day = ServiceDay(request.time, calendar: clock.calendar)
         let closures = StopClosures(notices: notices.withLock { $0 }, at: request.time)
         let scan = try scan(for: day, closures: closures)
         let results = options(scan: scan, origins: access(near: request.from.coordinate),
                               destinations: access(near: request.to.coordinate),
-                              time: minutes(of: request.time, on: day), arriveBy: request.arriveBy)
+                              time: minutes(of: request.time, on: day), arriveBy: request.arriveBy,
+                              skipping: Set(avoiding.flatMap { [$0, -$0, $0 + Self.tomorrowTrips] }))
         var journeys = try results.compactMap { try journey(from: $0, day: day, request: request) }
         if let walk = walkOnly(request, quickestBus: journeys.map(\.minutes).min()) {
             journeys.append(walk)
@@ -105,9 +107,9 @@ public final class JourneyPlanner: Sendable {
 
     /// Up to four bus options: one per set of trips, none beaten by another on both leave and arrival time.
     private func options(scan: ConnectionScan, origins: [Access], destinations: [Access],
-                         time: Int, arriveBy: Bool) -> [RouteResult] {
+                         time: Int, arriveBy: Bool, skipping: Set<Int>) -> [RouteResult] {
         func route(_ at: Int) -> RouteResult? {
-            scan.route(origins: origins, destinations: destinations, departAt: at)
+            scan.route(origins: origins, destinations: destinations, departAt: at, skipping: skipping)
         }
         // Earliest arrival alone may leave needlessly early: leave as late as possible for the same arrival.
         func latest(_ first: RouteResult) -> RouteResult {

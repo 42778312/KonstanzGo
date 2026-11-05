@@ -123,6 +123,31 @@ public final class LiveModel {
 
     // MARK: Delays
 
+    /// What's known right now, for checking a journey.
+    public var state: LiveState { LiveState(delays: tripDelays, cancelled: cancelledTrips, closures: closures) }
+
+    /// Reads the stops where the journey's next rides can be seen: where the user boards, or the next stop of
+    /// the bus they're on.
+    public func follow(_ journey: Journey, at date: Date = .now) async {
+        now = date
+        pruneDelays(at: date)
+        let store = store
+        for ride in journey.rides.filter({ $0.end.addingTimeInterval(tripDelays[$0.tripID] ?? 0) > date }).prefix(3) {
+            let stop = ride.stops.dropLast().first { $0.departure.addingTimeInterval(tripDelays[ride.tripID] ?? 0) > date }
+                ?? ride.boarding
+            let from = stop.departure.addingTimeInterval(-120)
+            let departures = await Task.detached(priority: .utility) {
+                (try? store.departures(at: stop.station.id, from: from, limit: 40, within: 1)) ?? []
+            }.value
+            _ = await live(departures, atStation: stop.station.id, at: date)
+        }
+    }
+
+    #if DEBUG
+    /// UI tests: acts as if the operator had cancelled this trip.
+    public func simulateCancelled(trip: Int) { cancelledTrips.insert(trip) }
+    #endif
+
     /// A stop's departures with what's known right now. Asks at most every 30 s per stop; without an answer
     /// they stay plain timetable times, never an old delay.
     public func live(_ departures: [Departure], atStation id: Int, at date: Date = .now) async -> [Departure] {

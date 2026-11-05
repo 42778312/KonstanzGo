@@ -81,6 +81,26 @@
         }
       }
     },
+    "%lld Min. früher": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min earlier"
+          }
+        }
+      }
+    },
+    "%lld Min. später": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min later"
+          }
+        }
+      }
+    },
     "%lld Min. vorher": {
       "localizations": {
         "en": {
@@ -127,6 +147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld× change · from %2$@"
+          }
+        }
+      }
+    },
+    "+%lld Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld min"
           }
         }
       }
@@ -461,6 +491,36 @@
         }
       }
     },
+    "Andere Route": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Another route"
+          }
+        }
+      }
+    },
+    "Andere Route finden": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find another route"
+          }
+        }
+      }
+    },
+    "Andere Wege": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other ways"
+          }
+        }
+      }
+    },
     "Andere Zeit wählen": {
       "localizations": {
         "en": {
@@ -611,6 +671,16 @@
         }
       }
     },
+    "Beste": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best"
+          }
+        }
+      }
+    },
     "Bevorzugen": {
       "localizations": {
         "en": {
@@ -627,6 +697,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Until %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Bis zum Ziel fährt jetzt nichts anderes. Der aktuelle Weg bleibt dein bester.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing else runs to your destination right now. Your current route stays the best one."
           }
         }
       }
@@ -1353,6 +1433,16 @@
         }
       }
     },
+    "Gerade kein anderer Weg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No other way right now"
+          }
+        }
+      }
+    },
     "Geradeaus": {
       "localizations": {
         "en": {
@@ -1399,6 +1489,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your bus is coming"
+          }
+        }
+      }
+    },
+    "Gleich schnell": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Same time"
           }
         }
       }
@@ -1984,6 +2084,46 @@
         }
       }
     },
+    "Linie %@ hält gerade nicht an %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line %1$@ isn't stopping at %2$@ right now."
+          }
+        }
+      }
+    },
+    "Linie %@ um %@ ab %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line %1$@ at %2$@ from %3$@."
+          }
+        }
+      }
+    },
+    "Linie %@ um %@ fällt aus.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line %1$@ at %2$@ is cancelled."
+          }
+        }
+      }
+    },
+    "Linie %@ um %@ schaffst du nicht.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You won't make line %1$@ at %2$@."
+          }
+        }
+      }
+    },
     "Linien": {
       "localizations": {
         "en": {
@@ -2270,6 +2410,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "New notice about the buses. Have a quick look."
+          }
+        }
+      }
+    },
+    "Neuer Weg: Ankunft %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New route: arrive %@."
           }
         }
       }
@@ -2954,6 +3104,26 @@
         }
       }
     },
+    "Steig an %@ aus und geh zu Fuß weiter.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get off at %@ and walk from there."
+          }
+        }
+      }
+    },
+    "Steig an %@ aus, dann Linie %@ um %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get off at %1$@, then line %2$@ at %3$@."
+          }
+        }
+      }
+    },
     "Steige %@–%@": {
       "localizations": {
         "en": {
@@ -3000,6 +3170,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Search"
+          }
+        }
+      }
+    },
+    "Suche …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching…"
           }
         }
       }
@@ -3374,6 +3554,16 @@
         }
       }
     },
+    "Wird knapp: nur %lld Sek. bis Linie %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tight: only %1$lld sec to line %2$@."
+          }
+        }
+      }
+    },
     "Wird nicht angefahren": {
       "localizations": {
         "en": {
@@ -3460,6 +3650,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "On foot · %lld min"
+          }
+        }
+      }
+    },
+    "Zu Fuß, %lld Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On foot, %lld min"
           }
         }
       }

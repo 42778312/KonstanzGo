@@ -147,6 +147,7 @@ struct JourneyMap: View {
         .ignoresSafeArea()
         .onAppear {
             model.lines = journey.mapLines
+            model.closedStations = services.live.closures.stations.compactMap { services.transit.station(id: $0) }
             model.insets = MapInsets(top: 110, bottom: bottomInset)
             model.onTapMap = onTap
             model.userLocation = services.location.coordinate

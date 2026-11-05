@@ -16,6 +16,12 @@ Each change maps to a finding in `REVIEW.md`.
 | R-07 | `LiveModel` and `EFADepartures`: stop sheets show live times, late buses move on the map, cancelled ones disappear | The app only knew the timetable | `LiveTests`, real data in the simulator |
 | R-08 | `LiveModel` and `EFANotices`: notices are read when online and kept on the phone. Closed stops get an X, leave the planner and are crossed out in stop lists. Seeri announces new notices once; a pill and sheet list them with alternatives | The app knew nothing about disruptions | `LiveTests`, `LiveNoticesTests`, real closure in the simulator |
 
+## Missed connections
+
+| What changed | Why | Checked by |
+|---|---|---|
+| `Journey.risk` compares each change with live delays, cancellations and closed stops. `JourneyPlanner.rescue` finds up to three other ways to the same target; when on a bus it tries every stop ahead as the place to get off. The trip screen warns and offers one tap to another route, and always has a small "Andere Route" button | A late bus shouldn't leave the user stranded | `RescueTests` (core and UI), simulator screenshots of the whole flow |
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).

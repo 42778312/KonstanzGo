@@ -9,7 +9,15 @@ import SwiftUI
 /// position (plan S15).
 struct JourneyScreen: View {
     let services: AppServices
-    let journey: Journey
+    /// The route being followed; a rescue replaces it.
+    @State private var journey: Journey
+    @State private var rescueOptions: [RescueOption] = []
+    @State private var showsRescue = false
+    @State private var isSearching = false
+    /// The user started near the route's start, so their position says something about it.
+    @State private var startedNearby = false
+    /// What Seeri says just after a rescue.
+    @State private var rerouted: Text?
     @State private var now = Date.now
     @State private var savedArrival = false
     /// Folded to a bar, half the screen, or pulled up full: the map's own sheet, dragged the same way.
@@ -23,6 +31,15 @@ struct JourneyScreen: View {
 
     private static let barHeight: CGFloat = 110
 
+    init(services: AppServices, journey: Journey) {
+        self.services = services
+        _journey = State(initialValue: journey)
+    }
+
+    private var live: LiveState { services.live.state }
+    private var position: Coordinate? { startedNearby ? services.location.coordinate : nil }
+    private var risk: JourneyRisk { journey.risk(at: now, live: live, location: position) }
+
     var body: some View {
         ZStack(alignment: .top) {
             // The whole trip in view: walks and every bus.
@@ -30,6 +47,7 @@ struct JourneyScreen: View {
                        bottomInset: expanded ? screenHeight * 0.5 : Self.barHeight) {
                 if expanded { withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.folded } }
             }
+            .id(journey.id)
             HStack(spacing: KGSpace.small) {
                 KGRoundIconButton(.close, label: Text("Zurück zu den Verbindungen", bundle: .module), action: endTrip)
                 .accessibilityIdentifier("endJourney")
@@ -67,6 +85,30 @@ struct JourneyScreen: View {
             try? await Task.sleep(for: .seconds(0.45))
             showsSheet = true
         }
+        // The buses of the route: is the next change still going to work?
+        .task(id: journey.id) {
+            while !Task.isCancelled {
+                await services.live.follow(journey)
+                now = .now
+                try? await Task.sleep(for: .seconds(30))
+            }
+        }
+        .onAppear {
+            if let here = services.location.coordinate, let first = journey.allPoints.first {
+                startedNearby = here.distance(to: first) < 1_500
+            }
+            #if DEBUG
+            if CommandLine.arguments.contains("-KGCancelFirstRide"), let first = journey.firstRide {
+                services.live.simulateCancelled(trip: first.tripID)
+            }
+            #endif
+        }
+        // Something broke: bring the way out up, and let them feel it.
+        .onChange(of: risk.isBroken) { _, broken in
+            if broken, !expanded { withAnimation(KGMotion.sheet) { detent = FoldingSheet<EmptyView>.half } }
+        }
+        .sensoryFeedback(.warning, trigger: risk.isBroken) { _, broken in broken }
+        .sensoryFeedback(.success, trigger: journey.id)
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { screenHeight = $0 }
         .task {
             while !Task.isCancelled {
@@ -108,14 +150,14 @@ struct JourneyScreen: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: KGSpace.compact) {
                 SeeriAlive(phase == .arrived ? .joyful : .excited).frame(width: 56, height: 60)
-                KGSpeechBubble(cheer, size: .side)
+                KGSpeechBubble(rerouted ?? cheer, size: .side)
                     .id(phase)
             }
             HStack(alignment: .firstTextBaseline) {
-                KGMinutesValue(departure: journey.end, now: now).text
+                KGMinutesValue(departure: live.expectedEnd(journey), now: now).text
                     .kgFont(.bigMinutes(26)).foregroundStyle(KGColor.ink)
                 Spacer()
-                (Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(journey.end)).bold())
+                (Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(live.expectedEnd(journey))).bold())
                     .kgFont(.callout.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
             }
             .padding(.top, KGSpace.mediumLarge)
@@ -123,14 +165,50 @@ struct JourneyScreen: View {
                 .padding(.top, KGSpace.small)
                 .accessibilityLabel(Text("Fahrtfortschritt", bundle: .module))
                 .accessibilityValue(progressValue)
+            if phase != .arrived {
+                RescuePrompt(risk: risk, isSearching: isSearching, onFind: findRescue)
+                    .padding(.top, KGSpace.small)
+                    .animation(KGMotion.pop, value: risk)
+            }
             ScrollView {
-                JourneyLegs(journey: journey, now: now)
+                JourneyLegs(journey: journey, now: now, delays: live.delays)
                     .padding(.top, KGSpace.mediumLarge)
                     .padding(.bottom, KGSpace.large)
             }
             .scrollIndicators(.hidden)
         }
         .padding(.horizontal, KGSpace.large)
+        .sheet(isPresented: $showsRescue) {
+            RescueSheet(risk: risk, options: rescueOptions, onTake: take) { showsRescue = false }
+        }
+    }
+
+    /// One tap: other ways to the same target from where the user is, also without internet.
+    private func findRescue() {
+        guard !isSearching else { return }
+        isSearching = true
+        let planner = services.transit.planner, journey = journey, live = live, position = position, date = Date.now
+        Task {
+            let options = await Task.detached(priority: .userInitiated) {
+                (try? planner.rescue(journey, at: date, live: live, location: position)) ?? []
+            }.value
+            rescueOptions = options
+            isSearching = false
+            showsRescue = true
+        }
+    }
+
+    private func take(_ option: RescueOption) {
+        showsRescue = false
+        withAnimation(KGMotion.sheet) {
+            journey = option.journey
+            rerouted = Text("Neuer Weg: Ankunft \(KGStrings.clock(option.arrival)).", bundle: .module)
+        }
+        TripActivity.update(journey: option.journey, now: .now)
+        Task {
+            try? await Task.sleep(for: .seconds(10))
+            withAnimation { rerouted = nil }
+        }
     }
 
     /// Under the route in the folded bar: "12 Min. · Ankunft 20:09".
@@ -235,6 +313,8 @@ struct ProgressBar: View {
 private struct JourneyLegs: View {
     let journey: Journey
     let now: Date
+    /// Seconds late, per trip.
+    let delays: [Int: Double]
 
     var body: some View {
         VStack(alignment: .leading, spacing: KGSpace.medium) {
@@ -261,6 +341,10 @@ private struct JourneyLegs: View {
                 Text(verbatim: ride.headsign).kgFont(.callout.weighted(KGFont.bold)).foregroundStyle(KGColor.ink)
                     .lineLimit(1)
                 Spacer()
+                if let late = delays[ride.tripID], late >= 60 {
+                    Text("+\(Int((late / 60).rounded())) Min.", bundle: .module).kgFont(.caption)
+                        .foregroundStyle(KGColor.warn)
+                }
                 Text("\(minutes) Min.", bundle: .module).kgFont(.caption.weighted(KGFont.semiBold))
                     .foregroundStyle(KGColor.ink2)
             }

@@ -114,7 +114,7 @@ struct RescueSheet: View {
     }
 }
 
-private struct RescueCard: View {
+struct RescueCard: View {
     let option: RescueOption
     let isBest: Bool
     let action: () -> Void

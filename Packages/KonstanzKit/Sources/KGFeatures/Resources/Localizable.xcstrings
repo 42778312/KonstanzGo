@@ -561,6 +561,16 @@
         }
       }
     },
+    "Anschluss verpasst?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missed your connection?"
+          }
+        }
+      }
+    },
     "Arbeit": {
       "localizations": {
         "en": {
@@ -571,12 +581,12 @@
         }
       }
     },
-    "Auch ohne Netz": {
+    "Auf deiner Fahrt warne ich dich. Ein Tipp, und du hast einen neuen Weg zum selben Ziel.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Even without signal"
+            "value": "On your trip, I warn you. One tap, and you have a new way to the same place."
           }
         }
       }
@@ -611,16 +621,6 @@
         }
       }
     },
-    "Auf der Karte, wo er gerade wirklich ist": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On the map, where it really is right now"
-          }
-        }
-      }
-    },
     "Automatisch": {
       "localizations": {
         "en": {
@@ -641,12 +641,12 @@
         }
       }
     },
-    "Bei Baustellen und gesperrten Haltestellen": {
+    "Beispiel": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "About road works and closed stops"
+            "value": "Example"
           }
         }
       }
@@ -741,6 +741,16 @@
         }
       }
     },
+    "Blinke ich, tipp mich an. Das X zeigt gesperrte Haltestellen, ich sage dir die Alternativen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If I flash, tap me. An X marks a closed stop, and I'll tell you the alternatives."
+          }
+        }
+      }
+    },
     "Bodensee": {
       "localizations": {
         "en": {
@@ -781,16 +791,6 @@
         }
       }
     },
-    "Bus verpasst? Ein Tipp.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Missed the bus? One tap."
-          }
-        }
-      }
-    },
     "Busse & Züge": {
       "localizations": {
         "en": {
@@ -807,6 +807,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Appearance"
+          }
+        }
+      }
+    },
+    "Das hier ist deine Karte. Alle Busse fahren mit, ein grüner Punkt heißt: live.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is your map. All the buses move on it, and a green dot means live."
           }
         }
       }
@@ -877,16 +887,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your bus 9A comes in 3 min"
-          }
-        }
-      }
-    },
-    "Dein Bus durch Konstanz": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your bus through Konstanz"
           }
         }
       }
@@ -1018,6 +1018,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dark"
+          }
+        }
+      }
+    },
+    "Echte Zeiten an jeder Haltestelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Real times at every stop"
           }
         }
       }
@@ -1223,12 +1233,12 @@
         }
       }
     },
-    "Fahrplan und Karte sind immer dabei": {
+    "Fahrplan und Karte sind immer dabei. Mit Internet kommen Verspätungen und Meldungen dazu.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Timetable and map are always with you"
+            "value": "Timetable and map are always with you. With internet, delays and notices join in."
           }
         }
       }
@@ -1804,32 +1814,12 @@
         }
       }
     },
-    "Ich finde sofort einen anderen Weg": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I'll find another way right away"
-          }
-        }
-      }
-    },
     "Ich höre zu …": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Listening …"
-          }
-        }
-      }
-    },
-    "Ich warne dich": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I'll warn you"
           }
         }
       }
@@ -1870,16 +1860,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Every line, every timetable"
-          }
-        }
-      }
-    },
-    "Jeder Bus. Live.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Every bus. Live."
           }
         }
       }
@@ -2274,6 +2254,16 @@
         }
       }
     },
+    "Läuft auch ohne Netz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Works without signal"
+          }
+        }
+      }
+    },
     "Löschen": {
       "localizations": {
         "en": {
@@ -2310,6 +2300,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Several lines"
+          }
+        }
+      }
+    },
+    "Mein Blaulicht warnt dich": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My siren warns you"
           }
         }
       }
@@ -2844,12 +2844,12 @@
         }
       }
     },
-    "Sag einfach, wohin": {
+    "Sag mir, wohin du willst": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Just say where"
+            "value": "Tell me where you want to go"
           }
         }
       }
@@ -3294,6 +3294,16 @@
         }
       }
     },
+    "Tipp auf eine Haltestelle. Orange heißt: Der Bus kommt später als geplant.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap a stop. Orange means the bus is coming later than planned."
+          }
+        }
+      }
+    },
     "Tipp: ": {
       "localizations": {
         "en": {
@@ -3344,12 +3354,12 @@
         }
       }
     },
-    "Tippen oder sprechen, auch ohne Internet": {
+    "Tippen oder ins Mikro sprechen. Die Suche ist unten auf der Karte.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Type or talk, even without internet"
+            "value": "Type or talk into the mic. Search is at the bottom of the map."
           }
         }
       }
@@ -3550,6 +3560,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "What you search for appears here – only on this iPhone."
+          }
+        }
+      }
+    },
+    "Wegen eines Wasserrohrbruchs werden diese Haltestellen nicht angefahren. Bitte nutze eine der anderen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Because of a burst water pipe, these stops aren't being served. Please use one of the others."
           }
         }
       }

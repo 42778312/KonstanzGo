@@ -34,7 +34,7 @@ public struct RootView: View {
                 }
                 .transition(.opacity)
             case .onboarding:
-                OnboardingFlow(model: onboarding) {
+                OnboardingFlow(model: onboarding, loader: loader) {
                     withAnimation(.easeInOut(duration: 0.35)) { stage = .home }
                 }
                 .transition(.opacity)

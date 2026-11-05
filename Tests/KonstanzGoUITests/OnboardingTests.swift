@@ -31,20 +31,21 @@ final class OnboardingTests: XCTestCase {
         skip.tap()
     }
 
-    /// The film plays by itself to its button; a picture of each scene is kept to check by eye.
+    /// The real app, one step per tap: nothing moves on by itself. A picture of each is kept to check by eye.
     @MainActor
-    func testFilmPlaysToTheEnd() {
+    func testStepsShowTheAppAndWaitForATap() {
         let app = launch(permissions: "allow")
         app.tap()
-        XCTAssertTrue(app.buttons["introSkip"].waitForExistence(timeout: 5))
-        for scene in 1...6 {
-            usleep(scene == 1 ? 2_100_000 : 2_700_000)
-            shot(app, "scene-\(scene)")
-        }
         let next = app.buttons["introNext"]
-        XCTAssertTrue(next.waitForExistence(timeout: 8), "the film did not end")
-        XCTAssertFalse(app.buttons["introSkip"].exists)
-        next.tap()
+        XCTAssertTrue(next.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["Hallo, ich bin Seeri"].waitForExistence(timeout: 3))
+        for step in 1...6 {
+            sleep(4)
+            shot(app, "step-\(step)")
+            if step == 1 { XCTAssertTrue(app.staticTexts["Hallo, ich bin Seeri"].exists, "moved on by itself") }
+            if step == 3 { XCTAssertTrue(app.staticTexts["Sternenplatz"].exists, "the stop's real list is missing") }
+            next.tap()
+        }
         XCTAssertTrue(app.buttons["allowPermissions"].waitForExistence(timeout: 3))
     }
 

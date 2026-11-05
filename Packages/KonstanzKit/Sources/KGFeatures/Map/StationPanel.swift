@@ -10,6 +10,8 @@ struct StationPanel: View {
     let onClose: () -> Void
     /// Opens another stop (the alternatives to a closed one).
     var onStation: (Int) -> Void = { _ in }
+    /// Departures from this moment instead of now (the intro at night, when nothing runs).
+    var start: Date?
     @State private var lines: [Line] = []
     @State private var line: Line.ID?
     @State private var from = Date.now
@@ -58,7 +60,7 @@ struct StationPanel: View {
         .task(id: station.id) {
             lines = (try? services.transit.lines(at: station.id)) ?? []
             line = nil
-            from = .now
+            from = start ?? .now
         }
         .task(id: "\(station.id)|\(line ?? -1)|\(from.timeIntervalSince1970)") { await followDepartures() }
         .sheet(isPresented: $choosingTime) { TimeSheet(date: $from) }

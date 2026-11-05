@@ -157,7 +157,7 @@ struct MoreScreen: View {
 
 /// The offline card on 13 (S17.3a): ring, "Offline-Daten ›", status line. No refresh button: data comes
 /// with app updates (0.2.4).
-private struct OfflineCard: View {
+struct OfflineCard: View {
     let info: TimetableInfo?
     let onOpen: () -> Void
 

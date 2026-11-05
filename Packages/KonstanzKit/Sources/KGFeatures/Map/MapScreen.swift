@@ -519,7 +519,7 @@ extension MapScreen {
 
 /// What SwiftUI still draws over the map: the selected stop and a dropped pin. In its own view, so their
 /// positions, which change with every frame of a move, redraw nothing else.
-private struct MapOverlays: View {
+struct MapOverlays: View {
     let map: MapModel
 
     var body: some View {
@@ -594,7 +594,7 @@ private struct LayersSheet: View {
 
 /// The pin of a picked place or a long press, drawn with its tip on the point: it falls in from above and
 /// bounces, its shadow grows as it lands, and a ring spreads from the spot.
-private struct DroppedPin: View {
+struct DroppedPin: View {
     @State private var landed = false
     @State private var ripple = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

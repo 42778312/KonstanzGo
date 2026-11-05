@@ -94,7 +94,8 @@ struct RescueTests {
     func tooFarToWalk() throws {
         let journey = try journeyWithChange()
         let ride = journey.rides[0]
-        let far = store.stations.max { $0.coordinate.distance(to: ride.boarding.platform.coordinate) < $1.coordinate.distance(to: ride.boarding.platform.coordinate) }
+        let stop = ride.boarding.platform.coordinate
+        let far = store.stations.max { $0.coordinate.distance(to: stop) < $1.coordinate.distance(to: stop) }
         let now = ride.start.addingTimeInterval(-60)
         guard case .missed = journey.risk(at: now, live: LiveState(), location: far?.coordinate) else {
             Issue.record("not missed")

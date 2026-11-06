@@ -177,7 +177,11 @@ final class UserDotView: MLNAnnotationView {
         isUserInteractionEnabled = false
         host.view.backgroundColor = .clear
         host.view.frame = bounds
+        host.view.accessibilityElementsHidden = true
         addSubview(host.view)
+        // The map lists this view itself, so it needs the name; the hosted label stays hidden.
+        isAccessibilityElement = true
+        accessibilityLabel = String(localized: "Mein Standort", bundle: .module)
     }
 
     @available(*, unavailable)

@@ -22,10 +22,31 @@ Each change maps to a finding in `REVIEW.md`.
 |---|---|---|
 | `Journey.risk` compares each change with live delays, cancellations and closed stops. `JourneyPlanner.rescue` finds up to three other ways to the same target; when on a bus it tries every stop ahead as the place to get off. The trip screen warns and offers one tap to another route, and always has a small "Andere Route" button | A late bus shouldn't leave the user stranded | `RescueTests` (core and UI), simulator screenshots of the whole flow |
 
+## Ultimate test, 6 Nov 2026
+
+Complete run: 265 of 265 app, snapshot and UI tests, 233 package tests, App Store check passed. On the simulator and Mac; the iPhone wasn't connected.
+
+| Measured | Before | After |
+|---|---|---|
+| Opening the offline data (Mac, Release) | 307 ms | 18 ms |
+| Live times on a stop's first frame | After 0.3–1.4 s of network | At once for any bus reported in the last 5 minutes |
+| Hitches panning, 15 s (simulator) | 12 | 10 |
+| Hitches zooming, 15 s (simulator) | 6 | 2 |
+| Hitches dragging a sheet, 15 s (simulator) | 22–37 with Liquid Glass | 15–17 with the blur material |
+
+| What changed | Why |
+|---|---|
+| `LiveModel.instant`, `status(ofTrip:)`, `warm(stations:)`, saved delays, one request per stop at a time | Real times without waiting |
+| Stops are white H signs, only buses are coral, with a glow (`KGStopSign`) | They looked alike |
+| Search index loads in the background | 98% of what opening the data waited for |
+| Sheets use a blur material | About 40% fewer dropped frames while dragging |
+| Trip card shows the real delay; route cards show a known delay | They only showed timetable times |
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).
 - **R-06:** a whole new timetable still needs an app release. Waiting for your decision on the host.
 - **R-22:** written permission or proper access from NVBW or MobiData BW, before release.
 - **R-23:** real detour streets for buses.
+- **Phone numbers:** every smoothness number above is from a simulator on a Mac. The iPhone 11 hasn't been measured. Build with `OTHER_SWIFT_FLAGS=-DKGMETER` for the on-screen meter.
 - **P2 and P3 findings:** still open.

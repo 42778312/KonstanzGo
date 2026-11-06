@@ -64,6 +64,8 @@ struct SpeedTests {
 
     @Test func searching() throws {
         let transit = try OfflineTransit(data: repoData)
+        // The very first search may wait for the index, which reads in the background after the app opens.
+        time("first search right after opening", limit: .seconds(1), runs: 1) { _ = transit.search("sternenpl", near: PlaceSearch.konstanzCentre) }
         time("search per letter", limit: .milliseconds(15)) { _ = transit.search("sternenpl", near: PlaceSearch.konstanzCentre) }
     }
 

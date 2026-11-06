@@ -21,7 +21,7 @@ extension KGMapView.Coordinator {
     }
 
     /// A stop on the map: the German "H" sign in a small white disc. Quiet and round, so it can't be taken for
-    /// a bus, which is a bright capsule with its line number.
+    /// a bus or train, which are bright 3D vehicles with their line number.
     static func stopTileImage() -> UIImage? {
         let tile = KGStopSign().padding(4).environment(\.colorScheme, .light)
         let renderer = ImageRenderer(content: tile)
@@ -57,15 +57,25 @@ extension KGMapView.Coordinator {
 
     // MARK: Buses and trains
 
-    /// Moves the buses by changing the layer's data: the map draws them itself, in step with every frame.
+    /// Moves the vehicles by changing the layer's data: the map draws them itself, in step with every frame. Only the
+    /// ones in and near the view, so a busy timetable costs the map little.
     func updateVehicles(on map: MLNMapView) {
         guard styleReady, let style = map.style, model.vehicles != shownVehicles else { return }
         shownVehicles = model.vehicles
-        for vehicle in model.vehicles { addImages(for: vehicle, to: style) }
-        let shape = MLNShapeCollectionFeature(shapes: model.vehicles.map { vehicle in
+        let bounds = map.visibleCoordinateBounds
+        let middle = CLLocationCoordinate2D(latitude: (bounds.ne.latitude + bounds.sw.latitude) / 2,
+                                            longitude: (bounds.ne.longitude + bounds.sw.longitude) / 2)
+        let reachLat = (bounds.ne.latitude - bounds.sw.latitude) * 0.75, reachLon = (bounds.ne.longitude - bounds.sw.longitude) * 0.75
+        let blinks = !UIAccessibility.isReduceMotionEnabled
+        let shown = model.vehicles.filter {
+            abs($0.coordinate.latitude - middle.latitude) <= reachLat && abs($0.coordinate.longitude - middle.longitude) <= reachLon
+        }
+        for vehicle in shown { addImages(for: vehicle, to: style) }
+        let shape = MLNShapeCollectionFeature(shapes: shown.map { vehicle in
             let feature = MLNPointFeature()
             feature.coordinate = vehicle.coordinate.location
-            feature.attributes = ["image": vehicle.imageName, "nose": vehicle.noseName, "heading": vehicle.heading]
+            feature.attributes = ["image": vehicle.spriteName, "label": vehicle.labelName,
+                                  "blink": blinks ? vehicle.blinkName : ""]
             return feature
         })
         if let source = style.source(withIdentifier: Self.vehiclesSource) as? MLNShapeSource {
@@ -74,57 +84,48 @@ extension KGMapView.Coordinator {
         }
         let source = MLNShapeSource(identifier: Self.vehiclesSource, shape: shape, options: nil)
         style.addSource(source)
-        // The nose first, under the marker, pointing where the bus heads; its offset turns with it.
-        for (name, distance) in [("kg-nose-red", 15.0), ("kg-nose-yellow", 15.0), ("kg-nose-trip", 22.0)] {
-            let nose = MLNSymbolStyleLayer(identifier: "kg-vehicles-\(name)", source: source)
-            nose.predicate = NSPredicate(format: "nose == %@", name)
-            nose.iconImageName = NSExpression(forConstantValue: name)
-            nose.iconRotation = NSExpression(forKeyPath: "heading")
-            nose.iconOffset = NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: 0, dy: -distance)))
-            nose.iconAllowsOverlap = NSExpression(forConstantValue: true)
-            nose.iconIgnoresPlacement = NSExpression(forConstantValue: true)
-            style.addLayer(nose)
+        // Small when zoomed out, so a crowded map stays readable; the offset of the number scales with it.
+        let scale = NSExpression(forMLNInterpolating: .zoomLevelVariable, curveType: .linear, parameters: nil,
+                                 stops: NSExpression(forConstantValue: [11: 0.75, 13: 1.1, 15: 1.35, 17: 1.7, 19: 2.1]))
+        func layer(_ name: String, image: String) -> MLNSymbolStyleLayer {
+            let layer = MLNSymbolStyleLayer(identifier: name, source: source)
+            layer.iconImageName = NSExpression(forKeyPath: image)
+            layer.iconScale = scale
+            layer.iconAllowsOverlap = NSExpression(forConstantValue: true)
+            layer.iconIgnoresPlacement = NSExpression(forConstantValue: true)
+            return layer
         }
-        let markers = MLNSymbolStyleLayer(identifier: Self.vehiclesSource, source: source)
-        markers.iconImageName = NSExpression(forKeyPath: "image")
-        markers.iconAllowsOverlap = NSExpression(forConstantValue: true)
-        markers.iconIgnoresPlacement = NSExpression(forConstantValue: true)
-        style.addLayer(markers)
+        style.addLayer(layer(Self.vehiclesSource, image: "image"))
+        let blink = layer("kg-vehicles-blink", image: "blink")
+        blink.predicate = NSPredicate(format: "blink != ''")
+        style.addLayer(blink)
+        let label = layer("kg-vehicles-label", image: "label")
+        label.minimumZoomLevel = 12
+        label.iconOffset = NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: 0, dy: -18)))
+        style.addLayer(label)
     }
 
     private func addImages(for vehicle: MapVehicle, to style: MLNStyle) {
-        if vehicleImages.insert(vehicle.imageName).inserted, let image = Self.markerImage(for: vehicle) {
-            style.setImage(image, forName: vehicle.imageName)
+        for name in [vehicle.spriteName, vehicle.blinkName] where !name.isEmpty && vehicleImages.insert(name).inserted {
+            if let image = KGVehicleSprite.image(named: name) { style.setImage(image, forName: name) }
         }
-        if vehicleImages.insert(vehicle.noseName).inserted, let image = Self.noseImage(for: vehicle) {
-            style.setImage(image, forName: vehicle.noseName)
+        if vehicleImages.insert(vehicle.labelName).inserted, let image = Self.labelImage(for: vehicle) {
+            style.setImage(image, forName: vehicle.labelName)
         }
     }
 
-    private static func image(of view: some View) -> UIImage? {
-        let renderer = ImageRenderer(content: view.environment(\.colorScheme, .light))
-        renderer.scale = 3
-        return renderer.uiImage
-    }
-
-    /// The design's own marker views, drawn once into an image.
-    static func markerImage(for vehicle: MapVehicle) -> UIImage? {
+    /// The number over a vehicle, drawn once into an image.
+    static func labelImage(for vehicle: MapVehicle) -> UIImage? {
+        let label: KGVehicleLabel
         switch vehicle.look {
         case let .vehicle(isTrain, isYellow, isLive):
-            // A soft glow in its own colour lifts a moving bus off the map and the quiet stops.
-            image(of: KGVehicleMarker(line: vehicle.line, isTrain: isTrain, isKreuzlingen: isYellow, isLive: isLive)
-                .shadow(color: (isYellow ? KGColor.kreuzlingen : KGColor.coral).opacity(0.75), radius: 5)
-                .padding(10))
-        case .trip:
-            image(of: KGBusMarker(line: vehicle.line, animated: false).padding(6))
+            label = KGVehicleLabel(line: vehicle.line, isTrain: isTrain, isYellow: isYellow, isLive: isLive)
+        case let .trip(isTrain):
+            label = KGVehicleLabel(line: vehicle.line, isTrain: isTrain, large: true)
         }
-    }
-
-    static func noseImage(for vehicle: MapVehicle) -> UIImage? {
-        switch vehicle.look {
-        case let .vehicle(_, isYellow, _): image(of: KGVehicleNose(isYellow: isYellow))
-        case .trip: image(of: KGBusMarkerNose())
-        }
+        let renderer = ImageRenderer(content: label.padding(4).environment(\.colorScheme, .light))
+        renderer.scale = 3
+        return renderer.uiImage
     }
 
     // MARK: The user

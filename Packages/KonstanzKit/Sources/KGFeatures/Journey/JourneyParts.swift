@@ -149,20 +149,33 @@ struct JourneyMap: View {
         }
     }
 
-    /// The estimated positions of the journey's buses, once a second (plan M5, S12.1).
+    /// The estimated positions of the journey's buses, four times a second so they drive smoothly (plan M5, S12.1).
     private func followBuses() async {
+        var motion = VehicleMotion()
+        var last = ContinuousClock.now
         while !Task.isCancelled {
             let now = Date.now
-            model.vehicles = journey.rides.compactMap { ride in
+            let found: [VehiclePosition] = journey.rides.compactMap { ride in
                 for day in [ServiceDay(ride.start), ServiceDay(ride.start).adding(days: -1)] {
-                    if let bus = try? services.transit.tracker.position(ofTrip: ride.tripID, on: day, at: now) {
-                        return MapVehicle(id: bus.tripID, line: bus.line.name, coordinate: bus.coordinate,
-                                          heading: bus.heading, look: .trip)
+                    // Where a late bus really is: it's where the timetable had it that many seconds ago.
+                    let placed = now.addingTimeInterval(-(services.live.tripDelays[ride.tripID] ?? 0))
+                    if let bus = try? services.transit.tracker.position(ofTrip: ride.tripID, on: day, at: placed) {
+                        return bus
                     }
                 }
                 return nil
             }
-            try? await Task.sleep(for: .seconds(1))
+            let tick = ContinuousClock.now
+            let headings = motion.advance(Dictionary(found.map { ($0.tripID, $0.heading) }) { first, _ in first },
+                                          after: (tick - last) / .seconds(1))
+            last = tick
+            let lit = Int(now.timeIntervalSince1970 * 2.8) % 2 == 0
+            model.vehicles = found.map { bus in
+                MapVehicle(id: bus.tripID, line: bus.line.name, coordinate: bus.coordinate,
+                           heading: headings[bus.tripID] ?? bus.heading, look: .trip(isTrain: bus.line.mode == .train),
+                           turn: lit ? bus.signal : .none)
+            }
+            try? await Task.sleep(for: .milliseconds(250))
         }
     }
 }

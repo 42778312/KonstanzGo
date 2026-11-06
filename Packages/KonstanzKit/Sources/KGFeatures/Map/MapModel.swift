@@ -89,8 +89,8 @@ public struct MapVehicle: Sendable, Hashable {
     public enum Look: Sendable, Hashable {
         /// On the map screen: red, or yellow for the Swiss buses, with a green dot when it reports live.
         case vehicle(isTrain: Bool, isYellow: Bool, isLive: Bool)
-        /// The larger marker of a bus on the user's own trip.
-        case trip
+        /// A vehicle on the user's own trip, with a larger number.
+        case trip(isTrain: Bool)
     }
 
     public var id: Int
@@ -99,8 +99,11 @@ public struct MapVehicle: Sendable, Hashable {
     /// Compass degrees.
     public var heading: Double
     public var look: Look
+    /// The indicators, while they are lit.
+    public var turn: VehicleTurn
 
-    public init(id: Int, line: String, coordinate: Coordinate, heading: Double, look: Look) {
+    public init(id: Int, line: String, coordinate: Coordinate, heading: Double, look: Look, turn: VehicleTurn = .none) {
+        self.turn = turn
         self.id = id
         self.line = line
         self.coordinate = coordinate
@@ -109,19 +112,44 @@ public struct MapVehicle: Sendable, Hashable {
     }
 
     /// The name of its image in the map's style; one image per line and look, drawn once.
-    var imageName: String {
+    private var isTrain: Bool {
         switch look {
-        case let .vehicle(isTrain, isYellow, isLive):
-            "kg-vehicle-\(line)-\(isTrain ? 1 : 0)\(isYellow ? 1 : 0)\(isLive ? 1 : 0)"
-        case .trip:
-            "kg-trip-\(line)"
+        case let .vehicle(isTrain, _, _): isTrain
+        case let .trip(isTrain): isTrain
         }
     }
 
-    var noseName: String {
+    /// Which of the 36 rendered angles shows this heading.
+    private var frame: Int {
+        let degrees = heading.truncatingRemainder(dividingBy: 360)
+        return Int(((degrees < 0 ? degrees + 360 : degrees) / 10).rounded()) % 36
+    }
+
+    /// The picture of the vehicle at its heading (Design/tools/make_vehicle_sprites.swift).
+    var spriteName: String {
+        let kind: String
         switch look {
-        case let .vehicle(_, isYellow, _): isYellow ? "kg-nose-yellow" : "kg-nose-red"
-        case .trip: "kg-nose-trip"
+        case let .vehicle(isTrain, isYellow, _): kind = isTrain ? "train" : isYellow ? "bus-yellow" : "bus-red"
+        case let .trip(isTrain): kind = isTrain ? "train" : "bus-red"
+        }
+        return kind + String(format: "-%02d", frame)
+    }
+
+    /// The lit indicators to lay over the vehicle; empty when none are.
+    var blinkName: String {
+        switch turn {
+        case .none: ""
+        case .left: String(format: "blink-left-%02d", frame)
+        case .right: String(format: "blink-right-%02d", frame)
+        }
+    }
+
+    var labelName: String {
+        switch look {
+        case let .vehicle(isTrain, isYellow, isLive):
+            "kg-label-\(line)-\(isTrain ? 1 : 0)\(isYellow ? 1 : 0)\(isLive ? 1 : 0)"
+        case let .trip(isTrain):
+            "kg-label-trip-\(line)-\(isTrain ? 1 : 0)"
         }
     }
 }

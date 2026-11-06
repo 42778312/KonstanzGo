@@ -493,10 +493,14 @@ extension MapScreen {
     /// Konstanz Bahnhof and Sternenplatz.
     private static let hubs = [15, 99]
 
-    /// Four times a second: where every bus and train is by the timetable, so they glide along their routes.
-    /// Paused while a screen is open over the map.
+    /// Eight times a second: where every bus and train is by the timetable, so they glide along their routes and
+    /// swing through corners, with their indicators going before a turn. Paused while a screen is open over the map.
     func moveVehicles() async {
         let tracker = services.transit.tracker
+        var motion = VehicleMotion()
+        var glide = DelayGlide()
+        var last = ContinuousClock.now
+        var lastDelays = ContinuousClock.now
         while !Task.isCancelled {
             if showsVehicles, services.router.path.isEmpty {
                 let now = Date.now
@@ -504,16 +508,23 @@ extension MapScreen {
                 let found = await Task.detached(priority: .utility) {
                     (try? tracker.positions(at: now, delays: delays, cancelled: cancelled)) ?? []
                 }.value
-                map.vehicles = found.filter { MapRegion.contains($0.coordinate) }.map { vehicle in
+                let running = found.filter { MapRegion.contains($0.coordinate) }
+                let tick = ContinuousClock.now
+                let headings = motion.advance(Dictionary(running.map { ($0.tripID, $0.heading) }) { first, _ in first },
+                                              after: (tick - last) / .seconds(1))
+                last = tick
+                let lit = Int(now.timeIntervalSince1970 * 2.8) % 2 == 0
+                map.vehicles = running.map { vehicle in
                     MapVehicle(id: vehicle.tripID, line: vehicle.line.name, coordinate: vehicle.coordinate,
-                               heading: vehicle.heading,
+                               heading: headings[vehicle.tripID] ?? vehicle.heading,
                                look: .vehicle(isTrain: vehicle.line.mode == .train, isYellow: vehicle.line.isYellowBus,
-                                              isLive: !vehicle.isEstimated))
+                                              isLive: !vehicle.isEstimated),
+                               turn: lit ? vehicle.signal : .none)
                 }
             } else if !showsVehicles, !map.vehicles.isEmpty {
                 map.vehicles = []
             }
-            try? await Task.sleep(for: .milliseconds(250))
+            try? await Task.sleep(for: .milliseconds(125))
         }
     }
 }

@@ -432,6 +432,7 @@ struct AboutScreen: View {
                 source(Text("Schrift", bundle: .module), "Figtree – SIL Open Font License 1.1")
                 source(Text("Karte", bundle: .module), "MapLibre Native – BSD 2-Clause")
                 source(Text("Datenbank", bundle: .module), "GRDB.swift – MIT")
+                source(Text("Symbole", bundle: .module), "Bus und Zug: Phosphor Icons, © 2023 Phosphor Icons – MIT")
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)

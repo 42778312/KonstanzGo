@@ -3284,6 +3284,16 @@
         }
       }
     },
+    "Symbole": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icons"
+          }
+        }
+      }
+    },
     "Teilen": {
       "localizations": {
         "en": {

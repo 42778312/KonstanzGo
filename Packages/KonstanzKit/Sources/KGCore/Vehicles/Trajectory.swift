@@ -9,6 +9,8 @@ public struct VehiclePosition: Sendable, Hashable, Identifiable {
     public var heading: Double
     /// Always estimated from the timetable for now (no live feed); shown as "geschätzt".
     public var isEstimated: Bool
+    /// How far the road ahead bends from `heading`, in degrees: positive to the right.
+    public var turnAhead = 0.0
 
     public var id: Int { tripID }
 }
@@ -39,6 +41,8 @@ public struct Trajectory: Sendable {
     static let balancePasses = 8
     /// Metres behind and ahead that give the heading, so corners turn the arrow smoothly.
     static let headingSpan = 15.0
+    /// Metres ahead where the road is looked at, so a bus signals before its corner.
+    static let turnLookAhead = 25.0
 
     public let tripID: Int
     public let line: Line
@@ -143,9 +147,12 @@ public struct Trajectory: Sendable {
             break
         }
         let back = point(at: distance - Self.headingSpan), ahead = point(at: distance + Self.headingSpan)
+        let heading = back.distance(to: ahead) < 0.5 ? 0 : back.bearing(to: ahead)
+        let near = point(at: distance + Self.turnLookAhead), far = point(at: distance + Self.turnLookAhead + 2 * Self.headingSpan)
         return VehiclePosition(tripID: tripID, line: line, headsign: headsign, coordinate: point(at: distance),
-                               heading: back.distance(to: ahead) < 0.5 ? 0 : back.bearing(to: ahead),
-                               isEstimated: true)
+                               heading: heading, isEstimated: true,
+                               turnAhead: near.distance(to: far) < 0.5 ? 0
+                                   : VehicleMotion.signedDifference(from: heading, to: near.bearing(to: far)))
     }
 
     private func point(at distance: Double) -> Coordinate {

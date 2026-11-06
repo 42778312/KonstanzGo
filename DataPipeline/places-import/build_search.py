@@ -19,6 +19,7 @@ import json
 import math
 import re
 import sqlite3
+import sys
 import unicodedata
 from collections import defaultdict
 from pathlib import Path
@@ -301,6 +302,30 @@ def cluster(points, gap=250):
     return list(groups.values())
 
 
+ALIASES = Path(__file__).parent / "aliases.json"
+# Places mapped under a bare letter or number: fine on a site plan, meaningless in a search result.
+BARE_NAME_PREFIX = {"Pier": "Steg", "Hospital": "Haus", "University": "Gebäude", "University building": "Gebäude",
+                    "College": "Gebäude"}
+
+
+def tidy_names(rows):
+    """Short, familiar names and search words from aliases.json, and bare letters made readable."""
+    aliases = json.loads(ALIASES.read_text(encoding="utf-8"))
+    used = set()
+    for r in rows:
+        alias = aliases.get(r[1])
+        if alias:
+            used.add(r[1])
+            r[8] = " ".join(p for p in (r[8], r[1], alias.get("keywords", "")) if p)
+            r[1] = alias.get("name", r[1])
+        elif len(r[1]) <= 2 and r[3] in BARE_NAME_PREFIX:
+            r[8] = " ".join(p for p in (r[8], r[1]) if p)
+            r[1] = f"{BARE_NAME_PREFIX[r[3]]} {r[1]}"
+    missing = set(aliases) - used
+    if missing:
+        sys.exit(f"aliases.json names places that no longer exist: {sorted(missing)}")
+
+
 def main():
     db = sqlite3.connect(DB)
     base = db.execute("SELECT slug, name, kind, detail, area, lat, lon, rank FROM place").fetchall()
@@ -435,6 +460,7 @@ def main():
         rows.append([unique("addr-" + slug(name)), name, "Address", "Address", where, point[0], point[1], 5, "", ""])
         n_addr += 1
 
+    tidy_names(rows)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with gzip.open(OUT, "wt", encoding="utf-8") as f:
         for r in rows:

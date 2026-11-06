@@ -39,6 +39,8 @@ public struct MapScreen: View {
     @State private var barLift: CGFloat = 0
     @AppStorage("map.showsStops") private var showsStops = true
     @AppStorage("map.showsVehicles") var showsVehicles = true
+    /// Only this line's buses on the map; empty for all.
+    @AppStorage("map.onlyLine") var onlyLine = ""
 
     public init(services: AppServices, bottomBar: CGFloat, onReplayOnboarding: @escaping () -> Void = {}) {
         self.services = services
@@ -106,7 +108,7 @@ public struct MapScreen: View {
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
         .sensoryFeedback(.impact(weight: .medium), trigger: drops)
         .sheet(item: presented) { sheet in sheetContent(sheet) }
-        .sheet(isPresented: $showsLayers) { LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles) }
+        .sheet(isPresented: $showsLayers) { layersSheet }
         .task { await moveVehicles() }
         .task { await followBuses() }
         .task { await services.live.keepFresh() }
@@ -170,6 +172,11 @@ public struct MapScreen: View {
             MapOverlays(map: map)
         }
         .ignoresSafeArea()
+    }
+
+    private var layersSheet: some View {
+        LayersSheet(showsStops: $showsStops, showsVehicles: $showsVehicles, onlyLine: $onlyLine,
+                    lines: services.transit.store.lines.filter(\.isCity).map(\.name))
     }
 
     @ViewBuilder private func sheetContent(_ sheet: MapSheet) -> some View {
@@ -544,7 +551,11 @@ extension MapScreen {
                 let found = await Task.detached(priority: .utility) {
                     (try? tracker.positions(at: now, delays: delays, cancelled: cancelled)) ?? []
                 }.value
-                let running = found.filter { MapRegion.contains($0.coordinate) }
+                let only = onlyLine
+                let running = found.filter { vehicle in
+                    MapRegion.contains(vehicle.coordinate)
+                        && (only.isEmpty || vehicle.line.name == only || Line.feedNumber(vehicle.line.name) == only)
+                }
                 let tick = ContinuousClock.now
                 let headings = motion.advance(Dictionary(running.map { ($0.tripID, $0.heading) }) { first, _ in first },
                                               after: (tick - last) / .seconds(1))
@@ -619,6 +630,8 @@ private struct StatusCorner: View {
 private struct LayersSheet: View {
     @Binding var showsStops: Bool
     @Binding var showsVehicles: Bool
+    @Binding var onlyLine: String
+    let lines: [String]
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -633,10 +646,22 @@ private struct LayersSheet: View {
             KGToggleRow(Text("Busse & Züge", bundle: .module), isOn: $showsVehicles)
             Text("Positionen sind aus Fahrplan und Verspätungen berechnet, nicht per GPS gemessen.", bundle: .module)
                 .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+            if showsVehicles {
+                ScrollView(.horizontal) {
+                    HStack(spacing: KGSpace.xs) {
+                        KGChip(Text("Alle Linien", bundle: .module), isOn: onlyLine.isEmpty) { onlyLine = "" }
+                        ForEach(lines, id: \.self) { line in
+                            KGChip(Text(verbatim: line), isOn: onlyLine == line) { onlyLine = line }
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+                .accessibilityIdentifier("onlyLine")
+            }
             Spacer(minLength: 0)
         }
         .padding(KGSpace.large)
-        .presentationDetents([.height(300)])
+        .presentationDetents([.height(360)])
         .kgGlassSheet()
         .presentationCornerRadius(KGRadius.card)
     }

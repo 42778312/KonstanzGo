@@ -100,6 +100,8 @@ First full run after the work above: 14 of 274 failed, none a bug in the app. 3 
 | P2-15 | Weather older than 6 hours is hidden; the request limit survives restarts; failures back off (R-10, R-11, R-16) | `WeatherTests` |
 | P2-17 | Bus numbers that would overlap give way; buses always show | Simulator. Check for flicker on a real iPhone |
 | P2-19 | A fade keeps the clock readable | Simulator |
+| P2-18 | "Busse & Züge" can show one line only ("9" includes 9A and 9B). The route line itself isn't drawn yet | Build; UI suite |
+| P2-22 | `places-import/aliases.json`: short names and familiar search words; bare letters become "Gebäude T", "Haus K", "Steg 5" | `familiarPlacesHaveShortNamesAndFamiliarWords` |
 | P2-23 | Start logo 0.5 s (was 0.6) and still skippable by a tap. iPhone start time still unmeasured | Not measured |
 
 ## Not changed yet

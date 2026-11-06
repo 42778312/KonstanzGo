@@ -117,6 +117,15 @@ struct PlaceSearchTests {
         #expect(place.address == "Universitätsstraße 10")
     }
 
+    @Test func familiarPlacesHaveShortNamesAndFamiliarWords() throws {
+        let search = try search
+        #expect(search.search("HTWG").first?.name == "HTWG Konstanz")
+        #expect(search.search("Hochschule Technik").first?.name == "HTWG Konstanz", "the full name still finds it")
+        #expect(search.search("Krankenhaus").contains { $0.name == "Klinikum Konstanz" })
+        #expect(search.search("Uni").contains { $0.name.hasPrefix("Universität") })
+        #expect(search.search("Lago").first?.name == "LAGO Shopping-Center")
+    }
+
     @Test func typingIsFast() throws {
         let search = try search
         // The index loads in the background; `SpeedTests` times that wait. This is about typing.

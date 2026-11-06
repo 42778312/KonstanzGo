@@ -851,6 +851,16 @@
         }
       }
     },
+    "Das konnte ich gerade nicht speichern.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I couldn't save that just now."
+          }
+        }
+      }
+    },
     "Daten": {
       "localizations": {
         "en": {
@@ -937,6 +947,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your data stays with you"
+          }
+        }
+      }
+    },
+    "Deine gespeicherten Daten waren beschädigt. Favoriten und Verlauf beginnen neu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your saved data was damaged. Favourites and history start fresh."
           }
         }
       }
@@ -1349,6 +1369,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Favourites"
+          }
+        }
+      }
+    },
+    "Favoriten können gerade nicht gespeichert werden.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favourites can't be saved right now."
           }
         }
       }

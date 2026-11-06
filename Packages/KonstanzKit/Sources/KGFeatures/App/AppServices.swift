@@ -1,6 +1,7 @@
 import Foundation
 import KGCore
 import Observation
+import SwiftUI
 
 /// Everything the screens share once the offline data is open: the timetable and planner, the user's
 /// saved things, their position, and where they are in the app.
@@ -11,6 +12,8 @@ public final class AppServices {
     public let transit: OfflineTransit
     /// Favourites, recent searches, alarms. Nil if the store could not be opened (then nothing is saved).
     public let user: UserStore?
+    /// Something the user should know about their saved things; the map shows it and clears it.
+    public var userMessage: Text?
     public let location: LocationModel
     public let router = Router()
     /// The weather in the map's corner: DWD's Konstanz station when online, the last reading offline.
@@ -33,7 +36,16 @@ public final class AppServices {
         self.transit = transit
         self.location = location
         live = Self.makeLive(transit)
-        user = try? UserStore.shared()
+        do {
+            let opened = try UserStore.sharedRecovering()
+            user = opened.store
+            if opened.recovered {
+                userMessage = Text("Deine gespeicherten Daten waren beschädigt. Favoriten und Verlauf beginnen neu.", bundle: .module)
+            }
+        } catch {
+            user = nil
+            userMessage = Text("Favoriten können gerade nicht gespeichert werden.", bundle: .module)
+        }
         #if KGMETER && canImport(UIKit)
         FrameMeter.start()
         #endif
@@ -95,11 +107,18 @@ public final class AppServices {
         here?.coordinate ?? MapRegion.center
     }
 
-    /// Runs a change on the user store and tells the lists.
-    public func updateUser(_ change: (UserStore) throws -> Void) {
-        guard let user else { return }
-        try? change(user)
-        userVersion += 1
+    /// Runs a change on the user store and tells the lists; says so when it could not be saved.
+    @discardableResult
+    public func updateUser(_ change: (UserStore) throws -> Void) -> Bool {
+        do {
+            guard let user else { throw CocoaError(.fileNoSuchFile) }
+            try change(user)
+            userVersion += 1
+            return true
+        } catch {
+            userMessage = Text("Das konnte ich gerade nicht speichern.", bundle: .module)
+            return false
+        }
     }
 
     public func isFavorite(_ target: SavedTarget) -> Bool {
@@ -114,8 +133,7 @@ public final class AppServices {
             updateUser { try $0.removeFavorite(id: existing.id) }
             return false
         }
-        updateUser { _ = try $0.addFavorite(target) }
-        return true
+        return updateUser { _ = try $0.addFavorite(target) }
     }
 }
 

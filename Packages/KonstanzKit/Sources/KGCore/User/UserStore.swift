@@ -13,15 +13,53 @@ public final class UserStore: Sendable {
     /// The shared database in the App Group folder, or Application Support when there is no group
     /// (unit tests, previews).
     public static func shared() throws -> UserStore {
+        try UserStore(url: sharedURL())
+    }
+
+    private static func sharedURL() throws -> URL {
         let folder = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
             ?? URL.applicationSupportDirectory
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        return try UserStore(url: folder.appending(path: "user.sqlite"))
+        return folder.appending(path: "user.sqlite")
+    }
+
+    /// For the app, not the widgets: the shared database, or a new one when the old file is damaged. The damaged
+    /// file is kept beside it, never deleted. Any other failure (a busy file, a full disk) throws, because the
+    /// saved things may still be fine.
+    public static func sharedRecovering() throws -> (store: UserStore, recovered: Bool) {
+        try openRecovering(url: sharedURL())
+    }
+
+    static func openRecovering(url: URL, now: Date = .now) throws -> (store: UserStore, recovered: Bool) {
+        do {
+            return (try UserStore(url: url), false)
+        } catch let error as DatabaseError where error.resultCode == .SQLITE_CORRUPT || error.resultCode == .SQLITE_NOTADB {
+            let stamp = Int(now.timeIntervalSince1970)
+            for suffix in ["", "-wal", "-shm"] {
+                let file = URL(filePath: url.path + suffix)
+                guard FileManager.default.fileExists(atPath: file.path) else { continue }
+                try FileManager.default.moveItem(at: file, to: URL(filePath: url.path + ".damaged-\(stamp)" + suffix))
+            }
+            return (try UserStore(url: url), true)
+        }
+    }
+
+    /// iOS kills an app that keeps a shared file locked while suspended (`0xDEAD10CC`), so the database stops
+    /// taking new work when the app goes to the background, and starts again when it returns.
+    public static func suspend() {
+        NotificationCenter.default.post(name: Database.suspendNotification, object: nil)
+    }
+
+    public static func resume() {
+        NotificationCenter.default.post(name: Database.resumeNotification, object: nil)
     }
 
     /// A store at `url`, or in memory when nil (tests, previews).
     public init(url: URL? = nil) throws {
-        database = try url.map { try DatabaseQueue(path: $0.path) } ?? DatabaseQueue()
+        var configuration = Configuration()
+        configuration.observesSuspensionNotifications = true
+        database = try url.map { try DatabaseQueue(path: $0.path, configuration: configuration) }
+            ?? DatabaseQueue(configuration: configuration)
         try Self.migrator.migrate(database)
     }
 

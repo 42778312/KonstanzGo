@@ -13,6 +13,42 @@ struct UserStoreTests {
         store = try UserStore()
     }
 
+    private func temporaryFile() throws -> URL {
+        let folder = URL.temporaryDirectory.appending(path: UUID().uuidString)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return folder.appending(path: "user.sqlite")
+    }
+
+    @Test func aDamagedFileIsKeptAndANewOneStarts() throws {
+        let url = try temporaryFile()
+        try Data(repeating: 0x41, count: 8_192).write(to: url)
+        let opened = try UserStore.openRecovering(url: url, now: Date(timeIntervalSince1970: 1_000))
+        #expect(opened.recovered)
+        try opened.store.setSlot(.home, to: home)
+        #expect(try opened.store.favorites().count == 1)
+        let kept = url.deletingLastPathComponent().appending(path: "user.sqlite.damaged-1000")
+        #expect(try Data(contentsOf: kept) == Data(repeating: 0x41, count: 8_192))
+    }
+
+    @Test func aHealthyFileIsLeftAlone() throws {
+        let url = try temporaryFile()
+        do {
+            let first = try UserStore.openRecovering(url: url)
+            #expect(!first.recovered)
+            try first.store.setSlot(.home, to: home)
+        }
+        let again = try UserStore.openRecovering(url: url)
+        #expect(!again.recovered)
+        #expect(try again.store.favorites().count == 1)
+    }
+
+    @Test func worksAgainAfterSuspension() throws {
+        UserStore.suspend()
+        UserStore.resume()
+        try store.setSlot(.home, to: home)
+        #expect(try store.favorites().count == 1)
+    }
+
     @Test func slotsAreSetOnceAndReplaced() throws {
         try store.setSlot(.home, to: home)
         try store.setSlot(.home, to: konzil)

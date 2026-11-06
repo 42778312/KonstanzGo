@@ -124,6 +124,9 @@ public struct MapScreen: View {
             sheet = request
         }
         .onChange(of: sheet) { _, new in services.showsMenu = new == .menu }
+        // A sheet would hide the message, so it waits until the map is in view.
+        .onChange(of: services.userMessage, initial: true) { _, _ in showUserMessage() }
+        .onChange(of: sheet) { _, _ in showUserMessage() }
         .onChange(of: services.showsMenu) { _, shows in
             if !shows, sheet == .menu { sheet = nil }
         }
@@ -320,6 +323,12 @@ public struct MapScreen: View {
         case .denied:
             show(Text("Standort ist in den Einstellungen aus.", bundle: .module))
         }
+    }
+
+    private func showUserMessage() {
+        guard sheet == nil, let message = services.userMessage else { return }
+        services.userMessage = nil
+        show(message)
     }
 
     private func show(_ message: Text) {

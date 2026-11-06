@@ -29,7 +29,13 @@ public struct HomeView: View {
         // The position keeps coming on every screen while the app is open (the trip and route maps show it
         // too), and stops in the background.
         .onChange(of: scenePhase, initial: true) { _, phase in
-            if phase == .active { location.start() } else if phase == .background { location.stop() }
+            if phase == .active {
+                location.start()
+                UserStore.resume()
+            } else if phase == .background {
+                location.stop()
+                UserStore.suspend()
+            }
         }
         .onOpenURL { open($0) }
         .onReceive(NotificationCenter.default.publisher(for: .kgDeepLink)) { note in

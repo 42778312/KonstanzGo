@@ -159,6 +159,16 @@ struct JourneyScreen: View {
                 Spacer()
                 (Text("Ankunft ", bundle: .module) + Text(verbatim: KGStrings.clock(live.expectedEnd(journey))).bold())
                     .kgFont(.callout.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                if phase != .arrived {
+                    ShareLink(item: Self.shareText(journey, arrival: live.expectedEnd(journey))) {
+                        KGIconView(.share, size: 20).foregroundStyle(KGColor.ink2)
+                            .frame(width: 44, height: 44)
+                            .contentShape(.rect)
+                    }
+                    .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 6 }
+                    .accessibilityLabel(Text("Ankunft teilen", bundle: .module))
+                    .accessibilityIdentifier("shareArrival")
+                }
             }
             .padding(.top, KGSpace.mediumLarge)
             ProgressBar(fraction: overallFraction)
@@ -224,6 +234,14 @@ struct JourneyScreen: View {
     }
 
     /// Where the trip ends: the last walk's target, or the last bus's stop.
+    /// What "Ankunft teilen" sends: plain text, with no tracking link.
+    static func shareText(_ journey: Journey, arrival: Date) -> String {
+        let time = KGStrings.clock(arrival)
+        guard !journey.rides.isEmpty else { return String(localized: "Ich bin um \(time) da (zu Fuß)", bundle: .module) }
+        let lines = journey.rides.map(\.line.name).joined(separator: ", ")
+        return String(localized: "Ich bin um \(time) da (Bus \(lines))", bundle: .module)
+    }
+
     private var destination: String {
         if case let .walk(walk) = journey.legs.last { return walk.destinationName }
         return journey.rides.last?.alighting.station.shortName ?? ""

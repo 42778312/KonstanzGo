@@ -1,6 +1,36 @@
 {
   "sourceLanguage": "de",
   "strings": {
+    "Ankunft teilen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share arrival"
+          }
+        }
+      }
+    },
+    "Ich bin um %@ da (Bus %@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'll be there at %1$@ (bus %2$@)"
+          }
+        }
+      }
+    },
+    "Ich bin um %@ da (zu Fuß)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'll be there at %@ (walking)"
+          }
+        }
+      }
+    },
     "%@ ab %@": {
       "localizations": {
         "en": {

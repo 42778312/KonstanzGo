@@ -134,6 +134,7 @@ final class UserJourneyTests: XCTestCase {
                 XCTAssertTrue(app.buttons["endJourney"].waitForExistence(timeout: 5), "the trip did not open")
                 XCTAssertTrue(app.descendants(matching: .any)["journeyLegs"].exists)
                 XCTAssertTrue(element("Ankunft").exists)
+                XCTAssertTrue(app.buttons["shareArrival"].isHittable, "arrival can't be shared")
             }
             step("09 Karte antippen: Liste klappt zusammen") {
                 tapMap(0.5, 0.25)

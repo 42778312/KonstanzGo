@@ -29,6 +29,7 @@ public struct HomeView: View {
         // The position keeps coming on every screen while the app is open (the trip and route maps show it
         // too), and stops in the background.
         .onChange(of: scenePhase, initial: true) { _, phase in
+            services?.isActive = phase == .active
             if phase == .active {
                 location.start()
                 UserStore.resume()

@@ -2,6 +2,11 @@ import Foundation
 import Network
 import Observation
 
+/// The server asked for fewer requests (HTTP 429 or 503).
+struct LiveServerBusy: Error {
+    var retryAfter: TimeInterval?
+}
+
 /// What's really happening on the road, from EFA-BW: disruptions, kept on the phone and refreshed the moment
 /// it has internet, and delays, which are only trusted for a few minutes. Offline the app runs on the last
 /// disruptions it knows, each ending by itself at its own end time, and on plain timetable times.
@@ -38,6 +43,9 @@ public final class LiveModel {
     private var reading: [Int: Task<[LiveEvent]?, Never>] = [:]
     private let delayFile: URL
     private var delaysSaved = Date.distantPast
+    /// Stop reads wait until then after failures, or when the server asks for a pause.
+    private var liveRetryAt = Date.distantPast
+    private var liveFailures = 0
     /// Disruptions change rarely: every 5 minutes, and right away when the internet comes back.
     static let interval: TimeInterval = 5 * 60
     /// A delay this old says nothing any more: the bus goes back to its timetable position.
@@ -45,6 +53,9 @@ public final class LiveModel {
     static let boardLife: TimeInterval = 30
     /// What's shown at once without asking: a report from the last few minutes still says how late that bus is.
     static let instantLife: TimeInterval = 5 * 60
+    /// Failed stop reads wait this long, doubling up to `liveBackoffLimit`, across all stops.
+    static let liveBackoffStart: TimeInterval = 30
+    static let liveBackoffLimit: TimeInterval = 15 * 60
 
     private struct SavedDelays: Codable {
         var at: Date
@@ -210,17 +221,31 @@ public final class LiveModel {
         if let board = boards[id], date.timeIntervalSince(board.at) < Self.boardLife { return board.events }
         // Someone is already asking for this stop: wait for that answer.
         if let running = reading[id] { return await running.value }
-        guard isOnline, let area = store.stopArea(ofStation: id), let url = EFADepartures.url(stopArea: area) else { return nil }
+        guard isOnline, date >= liveRetryAt, let area = store.stopArea(ofStation: id),
+              let url = EFADepartures.url(stopArea: area) else { return nil }
         let fetch = fetch
         let task = Task<[LiveEvent]?, Never> {
-            guard let data = try? await fetch(url) else { return nil }
-            return await Task.detached(priority: .utility) { try? EFADepartures.parse(data) }.value
+            do {
+                let data = try await fetch(url)
+                let events = await Task.detached(priority: .utility) { try? EFADepartures.parse(data) }.value
+                if events == nil { liveReadFailed(at: date, askedToWait: nil) } else { liveFailures = 0 }
+                return events
+            } catch {
+                liveReadFailed(at: date, askedToWait: (error as? LiveServerBusy)?.retryAfter)
+                return nil
+            }
         }
         reading[id] = task
         let events = await task.value
         reading[id] = nil
         if let events { boards[id] = (date, events) }
         return events
+    }
+
+    private func liveReadFailed(at date: Date, askedToWait: TimeInterval?) {
+        liveFailures += 1
+        let wait = min(Self.liveBackoffStart * pow(2, Double(liveFailures - 1)), Self.liveBackoffLimit)
+        liveRetryAt = date.addingTimeInterval(max(wait, askedToWait ?? 0))
     }
 
     private func remember(_ departures: [Departure], at date: Date) {
@@ -272,7 +297,11 @@ public final class LiveModel {
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         request.setValue("KonstanzGo (iOS; konstant@werkflow.cc)", forHTTPHeaderField: "User-Agent")
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
+        let http = response as? HTTPURLResponse
+        if http?.statusCode == 429 || http?.statusCode == 503 {
+            throw LiveServerBusy(retryAfter: http?.value(forHTTPHeaderField: "Retry-After").flatMap(TimeInterval.init))
+        }
+        guard http?.statusCode == 200 else { throw URLError(.badServerResponse) }
         return data
     }
 }

@@ -28,6 +28,8 @@ public final class AppServices {
     public var showsMenu = false
     /// Set to open the map's search sheet (links and Favoriten); the map clears it.
     public var wantsSearch = false
+    /// False while the app isn't in front: nobody sees the map, so it asks nothing and moves nothing.
+    public var isActive = true
     /// Bumped whenever the user store changes, so lists re-read it.
     public private(set) var userVersion = 0
 
@@ -36,6 +38,7 @@ public final class AppServices {
         self.transit = transit
         self.location = location
         live = Self.makeLive(transit)
+        Diagnostics.shared.start()
         do {
             let opened = try UserStore.sharedRecovering()
             user = opened.store

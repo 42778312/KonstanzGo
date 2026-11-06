@@ -291,6 +291,16 @@
         }
       }
     },
+    "Absturzberichte von iOS bleiben auf diesem iPhone. Du kannst sie uns schicken, wenn du magst.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crash reports from iOS stay on this iPhone. You can send them to us if you like."
+          }
+        }
+      }
+    },
     "Achtung, gerade kein Halt: %@.": {
       "localizations": {
         "en": {
@@ -1389,6 +1399,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Favourites and settings"
+          }
+        }
+      }
+    },
+    "Fehlerberichte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error reports"
+          }
+        }
+      }
+    },
+    "Fehlerberichte teilen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share error reports"
           }
         }
       }

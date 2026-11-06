@@ -487,7 +487,7 @@ extension MapScreen {
         let transit = services.transit, live = services.live
         var round = 0
         while !Task.isCancelled {
-            if showsVehicles, services.router.path.isEmpty {
+            if showsVehicles, services.router.path.isEmpty, services.isActive {
                 let around = inView(transit)
                 let turn = around.isEmpty ? [] : (0..<min(Self.stopsPerRound, around.count)).map {
                     around[(round * Self.stopsPerRound + $0) % around.count]
@@ -519,7 +519,7 @@ extension MapScreen {
         var last = ContinuousClock.now
         var lastDelays = ContinuousClock.now
         while !Task.isCancelled {
-            if showsVehicles, services.router.path.isEmpty {
+            if showsVehicles, services.router.path.isEmpty, services.isActive {
                 let now = Date.now
                 let delays = glide.advance(services.live.tripDelays, after: (ContinuousClock.now - lastDelays) / .seconds(1))
                 lastDelays = ContinuousClock.now

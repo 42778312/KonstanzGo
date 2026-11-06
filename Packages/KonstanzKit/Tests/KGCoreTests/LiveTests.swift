@@ -155,6 +155,44 @@ struct LiveTests {
         #expect(events[2].isCancelled)
     }
 
+    @Test("failed stop reads slow down across stops, and honour the server's pause")
+    @MainActor func stopReadsBackOff() async throws {
+        let from = at(20261105, 12, 0)
+        let calls = Counter()
+        let file = URL.temporaryDirectory.appending(path: "backoff-\(UUID().uuidString).json")
+        let live = LiveModel(store: store, file: file, fetch: { _ in
+            calls.add()
+            throw LiveServerBusy(retryAfter: 300)
+        })
+        let departures = try store.departures(at: 15, from: from, limit: 3)
+        _ = await live.live(departures, atStation: 15, at: from)
+        #expect(calls.value == 1)
+        _ = await live.live(departures, atStation: 99, at: from.addingTimeInterval(60))
+        #expect(calls.value == 1, "still waiting")
+        _ = await live.live(departures, atStation: 99, at: from.addingTimeInterval(301))
+        #expect(calls.value == 2)
+    }
+
+    @Test("a plain failure waits 30 s, then 60 s")
+    @MainActor func plainFailuresDouble() async throws {
+        let from = at(20261105, 12, 0)
+        let calls = Counter()
+        let file = URL.temporaryDirectory.appending(path: "backoff-\(UUID().uuidString).json")
+        let live = LiveModel(store: store, file: file, fetch: { _ in
+            calls.add()
+            throw URLError(.timedOut)
+        })
+        _ = await live.live([], atStation: 15, at: from)
+        _ = await live.live([], atStation: 15, at: from.addingTimeInterval(29))
+        #expect(calls.value == 1)
+        _ = await live.live([], atStation: 15, at: from.addingTimeInterval(31))
+        #expect(calls.value == 2)
+        _ = await live.live([], atStation: 15, at: from.addingTimeInterval(61))
+        #expect(calls.value == 2, "now 60 s")
+        _ = await live.live([], atStation: 15, at: from.addingTimeInterval(92))
+        #expect(calls.value == 3)
+    }
+
     @Test("an early bus is shown early; under a minute counts as on time")
     func earlyBuses() throws {
         let departure = try #require(try store.departures(at: 15, from: at(20261105, 12, 0), limit: 1).first)
@@ -360,4 +398,11 @@ private final class Applied: @unchecked Sendable {
     private var value: [ServiceNotice] = []
     func set(_ new: [ServiceNotice]) { value = new }
     func get() -> [ServiceNotice] { value }
+}
+
+private final class Counter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var count = 0
+    var value: Int { lock.withLock { count } }
+    func add() { lock.withLock { count += 1 } }
 }

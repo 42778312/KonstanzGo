@@ -431,6 +431,14 @@ struct AboutScreen: View {
                 source(Text("Karte, Orte und Wege", bundle: .module), "© OpenStreetMap contributors (ODbL), via Protomaps")
                 source(Text("Meldungen und Echtzeit", bundle: .module), "EFA-BW, NVBW GmbH")
                 source(Text("Wetter", bundle: .module), "Deutscher Wetterdienst, Station Konstanz – CC BY 4.0")
+                let reports = Diagnostics.shared.reports
+                if !reports.isEmpty {
+                    KGSectionHeader(Text("Fehlerberichte", bundle: .module))
+                    Text("Absturzberichte von iOS bleiben auf diesem iPhone. Du kannst sie uns schicken, wenn du magst.", bundle: .module)
+                        .kgFont(.footnote.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                    ShareLink(items: reports) { Text("Fehlerberichte teilen", bundle: .module).kgFont(.callout) }
+                        .accessibilityIdentifier("shareReports")
+                }
                 KGSectionHeader(Text("Software", bundle: .module))
                 source(Text("Schrift", bundle: .module), "Figtree – SIL Open Font License 1.1")
                 source(Text("Karte", bundle: .module), "MapLibre Native – BSD 2-Clause")

@@ -119,6 +119,8 @@ struct PlaceSearchTests {
 
     @Test func typingIsFast() throws {
         let search = try search
+        // The index loads in the background; `SpeedTests` times that wait. This is about typing.
+        _ = search.count
         let start = Date()
         for prefix in ["U", "Un", "Uni", "Univ", "Unive", "Konz", "Bahnh", "Apoth", "Markts", "Seestr"] {
             _ = search.search(prefix)

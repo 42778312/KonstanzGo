@@ -25,7 +25,7 @@ struct BundledDataTests {
         // The same numbers DataPipeline/check.py prints; they change with each new feed.
         #expect(info.stations == 142)
         #expect(info.platforms == 263)
-        #expect(info.cityLines == 18)
+        #expect(info.cityLines == 20)
         #expect(info.trips == 3380)
         #expect(info.validUntil == DateComponents(year: 2026, month: 12, day: 12))
         #expect(info.attribution == "Datensatz der NVBW GmbH")

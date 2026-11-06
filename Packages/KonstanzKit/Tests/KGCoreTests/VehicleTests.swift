@@ -144,7 +144,7 @@ struct VehicleTrackerTests {
     }
 
     @Test func aBusIsAtItsStopWhenItDeparts() throws {
-        let departure = try #require(try store.departures(at: 99, from: at(20261028, 14, 0)).first { $0.line.name == "9" })
+        let departure = try #require(try store.departures(at: 99, from: at(20261028, 14, 0)).first { $0.line.name == "9A" })
         let position = try #require(try tracker.position(ofTrip: departure.tripID, on: ServiceDay(yyyymmdd: 20261028),
                                                           at: departure.scheduled.addingTimeInterval(-3)))
         #expect(position.coordinate.distance(to: departure.platform.coordinate) < 30,

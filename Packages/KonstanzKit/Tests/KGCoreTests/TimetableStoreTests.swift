@@ -20,7 +20,7 @@ struct TimetableStoreTests {
 
     @Test func loadsEverythingSmallUpFront() {
         #expect(store.stations.count == 142)
-        #expect(store.lines.count == 47)
+        #expect(store.lines.count == 49)
         #expect(store.station(id: sternenplatz)?.shortName == "Sternenplatz")
         #expect(store.platforms(of: sternenplatz).count == 3)  // 98 "Sternenplatz/Spanierstraße" is its own station
     }

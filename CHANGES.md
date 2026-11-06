@@ -58,6 +58,17 @@ Built on request and committed under plan task P1-01. Checked in the simulator a
 
 `timetable.db` was patched with the importer's 9A/9B output instead of a full rebuild. Plan task P1-07 confirms a full rebuild gives the same data.
 
+## Test baseline, 6 Nov 2026 (plan task P1-05)
+
+First full run after the work above: 14 of 274 failed, none a bug in the app. 3 logic tests expected the old line 9, and 11 snapshot tests (16 pictures) predated the new look. The owner reviewed the picture changes and accepted them. Now, in two runs in a row: 273 passed, 0 failed, 1 skipped (`testPanZoomAndSheets`, on request only); package 237 tests.
+
+`typingIsFast` failed twice on a busy Mac because it counted the one-time wait for the search index (about 310 ms in Release). It now waits for the index first. Typing itself takes 0-9 ms per key in Release.
+
+| Known exception | Detail | Owner |
+|---|---|---|
+| Light-mode snapshots | They show the glass on light backgrounds, which the always-dark app and the widgets never display | Later clean-up |
+| Rainbow block in the map snapshot | Also in the old picture; from the test gallery, not a screen | Later clean-up |
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).

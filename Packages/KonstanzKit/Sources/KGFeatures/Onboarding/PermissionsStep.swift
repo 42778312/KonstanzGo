@@ -52,7 +52,7 @@ struct PermissionsStep: View {
             PermissionRow(icon: .bell, tile: KGColor.tileRed, title: Text("Mitteilungen", bundle: .module),
                           detail: Text("Abfahrtsalarme", bundle: .module), isOn: $model.wantsNotifications)
         }
-        .background(KGColor.card, in: .kgRounded(KGRadius.large))
+        .kgGlassCard(in: .kgRounded(KGRadius.large))
     }
 }
 

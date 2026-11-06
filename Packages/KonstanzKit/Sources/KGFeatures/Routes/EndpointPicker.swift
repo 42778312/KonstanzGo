@@ -68,7 +68,7 @@ struct EndpointPicker: View {
         ]
         ForEach(slots, id: \.0) { slot, icon, name in
             if let favorite = { _ = services.userVersion; return try? services.user?.slot(slot) }() {
-                row(icon: icon, tint: KGColor.ink2, background: KGColor.card, title: name,
+                row(icon: icon, tint: KGColor.ink2, background: KGColor.glassFill, title: name,
                     subtitle: Text(verbatim: favorite.target.name)) {
                     pick(Endpoint(name: favorite.displayName, coordinate: favorite.target.coordinate))
                 }
@@ -79,7 +79,7 @@ struct EndpointPicker: View {
             KGSectionHeader(Text("Zuletzt", bundle: .module))
                 .padding(.horizontal, KGSpace.large).padding(.top, KGSpace.large).padding(.bottom, KGSpace.xs)
             ForEach(recent.prefix(8)) { item in
-                row(icon: .history, tint: KGColor.ink2, background: KGColor.card,
+                row(icon: .history, tint: KGColor.ink2, background: KGColor.glassFill,
                     title: Text(verbatim: item.target.name), subtitle: nil) {
                     pick(Endpoint(name: item.target.name, coordinate: item.target.coordinate))
                 }

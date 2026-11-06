@@ -86,7 +86,7 @@ public struct HomePlaceholder: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(KGColor.surface.ignoresSafeArea())
+        .background(KGGlassBackdrop().ignoresSafeArea())
     }
 }
 

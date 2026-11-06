@@ -31,6 +31,11 @@ struct RecentScreen: View {
                 if !items.isEmpty {
                     KGTextButton(Text("Alle löschen", bundle: .module), style: .bodyMedium) { confirmingClear = true }
                         .accessibilityIdentifier("clearRecent")
+                        .kgGlassMenu(isPresented: $confirmingClear, title: Text("Verlauf löschen?", bundle: .module), items: [
+                            KGGlassMenuItem(Text("Alle löschen", bundle: .module), icon: .trash, isDestructive: true) {
+                                for item in items { services.updateUser { try $0.removeRecent(id: item.id) } }
+                            }
+                        ])
                 }
             }
             .padding(.horizontal, KGSpace.medium)
@@ -48,6 +53,7 @@ struct RecentScreen: View {
                     ForEach(items) { item in
                         Button { open(item.target) } label: { row(item) }
                             .listRowInsets(EdgeInsets(top: 0, leading: KGSpace.large, bottom: 0, trailing: KGSpace.large))
+                            .listRowBackground(KGColor.glassFill)
                             .kgSwipeToDelete { delete(item) }
                     }
                     Text("Nach links wischen zum Löschen. Dein Verlauf bleibt nur auf diesem iPhone.", bundle: .module)
@@ -55,7 +61,11 @@ struct RecentScreen: View {
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                 }
+                #if os(iOS)
+                .listStyle(.insetGrouped)
+                #else
                 .listStyle(.plain)
+                #endif
             }
         }
         .scrollContentBackground(.hidden)
@@ -68,18 +78,12 @@ struct RecentScreen: View {
                 .padding(.bottom, KGSpace.xl)
             }
         }
-        .confirmationDialog(Text("Verlauf löschen?", bundle: .module), isPresented: $confirmingClear,
-                            titleVisibility: .visible) {
-            Button(role: .destructive) {
-                for item in items { services.updateUser { try $0.removeRecent(id: item.id) } }
-            } label: { Text("Alle löschen", bundle: .module) }
-        }
     }
 
     private func row(_ item: RecentItem) -> some View {
         HStack(spacing: KGSpace.mediumLarge) {
             KGIconView(icon(item.target), size: 18).foregroundStyle(KGColor.ink2)
-                .frame(width: 40, height: 40).background(KGColor.glassFill, in: .circle)
+                .frame(width: 40, height: 40).kgGlassCard(in: .circle)
             VStack(alignment: .leading, spacing: 1) {
                 Text(verbatim: item.target.name).kgFont(.bodyMedium).foregroundStyle(KGColor.ink)
                 Text(verbatim: "\(kind(item.target)) · \(day(item.date))").kgFont(.footnote.weighted(KGFont.regular))

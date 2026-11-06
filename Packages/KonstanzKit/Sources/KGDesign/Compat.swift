@@ -32,7 +32,7 @@ extension EnvironmentValues {
 
 extension View {
     /// A floating glass surface (tab bar, map buttons): Liquid Glass on iOS 26+, otherwise a blur
-    /// material under the design's tab bar tint (`KGPalette.tabBar`).
+    /// material under the glass's blue-grey.
     public func kgGlass<S: Shape>(in shape: S) -> some View {
         modifier(KGGlassModifier(shape: shape))
     }
@@ -55,11 +55,12 @@ extension View {
 /// Glass at every height, without the system's dimming of what's behind, so the map keeps showing through. A blur
 /// material rather than Liquid Glass: over the moving map it dropped about 40% fewer frames while a sheet was
 /// dragged (22–37 against 15–17 hitches in 15 s). Small floating parts keep Liquid Glass (`kgGlass`).
+/// The colours and light on top are in `KGGlassBackdrop`.
 private struct KGGlassSheet: ViewModifier {
     func body(content: Content) -> some View {
         content
             .presentationBackgroundInteraction(.enabled)
-            .presentationBackground(.ultraThinMaterial)
+            .presentationBackground { KGGlassBackdrop() }
     }
 }
 
@@ -74,7 +75,7 @@ private struct KGGlassModifier<S: Shape>: ViewModifier {
             content.background {
                 ZStack {
                     shape.fill(.ultraThinMaterial)
-                    shape.fill(KGColor.tabBar)
+                    shape.fill(KGColor.glassTint.opacity(0.84))
                 }
             }
         }

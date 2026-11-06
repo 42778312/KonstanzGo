@@ -77,7 +77,7 @@ private struct DoneChip: View {
         .padding(.leading, KGSpace.compact)
         .padding(.trailing, KGSpace.mediumLarge)
         .frame(minHeight: 40)
-        .background(KGColor.card, in: .capsule)
+        .kgGlassCard(in: .capsule)
         .accessibilityElement(children: .combine)
     }
 }

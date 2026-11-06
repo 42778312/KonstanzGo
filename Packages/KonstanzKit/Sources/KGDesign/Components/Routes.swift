@@ -84,7 +84,7 @@ public struct KGRouteCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, KGSpace.mediumLarge)
             .padding(.horizontal, KGSpace.screen)
-            .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+            .kgGlassCard(in: .kgRounded(KGRadius.card))
             .overlay {
                 RoundedRectangle(cornerRadius: KGRadius.card, style: .continuous)
                     .strokeBorder(isSelected ? KGColor.ink : KGColor.line, lineWidth: 2)

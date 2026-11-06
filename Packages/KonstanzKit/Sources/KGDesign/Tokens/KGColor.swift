@@ -46,7 +46,7 @@ public enum KGPalette {
     // MARK: Ink
     public static let ink = KGColorValue(0x000000, dark: 0xFFFFFF)
     /// Secondary text (7.6:1 on white).
-    public static let ink2 = KGColorValue(0x545454, dark: 0xE0E0E0)
+    public static let ink2 = KGColorValue(0x545454, dark: 0xE6EBF0)
     /// Captions and placeholders. The design's #757575 is 4.3:1 on its grey cards; #6B6B6B passes on both.
     public static let ink3 = KGColorValue(0x6B6B6B, dark: 0x9E9E9E, highContrast: 0x4A4A4A, darkHighContrast: 0xC4C4C4)
     /// Decoration only (chevrons, empty states' lines), never text.
@@ -59,6 +59,11 @@ public enum KGPalette {
     public static let card = KGColorValue(0xF6F6F6, dark: 0x242424)
     public static let pressed = KGColorValue(0xEEEEEE, dark: 0x2A2A2A)
     public static let line = KGColorValue(0xE2E2E2, dark: 0x2D2D2D, highContrast: 0xB0B0B0, darkHighContrast: 0x555555)
+    /// Trains on the map, so they never read as a bus.
+    public static let trainFill = KGColorValue(0x5457E0)
+    /// Over the blur, which brightens them, these come out as the search field's colour over the map (#2D3946).
+    public static let glassTint = KGColorValue(0x1D2933)
+    public static let glassTintDeep = KGColorValue(0x1B2630)
     public static let switchOff = KGColorValue(0xE9E9EB, dark: 0x39393D)
     public static let handle = KGColorValue(0xD1D1D6, dark: 0x5A5A5A)
     /// The floating tab bar's fill under its blur (iOS 18–25).
@@ -71,7 +76,7 @@ public enum KGPalette {
     public static let liveText = KGColorValue(0x047A41, dark: 0x5BD08F)
     public static let liveTint = KGColorValue(0xE6F4EC, dark: 0x203126)
     /// The user's position, links (4.6:1 on white).
-    public static let location = KGColorValue(0x276EF1, dark: 0x0A84FF)
+    public static let location = KGColorValue(0x276EF1, dark: 0x5CB0FF)
     public static let locationTint = KGColorValue(0xE9F0FE, dark: 0x1C2A44)
     public static let warn = KGColorValue(0xFF9500, dark: 0xFF9F0A)
 
@@ -153,10 +158,15 @@ public enum KGColor {
     public static let surface = Color(KGPalette.surface)
     public static let card = Color(KGPalette.card)
     /// Lists and cards on glass (the stop sheet's look): a light veil over whatever is behind, never solid black.
-    public static let glassFill = Color.white.opacity(0.08)
+    public static let glassFill = Color.white.opacity(0.06)
     public static let stopSign = Color(KGPalette.stopSign)
-    public static let pressed = Color(KGPalette.pressed)
-    public static let line = Color(KGPalette.line)
+    public static let pressed = Color.white.opacity(0.1)
+    public static let trainFill = Color(KGPalette.trainFill)
+    /// Washed over the blur of every glass surface, to match the search field.
+    public static let glassTint = Color(KGPalette.glassTint)
+    public static let glassTintDeep = Color(KGPalette.glassTintDeep)
+    /// See-through, so hairlines pick up the glass they lie on.
+    public static let line = Color.white.opacity(0.1)
     public static let switchOff = Color(KGPalette.switchOff)
     public static let handle = Color(KGPalette.handle)
     public static let tabBar = Color(KGPalette.tabBar)

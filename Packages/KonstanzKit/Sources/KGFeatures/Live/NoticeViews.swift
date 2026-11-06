@@ -221,7 +221,7 @@ struct NoticeCard: View {
         }
         .padding(KGSpace.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+        .kgGlassCard(in: .kgRounded(KGRadius.card))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("noticeCard")
     }
@@ -260,7 +260,7 @@ struct AlternativeStops: View {
                                 }
                                 .padding(.horizontal, KGSpace.compact)
                                 .frame(minHeight: 36)
-                                .background(KGColor.glassFill, in: Capsule())
+                                .kgGlassCard(in: Capsule())
                             }
                             .buttonStyle(KGPressStyle())
                             .accessibilityIdentifier("alternativeStop")
@@ -295,7 +295,7 @@ struct ClosureBanner: View {
         }
         .padding(KGSpace.compact)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.medium))
+        .kgGlassCard(in: .kgRounded(KGRadius.medium))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("closureBanner")
     }

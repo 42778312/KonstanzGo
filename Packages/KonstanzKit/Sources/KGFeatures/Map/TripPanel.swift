@@ -64,16 +64,6 @@ struct TripPanel: View {
                 try? await Task.sleep(for: .seconds(20))
             }
         }
-        .confirmationDialog(Text("Wann soll ich dich erinnern?", bundle: .module), isPresented: $choosingAlarm,
-                            titleVisibility: .visible) {
-            ForEach([1, 2, 5, 10], id: \.self) { minutes in
-                Button { Task { await setAlarm(minutes: minutes) } } label: {
-                    Text("\(minutes) Min. vorher", bundle: .module)
-                }
-            }
-        } message: {
-            Text("Für Linie \(ride.line.name) nach \(ride.headsign) um \(KGStrings.clock(ride.start))", bundle: .module)
-        }
         .alert(Text("Mitteilungen sind aus", bundle: .module), isPresented: $alarmFailed) {
             Button(role: .cancel) {} label: { Text("OK", bundle: .module) }
         } message: {
@@ -94,6 +84,14 @@ struct TripPanel: View {
         } else if ride.start.addingTimeInterval(-60) > now {
             KGButton(Text("Alarm stellen", bundle: .module), icon: .bell) { choosingAlarm = true }
                 .accessibilityIdentifier("setAlarm")
+                .kgGlassMenu(isPresented: $choosingAlarm, title: Text("Wann soll ich dich erinnern?", bundle: .module),
+                             message: Text("Für Linie \(ride.line.name) nach \(ride.headsign) um \(KGStrings.clock(ride.start))",
+                                           bundle: .module),
+                             items: [1, 2, 5, 10].map { minutes in
+                                 KGGlassMenuItem(Text("\(minutes) Min. vorher", bundle: .module)) {
+                                     Task { await setAlarm(minutes: minutes) }
+                                 }
+                             })
         }
     }
 

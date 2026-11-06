@@ -96,7 +96,7 @@ struct RouteHeader: View {
         .padding(.leading, KGSpace.xxs)
         .padding(.trailing, KGSpace.mediumLarge)
         .frame(minHeight: 64)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.search))
+        .kgGlassCard(in: .kgRounded(KGRadius.search))
         .kgShadow(.search, in: .kgRounded(KGRadius.search))
         .padding(.horizontal, KGSpace.screen)
         .padding(.top, 11)

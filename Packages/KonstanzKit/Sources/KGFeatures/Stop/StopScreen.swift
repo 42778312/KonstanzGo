@@ -46,21 +46,8 @@ struct StopScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.top, 11)
         }
-        .background(KGColor.surface.ignoresSafeArea())
+        .background(KGGlassBackdrop().ignoresSafeArea())
         .task(id: stationID) { await refreshLoop() }
-        .confirmationDialog(Text("Wann soll ich dich erinnern?", bundle: .module), isPresented: $choosingAlarm,
-                            titleVisibility: .visible) {
-            ForEach([1, 2, 5, 10], id: \.self) { minutes in
-                Button { Task { await setAlarm(minutes: minutes, station: station) } } label: {
-                    Text("\(minutes) Min. vorher", bundle: .module)
-                }
-            }
-        } message: {
-            if let next = departures.first {
-                Text("Für Linie \(next.line.name) nach \(next.headsign) um \(KGStrings.clock(next.expected))",
-                     bundle: .module)
-            }
-        }
         .alert(Text("Mitteilungen sind aus", bundle: .module), isPresented: $alarmFailed) {
             Button(role: .cancel) {} label: { Text("OK", bundle: .module) }
         } message: {
@@ -96,9 +83,10 @@ struct StopScreen: View {
         .padding(.top, 22)
         .padding(.horizontal, KGSpace.large)
         .frame(maxHeight: .infinity, alignment: .top)
-        .background(KGColor.surface, in: UnevenRoundedRectangle(topLeadingRadius: KGRadius.card,
-                                                                topTrailingRadius: KGRadius.card,
-                                                                style: .continuous))
+        .background {
+            KGGlassBackdrop().clipShape(UnevenRoundedRectangle(topLeadingRadius: KGRadius.card, topTrailingRadius: KGRadius.card,
+                                                               style: .continuous))
+        }
     }
 
     private func subtitle(_ station: Station) -> Text {
@@ -187,6 +175,16 @@ struct StopScreen: View {
         } else if !departures.isEmpty {
             KGButton(Text("Alarm stellen", bundle: .module), icon: .bell) { choosingAlarm = true }
                 .accessibilityIdentifier("setAlarm")
+                .kgGlassMenu(isPresented: $choosingAlarm, title: Text("Wann soll ich dich erinnern?", bundle: .module),
+                             message: departures.first.map { next in
+                                 Text("Für Linie \(next.line.name) nach \(next.headsign) um \(KGStrings.clock(next.expected))",
+                                      bundle: .module)
+                             },
+                             items: [1, 2, 5, 10].map { minutes in
+                                 KGGlassMenuItem(Text("\(minutes) Min. vorher", bundle: .module)) {
+                                     Task { await setAlarm(minutes: minutes, station: station) }
+                                 }
+                             })
         }
     }
 
@@ -243,7 +241,7 @@ struct FavoriteButton: View {
                 }
             }
             .frame(width: KGSize.touch, height: KGSize.touch)
-            .background(KGColor.glassFill, in: .circle)
+            .kgGlassCard(in: .circle)
             .kgShadow(.floating, in: Circle())
         }
         .buttonStyle(KGPressStyle())

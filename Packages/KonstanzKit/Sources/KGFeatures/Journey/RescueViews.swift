@@ -22,7 +22,7 @@ struct RescuePrompt: View {
                     .foregroundStyle(KGColor.ink)
                     .padding(.horizontal, KGSpace.compact)
                     .frame(minHeight: 36)
-                    .background(KGColor.glassFill, in: Capsule())
+                    .kgGlassCard(in: Capsule())
                     .contentShape(Capsule())
                 }
                 .buttonStyle(KGPressStyle())
@@ -144,7 +144,7 @@ struct RescueCard: View {
             }
             .padding(KGSpace.medium)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+            .kgGlassCard(in: .kgRounded(KGRadius.card))
             .contentShape(.rect)
         }
         .buttonStyle(KGPressStyle())

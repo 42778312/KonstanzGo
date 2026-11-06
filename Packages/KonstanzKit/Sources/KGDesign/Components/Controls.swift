@@ -50,7 +50,7 @@ public struct KGSegmentedControl<Value: Hashable>: View {
             }
         }
         .padding(inset)
-        .background(KGColor.glassFill, in: .kgRounded(size == .small ? KGRadius.compact : KGRadius.medium))
+        .kgGlassCard(in: .kgRounded(size == .small ? KGRadius.compact : KGRadius.medium))
         .frame(minHeight: KGSize.touch)
         .sensoryFeedback(KGHaptic.selection, trigger: selection)
         .accessibilityElement(children: .contain)
@@ -199,8 +199,8 @@ public struct KGSettingsGroup<Content: View>: View {
                 }
             }
         }
-        .background(KGColor.glassFill)
         .clipShape(.kgRounded(KGRadius.large))
+        .kgGlassCard(in: .kgRounded(KGRadius.large))
     }
 }
 

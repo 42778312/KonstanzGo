@@ -25,7 +25,7 @@ struct PlaceScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.top, 11)
         }
-        .background(KGColor.surface.ignoresSafeArea())
+        .background(KGGlassBackdrop().ignoresSafeArea())
     }
 
     private var subtitle: String {
@@ -101,10 +101,12 @@ struct PlacePanel: View {
         .padding(.top, 22)
         .padding(.horizontal, KGSpace.large)
         .frame(maxHeight: .infinity, alignment: .top)
-        .background(KGColor.surface, in: UnevenRoundedRectangle(topLeadingRadius: KGRadius.card,
-                                                                topTrailingRadius: KGRadius.card, style: .continuous))
+        .background {
+            KGGlassBackdrop().clipShape(UnevenRoundedRectangle(topLeadingRadius: KGRadius.card, topTrailingRadius: KGRadius.card,
+                                                               style: .continuous))
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            BottomBar(background: KGColor.surface) {
+            BottomBar {
                 KGButton(Text("Route hierher", bundle: .module), icon: .swap) { routeHere() }
                     .accessibilityIdentifier("routeHere")
             }

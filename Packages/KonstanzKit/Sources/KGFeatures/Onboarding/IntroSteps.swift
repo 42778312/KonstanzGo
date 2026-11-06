@@ -194,7 +194,7 @@ struct IntroSteps: View {
             }
             .padding(.horizontal, KGSpace.medium)
             .frame(height: 50)
-            .background(KGColor.glassFill, in: Capsule())
+            .kgGlassCard(in: Capsule())
             ForEach(Array(transit.search(typed, near: MapRegion.center).prefix(2))) { result in
                 ResultRow(result: result, query: typed)
             }

@@ -35,7 +35,7 @@ struct MapSearchSheet: View {
                 Button { dismiss() } label: {
                     KGIconView(.close, size: 18).foregroundStyle(KGColor.ink)
                         .frame(width: 48, height: 48)
-                        .background(KGColor.glassFill, in: .circle)
+                        .kgGlassCard(in: .circle)
                 }
                 .buttonStyle(KGPressStyle())
                 .accessibilityLabel(Text("Schließen", bundle: .module))
@@ -63,12 +63,10 @@ struct MapSearchSheet: View {
                     } else {
                         group(nil) {
                             ForEach(results) { result in
-                                Button { onPick(Self.target(result)) } label: {
-                                    ResultRow(result: result, query: query)
-                                }
-                                .buttonStyle(KGRowPressStyle())
-                                .contextMenu {
-                                    Button { save(result) } label: { Text("Merken", bundle: .module) }
+                                ResultButton(result: result, query: query) {
+                                    onPick(Self.target(result))
+                                } onSave: {
+                                    save(result)
                                 }
                             }
                         }
@@ -173,7 +171,7 @@ struct MapSearchSheet: View {
         .padding(.leading, KGSpace.mediumLarge)
         .padding(.trailing, KGSpace.xs)
         .frame(minHeight: 48)
-        .background(KGColor.glassFill, in: .capsule)
+        .kgGlassCard(in: .capsule)
     }
 
     /// Schnell hin · Haltestellen · Orte: chips on top, and one card each that swipes sideways.
@@ -244,7 +242,7 @@ struct MapSearchSheet: View {
             }
         }
         .padding(.vertical, KGSpace.xs)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+        .kgGlassCard(in: .kgRounded(KGRadius.card))
         .clipShape(.kgRounded(KGRadius.card))
     }
 
@@ -302,7 +300,7 @@ struct MapSearchSheet: View {
             }
             VStack(spacing: 0) { content() }
                 .padding(.vertical, KGSpace.xs)
-                .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+                .kgGlassCard(in: .kgRounded(KGRadius.card))
                 .clipShape(.kgRounded(KGRadius.card))
         }
     }
@@ -335,6 +333,31 @@ struct MapSearchSheet: View {
     private func save(_ result: SearchResult) {
         let target = Self.target(result)
         if !services.isFavorite(target) { services.toggleFavorite(target) }
+    }
+}
+
+/// A search result: a tap picks it, a long press opens the glass menu to save it.
+private struct ResultButton: View {
+    let result: SearchResult
+    let query: String
+    let onPick: () -> Void
+    let onSave: () -> Void
+    @State private var showsMenu = false
+
+    var body: some View {
+        Button {
+            // Letting go after the long press still ends as a tap.
+            if !showsMenu { onPick() }
+        } label: {
+            ResultRow(result: result, query: query)
+        }
+        .buttonStyle(KGRowPressStyle())
+        .simultaneousGesture(LongPressGesture(minimumDuration: 0.45).onEnded { _ in showsMenu = true })
+        .sensoryFeedback(KGHaptic.selection, trigger: showsMenu) { _, shows in shows }
+        .accessibilityAction(named: Text("Merken", bundle: .module), onSave)
+        .kgGlassMenu(isPresented: $showsMenu, items: [
+            KGGlassMenuItem(Text("Merken", bundle: .module), icon: .star, action: onSave)
+        ])
     }
 }
 

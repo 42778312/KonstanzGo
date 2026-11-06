@@ -32,7 +32,7 @@ struct RoutesScreen: View {
 
     var body: some View {
         ZStack {
-            KGColor.card.ignoresSafeArea()
+            KGGlassBackdrop().ignoresSafeArea()
             if showsFinding {
                 FindingView(query: query) { services.router.back() }
                     .transition(.opacity)
@@ -144,7 +144,7 @@ struct RoutesScreen: View {
                 KGIconView(.swap, size: 20).foregroundStyle(KGColor.ink)
                     .rotationEffect(.degrees(swapTurns))
                     .frame(width: KGSize.touch, height: KGSize.touch)
-                    .background(KGColor.glassFill, in: .circle)
+                    .kgGlassCard(in: .circle)
             }
             .buttonStyle(KGPressStyle())
             .accessibilityLabel(Text("Start und Ziel tauschen", bundle: .module))
@@ -152,7 +152,7 @@ struct RoutesScreen: View {
         .padding(.leading, KGSpace.screen)
         .padding(.trailing, KGSpace.small)
         .padding(.vertical, KGSpace.xxs)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+        .kgGlassCard(in: .kgRounded(KGRadius.card))
     }
 
     /// Tapping a field opens the picker to change that end.
@@ -241,12 +241,12 @@ private struct ShimmerCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: KGSpace.compact) {
-            Capsule().fill(KGColor.card).frame(width: 190, height: 16)
-            Capsule().fill(KGColor.card).frame(width: 120, height: 12)
+            Capsule().fill(KGColor.glassFill).frame(width: 190, height: 16)
+            Capsule().fill(KGColor.glassFill).frame(width: 120, height: 12)
         }
         .padding(KGSpace.screen)
         .frame(maxWidth: .infinity, minHeight: 76, alignment: .leading)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+        .kgGlassCard(in: .kgRounded(KGRadius.card))
         .opacity(phase ? 0.6 : 1)
         .kgLoop(.seeriBounce, phase: $phase)
         .accessibilityHidden(true)

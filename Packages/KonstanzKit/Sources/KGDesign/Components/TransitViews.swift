@@ -202,7 +202,7 @@ public struct KGWalkChip: View {
         .padding(.leading, KGSpace.small)
         .padding(.trailing, KGSpace.compact)
         .frame(minHeight: KGSize.badgeHeight)
-        .background(KGColor.surface, in: .capsule)
+        .kgGlass(in: Capsule())
         .fixedSize()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(minutes) Minuten zu Fuß", bundle: .kgDesign))
@@ -231,7 +231,7 @@ public struct KGStatusPill: View {
         .padding(.leading, KGSpace.small)
         .padding(.trailing, KGSpace.medium)
         .frame(minHeight: 34)
-        .background(KGColor.surface, in: .capsule)
+        .kgGlass(in: Capsule())
         .kgShadow(.floating, in: Capsule())
         .accessibilityElement(children: .combine)
     }
@@ -377,7 +377,7 @@ public struct KGStopCard: View {
         .padding(.top, KGSpace.medium)
         .padding(.horizontal, KGSpace.mediumLarge)
         .padding(.bottom, KGSpace.xs)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+        .kgGlassCard(in: .kgRounded(KGRadius.card))
         .accessibilityElement(children: .contain)
     }
 }

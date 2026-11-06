@@ -161,7 +161,7 @@ struct PlaceSheet: View {
                 KGIconView(.swap, size: 20).foregroundStyle(KGColor.ink)
                     .rotationEffect(.degrees(swapTurns))
                     .frame(width: KGSize.touch, height: KGSize.touch)
-                    .background(KGColor.glassFill, in: .circle)
+                    .kgGlassCard(in: .circle)
             }
             .buttonStyle(KGPressStyle())
             .accessibilityLabel(Text("Start und Ziel tauschen", bundle: .module))
@@ -170,7 +170,7 @@ struct PlaceSheet: View {
         .padding(.leading, KGSpace.screen)
         .padding(.trailing, KGSpace.compact)
         .padding(.vertical, KGSpace.xxs)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.option))
+        .kgGlassCard(in: .kgRounded(KGRadius.option))
     }
 
     private func field(_ label: Text, _ endpoint: Endpoint, action: @escaping () -> Void) -> some View {

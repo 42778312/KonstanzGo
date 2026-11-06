@@ -29,7 +29,7 @@ public struct OnboardingFlow: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .background(KGColor.surface.ignoresSafeArea())
+        .background(KGGlassBackdrop().ignoresSafeArea())
         .onChange(of: loader.transit != nil, initial: true) { _, ready in
             guard ready, services == nil, let transit = loader.transit, let data = loader.data else { return }
             services = AppServices(data: data, transit: transit, location: LocationModel())

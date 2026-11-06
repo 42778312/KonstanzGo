@@ -35,7 +35,7 @@ struct StationPanel: View {
                     .foregroundStyle(KGColor.ink)
                     .padding(.horizontal, KGSpace.medium)
                     .frame(minHeight: 36)
-                    .background(KGColor.glassFill, in: .kgRounded(KGRadius.compact))
+                    .kgGlassCard(in: .kgRounded(KGRadius.compact))
                 }
                 .buttonStyle(KGPressStyle())
                 .accessibilityIdentifier("stationTime")
@@ -142,6 +142,8 @@ struct StationPanel: View {
                     }
                 }
             }
+            .padding(.horizontal, KGSpace.medium)
+            .kgGlassCard(in: .kgRounded(KGRadius.card))
         }
         .scrollIndicators(.hidden)
         .contentMargins(.bottom, KGSpace.medium, for: .scrollContent)

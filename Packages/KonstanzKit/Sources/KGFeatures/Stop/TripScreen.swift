@@ -36,7 +36,7 @@ struct TripScreen: View {
                 Spacer()
             }
         }
-        .background(KGColor.card.ignoresSafeArea())
+        .background(KGGlassBackdrop().ignoresSafeArea())
         .task { await load() }
     }
 
@@ -135,7 +135,7 @@ struct DepartureCard: View {
         .padding(.vertical, KGSpace.screen)
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.cardLarge))
+        .kgGlassCard(in: .kgRounded(KGRadius.cardLarge))
         .accessibilityElement(children: .combine)
     }
 }
@@ -159,7 +159,7 @@ struct StopsTimeline: View {
         }
         .padding(.horizontal, KGSpace.screen)
         .padding(.vertical, KGSpace.xs)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.cardLarge))
+        .kgGlassCard(in: .kgRounded(KGRadius.cardLarge))
     }
 
     private func state(_ index: Int, progress: TripProgress) -> KGTimelineStop.State {

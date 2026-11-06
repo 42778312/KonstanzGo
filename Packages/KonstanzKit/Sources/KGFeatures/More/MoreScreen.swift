@@ -23,6 +23,7 @@ struct MoreScreen: View {
     @State private var path: [MoreRoute] = []
     @State private var notifications = false
     @AppStorage("alarm.minutes") private var alarmMinutes = 2
+    @State private var choosingMinutes = false
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
 
@@ -113,15 +114,13 @@ struct MoreScreen: View {
     }
 
     private var alarmRow: some View {
-        Menu {
-            Picker(selection: $alarmMinutes) {
-                ForEach([1, 2, 5, 10], id: \.self) { Text("\($0) Min. vorher", bundle: .module).tag($0) }
-            } label: { EmptyView() }
-        } label: {
-            KGSettingsRow(Text("Abfahrtsalarm", bundle: .module), icon: .timer, tile: KGColor.warn,
-                          value: Text("\(alarmMinutes) Min. vorher", bundle: .module)) {}
-                .allowsHitTesting(false)
-        }
+        KGSettingsRow(Text("Abfahrtsalarm", bundle: .module), icon: .timer, tile: KGColor.warn,
+                      value: Text("\(alarmMinutes) Min. vorher", bundle: .module)) { choosingMinutes = true }
+            .kgGlassMenu(isPresented: $choosingMinutes, items: [1, 2, 5, 10].map { minutes in
+                KGGlassMenuItem(Text("\(minutes) Min. vorher", bundle: .module), isSelected: alarmMinutes == minutes) {
+                    alarmMinutes = minutes
+                }
+            })
     }
 
     private func readNotificationState() async {
@@ -178,7 +177,7 @@ struct OfflineCard: View {
                 Spacer()
             }
             .padding(KGSpace.screen)
-            .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+            .kgGlassCard(in: .kgRounded(KGRadius.card))
         }
         .buttonStyle(KGPressStyle())
         .accessibilityIdentifier("offlineCard")
@@ -278,7 +277,7 @@ struct OfflineDataScreen: View {
                     }
                 }
                 .padding(KGSpace.screen)
-                .background(KGColor.glassFill, in: .kgRounded(KGRadius.cardLarge))
+                .kgGlassCard(in: .kgRounded(KGRadius.cardLarge))
                 KGSectionHeader(Text("Gebiete", bundle: .module))
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
@@ -292,7 +291,7 @@ struct OfflineDataScreen: View {
                 }
                 .padding(.horizontal, KGSpace.screen)
                 .frame(minHeight: 62)
-                .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+                .kgGlassCard(in: .kgRounded(KGRadius.card))
                 Text("Neue Fahrpläne kommen mit App-Updates. Aus dem Netz holt die App nur Wetter, Meldungen und Verspätungen.", bundle: .module)
                     .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink3)
             }
@@ -325,22 +324,21 @@ struct PrivacyScreen: View {
                     promise(.history, KGColor.lineText, KGColor.lineTint, Text("Suchverlauf bleibt lokal", bundle: .module),
                             Text("Du kannst ihn jederzeit löschen.", bundle: .module))
                 }
-                .background(KGColor.glassFill, in: .kgRounded(KGRadius.card))
+                .kgGlassCard(in: .kgRounded(KGRadius.card))
                 KGButton(Text("Datenschutzerklärung lesen", bundle: .module), kind: .secondary) { showsPolicy = true }
                 KGButton(cleared ? Text("Verlauf gelöscht", bundle: .module) : Text("Verlauf löschen", bundle: .module),
                          icon: .trash, kind: .secondary) { confirming = true }
                     .disabled(cleared)
                     .accessibilityIdentifier("clearHistory")
+                    .kgGlassMenu(isPresented: $confirming, title: Text("Suchverlauf und Fahrten löschen?", bundle: .module), items: [
+                        KGGlassMenuItem(Text("Verlauf löschen", bundle: .module), icon: .trash, isDestructive: true) {
+                            services.updateUser { try $0.clearHistory() }
+                            cleared = true
+                        }
+                    ])
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
-        }
-        .confirmationDialog(Text("Suchverlauf und Fahrten löschen?", bundle: .module), isPresented: $confirming,
-                            titleVisibility: .visible) {
-            Button(role: .destructive) {
-                services.updateUser { try $0.clearHistory() }
-                cleared = true
-            } label: { Text("Verlauf löschen", bundle: .module) }
         }
         .sheet(isPresented: $showsPolicy) { PolicyText() }
         .sensoryFeedback(KGHaptic.warning, trigger: cleared)
@@ -402,6 +400,7 @@ private struct PolicyText: View {
                 }
             }
         }
+        .kgGlassSheet()
     }
 }
 
@@ -446,7 +445,7 @@ struct AboutScreen: View {
         }
         .padding(KGSpace.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(KGColor.glassFill, in: .kgRounded(KGRadius.medium))
+        .kgGlassCard(in: .kgRounded(KGRadius.medium))
     }
 }
 

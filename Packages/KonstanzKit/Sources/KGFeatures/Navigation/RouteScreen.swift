@@ -47,11 +47,9 @@ extension View {
 /// The bar that holds a screen's main button under its scrolling content: the screen's background with a
 /// hairline on top, so the list ends above it instead of running under it.
 struct BottomBar<Content: View>: View {
-    let background: Color
     let content: Content
 
-    init(background: Color = KGColor.card, @ViewBuilder content: () -> Content) {
-        self.background = background
+    init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
 
@@ -61,7 +59,7 @@ struct BottomBar<Content: View>: View {
             .padding(.top, KGSpace.medium)
             .padding(.bottom, KGSpace.compact)
             .frame(maxWidth: .infinity)
-            .background(background.ignoresSafeArea(edges: .bottom))
+            .background(KGGlassBackdrop().ignoresSafeArea(edges: .bottom))
             .overlay(alignment: .top) { Rectangle().fill(KGColor.line).frame(height: 1) }
     }
 }

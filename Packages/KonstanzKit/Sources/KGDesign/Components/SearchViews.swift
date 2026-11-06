@@ -24,7 +24,7 @@ public struct KGMapSearchBar: View {
             .padding(.leading, 18)
             .padding(.trailing, KGSpace.compact)
             .frame(minHeight: height)
-            .background(KGColor.surface, in: .kgRounded(KGRadius.search))
+            .kgGlass(in: .kgRounded(KGRadius.search))
             .kgShadow(.search, in: .kgRounded(KGRadius.search))
             .contentShape(.kgRounded(KGRadius.search))
         }
@@ -78,7 +78,7 @@ public struct KGSearchField: View {
             }
             .padding(.horizontal, KGSpace.compact)
             .frame(minHeight: height)
-            .background(KGColor.glassFill, in: .kgRounded(KGRadius.medium))
+            .kgGlassCard(in: .kgRounded(KGRadius.medium))
             KGTextButton(Text("Abbrechen", bundle: .kgDesign), style: .bodyMedium.weighted(KGFont.regular),
                          action: onCancel)
         }

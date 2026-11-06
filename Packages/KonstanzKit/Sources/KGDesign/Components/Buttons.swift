@@ -178,7 +178,7 @@ public struct KGRoundIconButton: View {
             KGIconView(icon, size: surface == .mapSquare ? 22 : 20)
                 .foregroundStyle(tint)
                 .frame(width: side, height: side)
-                .background(fill, in: shape)
+                .modifier(RoundButtonGlass(floating: surface != .plain, shape: shape))
                 .modifier(FloatingShadow(active: surface != .plain, shape: shape))
                 .contentShape(shape)
         }
@@ -187,9 +187,17 @@ public struct KGRoundIconButton: View {
     }
 
     private var side: CGFloat { surface == .mapSquare ? KGSize.mapButton : KGSize.touch }
-    private var fill: Color { surface == .plain ? KGColor.glassFill : KGColor.surface }
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: surface == .mapSquare ? KGRadius.large : side / 2, style: .continuous)
+    }
+}
+
+private struct RoundButtonGlass<S: Shape>: ViewModifier {
+    let floating: Bool
+    let shape: S
+
+    func body(content: Content) -> some View {
+        if floating { content.kgGlass(in: shape) } else { content.kgGlassCard(in: shape) }
     }
 }
 
@@ -238,6 +246,7 @@ public struct KGChip: View {
             .padding(.horizontal, icon == nil ? KGSpace.screen : KGSpace.medium)
             .frame(minHeight: 36)
             .background(isOn ? KGColor.ink : KGColor.glassFill, in: .capsule)
+            .kgGlassEdge(in: Capsule())
             .frame(minHeight: KGSize.touch)
             .contentShape(.capsule)
         }

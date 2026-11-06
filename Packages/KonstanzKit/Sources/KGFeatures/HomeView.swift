@@ -3,7 +3,7 @@ import KGDesign
 import SwiftUI
 
 /// Home: the map and the screens opened from it. There is no tab bar (changed after testing on a phone):
-/// Favoriten and Mehr open from Seeri in the map's search bar.
+/// Favoriten and Einstellungen open from Seeri in the map's search bar.
 public struct HomeView: View {
 
     let loader: TransitLoader

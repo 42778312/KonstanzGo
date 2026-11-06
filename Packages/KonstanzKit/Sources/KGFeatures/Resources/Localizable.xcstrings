@@ -1072,6 +1072,16 @@
         }
       }
     },
+    "Einstellungen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
     "Einstellungen, Offline-Daten und Datenschutz kommen bald.": {
       "extractionState": "stale",
       "localizations": {
@@ -2044,12 +2054,12 @@
         }
       }
     },
-    "KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nMit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird dabei nicht übertragen.\n\nWir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Er verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Mehr › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
+    "KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nMit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird dabei nicht übertragen.\n\nWir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Er verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Einstellungen › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "KonstanzGo works offline. Timetables, map and search are part of the app.\n\nWith internet the app also gets the weather from the Deutscher Wetterdienst (DWD), and notices and delays from NVBW's EFA-BW. These services see your iPhone's IP address; DWD says it stores it for at most 7 days. Your location is not sent.\n\nWe ourselves don't collect or store any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour location is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under More › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
+            "value": "KonstanzGo works offline. Timetables, map and search are part of the app.\n\nWith internet the app also gets the weather from the Deutscher Wetterdienst (DWD), and notices and delays from NVBW's EFA-BW. These services see your iPhone's IP address; DWD says it stores it for at most 7 days. Your location is not sent.\n\nWe ourselves don't collect or store any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour location is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under Settings › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
           }
         }
       }
@@ -2290,16 +2300,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dropped pin"
-          }
-        }
-      }
-    },
-    "Mehr": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "More"
           }
         }
       }

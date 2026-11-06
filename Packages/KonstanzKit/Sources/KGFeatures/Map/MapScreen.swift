@@ -161,7 +161,7 @@ public struct MapScreen: View {
         case .search:
             MapSearchSheet(services: services, listens: listens) { pick($0) }
         case .menu:
-            FoldingSheet(detent: $detent, title: String(localized: "Mehr", bundle: .module), onClose: { self.sheet = nil }) {
+            FoldingSheet(detent: $detent, title: String(localized: "Einstellungen", bundle: .module), onClose: { self.sheet = nil }) {
                 MoreScreen(services: services, onReplayOnboarding: onReplayOnboarding)
             }
             .kgGlassSheet()
@@ -426,7 +426,7 @@ extension MapScreen {
         }
         .buttonStyle(KGPressStyle())
         .offset(y: -12)
-        .accessibilityLabel(Text("Mehr", bundle: .module))
+        .accessibilityLabel(Text("Einstellungen", bundle: .module))
         .accessibilityHint(Text("Favoriten und Einstellungen", bundle: .module))
         .accessibilityIdentifier("moreHandle")
     }
@@ -629,7 +629,7 @@ struct DroppedPin: View {
 /// a bar on a map tap, swipe between half and full height, and close the same way.
 enum MapSheet: Identifiable, Hashable {
     case search
-    /// Mehr (with Favoriten), from Seeri.
+    /// Einstellungen (with Favoriten), from Seeri.
     case menu
     /// What the operator says is going on.
     case notices

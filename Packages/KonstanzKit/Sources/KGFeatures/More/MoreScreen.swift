@@ -14,7 +14,7 @@ enum AppInfo {
 /// The menu's own screens.
 enum MoreRoute: Hashable { case favorites, recent, offline, privacy, about }
 
-/// Screen 13 (Mehr), opened from Seeri in the map's search bar as a half sheet: the offline status on top;
+/// Screen 13 (Einstellungen), opened from Seeri in the map's search bar as a half sheet: the offline status on top;
 /// Favoriten; notifications, alarm lead time; language (the app is always dark); privacy, help, about; the version
 /// (plan S17.1).
 struct MoreScreen: View {
@@ -31,7 +31,7 @@ struct MoreScreen: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: KGSpace.large) {
-                    Text("Mehr", bundle: .module).kgFont(.display.sized(34)).foregroundStyle(KGColor.ink)
+                    Text("Einstellungen", bundle: .module).kgFont(.display.sized(34)).foregroundStyle(KGColor.ink)
                         .padding(.horizontal, KGSpace.xxs)
                         .accessibilityAddTraits(.isHeader)
                     OfflineCard(info: services.transit.timetableInfo) { path.append(.offline) }
@@ -95,7 +95,7 @@ struct MoreScreen: View {
                     case .favorites:
                         SavedScreen(services: services)
                             .safeAreaInset(edge: .top, spacing: 0) {
-                                BackLink(title: Text("Mehr", bundle: .module)) { path.removeLast() }
+                                BackLink(title: Text("Einstellungen", bundle: .module)) { path.removeLast() }
                                     .padding(.horizontal, KGSpace.screen)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -234,7 +234,7 @@ struct OfflineDataScreen: View {
         let total = parts.reduce(0) { $0 + $1.bytes }
         ScrollView {
             VStack(alignment: .leading, spacing: KGSpace.large) {
-                BackLink(title: Text("Mehr", bundle: .module), action: onBack)
+                BackLink(title: Text("Einstellungen", bundle: .module), action: onBack)
                 Text("Offline-Daten", bundle: .module).kgFont(.display.weighted(KGFont.bold)).foregroundStyle(KGColor.ink)
                     .accessibilityAddTraits(.isHeader)
                 VStack(alignment: .leading, spacing: KGSpace.screen) {
@@ -313,7 +313,7 @@ struct PrivacyScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: KGSpace.large) {
-                BackLink(title: Text("Mehr", bundle: .module), action: onBack)
+                BackLink(title: Text("Einstellungen", bundle: .module), action: onBack)
                 Text("Deine Daten bleiben bei dir", bundle: .module).kgFont(.display.weighted(KGFont.bold))
                     .foregroundStyle(KGColor.ink).accessibilityAddTraits(.isHeader)
                 VStack(spacing: 0) {
@@ -383,7 +383,7 @@ private struct PolicyText: View {
                         zu zeigen. Er verlässt das Gerät nie.
 
                         Favoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du \
-                        kannst den Verlauf unter Mehr › Datenschutz löschen; beim Löschen der App wird alles entfernt.
+                        kannst den Verlauf unter Einstellungen › Datenschutz löschen; beim Löschen der App wird alles entfernt.
 
                         Abfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.
 
@@ -412,7 +412,7 @@ struct AboutScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: KGSpace.large) {
-                BackLink(title: Text("Mehr", bundle: .module), action: onBack)
+                BackLink(title: Text("Einstellungen", bundle: .module), action: onBack)
                 HStack(spacing: KGSpace.medium) {
                     SeeriLogo(size: 56)
                     VStack(alignment: .leading) {
@@ -449,7 +449,7 @@ struct AboutScreen: View {
     }
 }
 
-/// "‹ Mehr": the blue back link of 18, 24, 25.
+/// "‹ Einstellungen": the blue back link of 18, 24, 25.
 struct BackLink: View {
     let title: Text
     let action: () -> Void

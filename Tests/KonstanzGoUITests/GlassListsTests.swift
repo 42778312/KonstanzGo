@@ -44,20 +44,20 @@ final class GlassListsTests: XCTestCase {
         favorites.tap()
         sleep(1)
         shot("03-favourites")
-        app.buttons.matching(NSPredicate(format: "label == 'Mehr'")).firstMatch.tap()
+        app.buttons.matching(NSPredicate(format: "label == 'Einstellungen'")).firstMatch.tap()
         sleep(1)
         let offline = app.buttons["offlineCard"]
         XCTAssertTrue(offline.waitForExistence(timeout: 3))
         offline.tap()
         sleep(1)
         shot("04-offline")
-        app.buttons.matching(NSPredicate(format: "label == 'Mehr'")).firstMatch.tap()
+        app.buttons.matching(NSPredicate(format: "label == 'Einstellungen'")).firstMatch.tap()
         sleep(1)
         let privacy = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Datenschutz'")).firstMatch
         privacy.tap()
         sleep(1)
         shot("05-privacy")
-        app.buttons.matching(NSPredicate(format: "label == 'Mehr'")).firstMatch.tap()
+        app.buttons.matching(NSPredicate(format: "label == 'Einstellungen'")).firstMatch.tap()
         sleep(1)
         let about = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Über'")).firstMatch
         about.tap()

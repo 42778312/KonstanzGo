@@ -33,7 +33,7 @@ extension KGTextStyle {
     public static let hero = KGTextStyle(fontName: KGFont.bold, size: 40, relativeTo: .largeTitle)
     /// 32 ExtraBold: onboarding titles.
     public static let display = KGTextStyle(fontName: KGFont.extraBold, size: 32, relativeTo: .largeTitle)
-    /// 28 Bold: screen titles ("Favoriten", "Mehr").
+    /// 28 Bold: screen titles ("Favoriten", "Einstellungen").
     public static let titleL = KGTextStyle(fontName: KGFont.bold, size: 28, relativeTo: .title)
     /// 22 ExtraBold: section and sheet titles ("In deiner Nähe").
     public static let title = KGTextStyle(fontName: KGFont.extraBold, size: 22, relativeTo: .title2)

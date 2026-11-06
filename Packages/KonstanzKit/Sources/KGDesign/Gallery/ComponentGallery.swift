@@ -195,7 +195,7 @@ private struct JourneyPart: View {
         KGFloatingTabBar(selection: $tab, tabs: [
             KGTab(id: 0, title: Text(verbatim: "Karte"), icon: .map),
             KGTab(id: 1, title: Text(verbatim: "Favoriten"), icon: .star),
-            KGTab(id: 2, title: Text(verbatim: "Mehr"), icon: .more),
+            KGTab(id: 2, title: Text(verbatim: "Einstellungen"), icon: .more),
         ])
         .frame(maxWidth: .infinity)
     }

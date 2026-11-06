@@ -33,6 +33,8 @@ public struct MapScreen: View {
     /// The Von, Nach and time chosen in the place sheet: it goes away while a route is open over the map, and
     /// comes back with them. A new sheet starts afresh.
     @State private var placeQuery: PlanQuery?
+    /// The Jetzt card's height, for what sits above it.
+    @State private var nowHeight: CGFloat = 0
     /// How far the search bar is being pulled up, towards the menu.
     @State private var barLift: CGFloat = 0
     @AppStorage("map.showsStops") private var showsStops = true
@@ -50,12 +52,19 @@ public struct MapScreen: View {
     private static let foldedSpace: CGFloat = 100
     /// The search bar, from the screen's bottom edge.
     private var barSpace: CGFloat { bottomBar + Self.searchBarHeight }
+    /// The Jetzt card and its gap, while it's there.
+    private var nowSpace: CGFloat { nowHeight > 0 ? nowHeight + KGSpace.large : 0 }
     /// A bit taller than the design's 56 after testing on a phone.
     private static let searchBarHeight: CGFloat = 66
 
     public var body: some View {
         ZStack(alignment: .top) {
             mapLayer
+            // Keeps the clock readable over map labels.
+            LinearGradient(colors: [KGColor.mapLand.opacity(0.85), KGColor.mapLand.opacity(0)], startPoint: .top, endPoint: .bottom)
+                .frame(height: 70)
+                .ignoresSafeArea(edges: .top)
+                .allowsHitTesting(false)
             StatusCorner(info: transit.timetableInfo, weather: services.weather)
                 .padding(.horizontal, KGSpace.screen)
                 .padding(.top, KGSpace.small)
@@ -65,16 +74,21 @@ public struct MapScreen: View {
                 .foregroundStyle(KGColor.ink3)
                 .padding(.horizontal, KGSpace.small)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                .padding(.bottom, barSpace + KGSpace.xs)
+                .padding(.bottom, barSpace + nowSpace + KGSpace.xs)
                 .ignoresSafeArea(edges: .bottom)
                 .allowsHitTesting(false)
             controls
                 .padding(.trailing, KGSpace.screen)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                .padding(.bottom, (sheet == nil ? barSpace : Self.foldedSpace) + KGSpace.medium)
+                .padding(.bottom, (sheet == nil ? barSpace + nowSpace : Self.foldedSpace) + KGSpace.medium)
                 .ignoresSafeArea(edges: .bottom)
             // While a stop or place is open its sheet (or folded bar) takes the bottom.
             if sheet == nil {
+                NowCard(services: services, onStop: { open(.station($0)) }, onHeight: { nowHeight = $0 })
+                    .padding(.horizontal, KGSpace.screen)
+                    .padding(.bottom, barSpace + KGSpace.large)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    .ignoresSafeArea(edges: .bottom)
                 noticesLayer
                 searchBar
                     .padding(.horizontal, KGSpace.screen)
@@ -85,7 +99,7 @@ public struct MapScreen: View {
             if let toast {
                 KGToast(toast)
                     .frame(maxHeight: .infinity, alignment: .bottom)
-                    .padding(.bottom, barSpace + KGSpace.large)
+                    .padding(.bottom, barSpace + nowSpace + KGSpace.large)
                     .ignoresSafeArea(edges: .bottom)
             }
         }
@@ -351,7 +365,7 @@ extension MapScreen {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, KGSpace.screen)
-        .padding(.bottom, barSpace + KGSpace.large + 12)
+        .padding(.bottom, barSpace + nowSpace + KGSpace.large + 12)
         .frame(maxHeight: .infinity, alignment: .bottom)
         .ignoresSafeArea(edges: .bottom)
     }
@@ -455,6 +469,9 @@ extension MapScreen {
     /// Layers and my location, one glass column.
     fileprivate var controls: some View {
         VStack(spacing: 0) {
+            controlButton(.more, label: Text("Einstellungen", bundle: .module), tint: KGColor.ink) { open(.menu) }
+                .accessibilityIdentifier("settingsButton")
+            Rectangle().fill(KGColor.line).frame(width: 26, height: 1)
             controlButton(.layers, label: Text("Kartenebenen", bundle: .module), tint: KGColor.ink) {
                 showsLayers = true
             }

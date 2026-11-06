@@ -1142,6 +1142,16 @@
         }
       }
     },
+    "Einklappen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold"
+          }
+        }
+      }
+    },
     "Einstellungen": {
       "localizations": {
         "en": {
@@ -1579,6 +1589,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Measured at %@"
+          }
+        }
+      }
+    },
+    "Gerade fährt hier nichts mehr.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing is running here right now."
           }
         }
       }
@@ -2034,6 +2054,16 @@
         }
       }
     },
+    "Jetzt los": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave now"
+          }
+        }
+      }
+    },
     "Jetzt los · %lld× Umsteigen · ab %@": {
       "localizations": {
         "en": {
@@ -2410,6 +2440,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Off you go on foot"
+          }
+        }
+      }
+    },
+    "Los in %lld Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave in %lld min"
           }
         }
       }
@@ -2840,6 +2880,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Just a short walk left"
+          }
+        }
+      }
+    },
+    "Nächste Busse zeigen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show next buses"
           }
         }
       }
@@ -4160,6 +4210,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "partly cloudy"
+          }
+        }
+      }
+    },
+    "Zügig gehen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk briskly"
           }
         }
       }

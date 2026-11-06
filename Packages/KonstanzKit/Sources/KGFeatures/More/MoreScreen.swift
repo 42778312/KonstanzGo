@@ -89,6 +89,7 @@ struct MoreScreen: View {
             .scrollIndicators(.hidden)
             .kgClearNavigation()
             .kgHideNavigationBar()
+            .kgSwipeBack()
             .navigationDestination(for: MoreRoute.self) { route in
                 Group {
                     switch route {

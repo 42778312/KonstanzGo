@@ -406,3 +406,57 @@ private final class Counter: @unchecked Sendable {
     var value: Int { lock.withLock { count } }
     func add() { lock.withLock { count += 1 } }
 }
+
+@Suite("Diversions")
+struct DiversionTests {
+    private let start = Date(timeIntervalSince1970: 1_800_000_000)
+
+    /// Five stops in a row, 100 m apart in spirit, on a path that passes each.
+    private var ride: RideLeg {
+        let stops = (0..<5).map { index -> TripStop in
+            let spot = Coordinate(latitude: 47.66 + Double(index) * 0.001, longitude: 9.17)
+            let station = Station(id: index, name: "\(index)", shortName: "\(index)", coordinate: spot)
+            let platform = Platform(id: index, stationID: index, code: nil, coordinate: spot, direction: nil)
+            return TripStop(station: station, platform: platform, arrival: start, departure: start)
+        }
+        return RideLeg(tripID: 1, line: Line(id: 1, name: "9A", longName: "", isCity: true), headsign: "4", stops: stops,
+                       path: stops.map(\.platform.coordinate))
+    }
+
+    private func closures(_ stations: [Int], lines: [String] = [], at date: Date? = nil) -> StopClosures {
+        let period = ServiceNotice.Period(from: start, to: start.addingTimeInterval(3600))
+        let notice = ServiceNotice(id: "n", text: "", lines: lines, stations: stations, closesStops: true, periods: [period])
+        return StopClosures(notices: [notice], at: date ?? start.addingTimeInterval(60))
+    }
+
+    @Test func noClosureLeavesTheWayWhole() {
+        let parts = ride.stretches(closures: StopClosures())
+        #expect(parts == [RideStretch(points: ride.path, isDiverted: false)])
+        #expect(!ride.isDiverted(closures: StopClosures()))
+    }
+
+    @Test func marksFromTheStopBeforeToTheStopAfter() {
+        let parts = ride.stretches(closures: closures([2]))
+        #expect(parts.map(\.isDiverted) == [false, true, false])
+        #expect(parts[1].points == Array(ride.path[1...3]))
+        #expect(parts.flatMap(\.points).count == ride.path.count + 2)  // Each joint is in both pieces.
+    }
+
+    @Test func neighbouringClosedStopsMakeOneStretch() {
+        let parts = ride.stretches(closures: closures([1, 2]))
+        #expect(parts.map(\.isDiverted) == [true, false])
+        #expect(parts[0].points == Array(ride.path[0...3]))
+    }
+
+    @Test func aClosedLastStopEndsTheWay() {
+        let parts = ride.stretches(closures: closures([4]))
+        #expect(parts.map(\.isDiverted) == [false, true])
+        #expect(parts[1].points == Array(ride.path[3...4]))
+    }
+
+    @Test func otherLinesAndEndedNoticesChangeNothing() {
+        #expect(!ride.isDiverted(closures: closures([2], lines: ["5"])))
+        #expect(ride.isDiverted(closures: closures([2], lines: ["9"])))  // 9A runs as line 9 in the feed.
+        #expect(!ride.isDiverted(closures: closures([2], at: start.addingTimeInterval(7200))))
+    }
+}

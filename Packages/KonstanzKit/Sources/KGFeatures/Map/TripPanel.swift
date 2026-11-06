@@ -44,6 +44,11 @@ struct TripPanel: View {
                         .accessibilityIdentifier("closeTrip")
                 }
                 DepartureCard(ride: shownRide, now: now)
+                if ride.isDiverted(closures: services.live.closures) {
+                    Text("Umleitung, Weg unbekannt. Die Linie auf der Karte zeigt nicht die echte Strecke.", bundle: .module)
+                        .kgFont(.callout.weighted(KGFont.medium)).foregroundStyle(KGColor.warn)
+                        .accessibilityIdentifier("divertedRide")
+                }
                 alarmButton
                 KGSectionHeader(Text("Haltestellen", bundle: .module))
                     .padding(.horizontal, KGSpace.xxs)

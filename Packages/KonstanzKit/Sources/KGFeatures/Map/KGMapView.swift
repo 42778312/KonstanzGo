@@ -228,7 +228,13 @@ public struct KGMapView: UIViewRepresentable {
             walk.lineWidth = NSExpression(forConstantValue: 4)
             walk.lineCap = NSExpression(forConstantValue: "round")
             walk.lineDashPattern = NSExpression(forConstantValue: [0.1, 2])
-            for layer in [casing, bus, walk] {
+            // Dashed: the bus leaves its normal road here, and the real streets aren't known.
+            let diversion = MLNLineStyleLayer(identifier: "kg-route-diversion", source: source)
+            diversion.predicate = NSPredicate(format: "kind == 'diversion'")
+            diversion.lineColor = NSExpression(forConstantValue: UIColor(KGColor.warn))
+            diversion.lineWidth = NSExpression(forConstantValue: 4)
+            diversion.lineDashPattern = NSExpression(forConstantValue: [1.5, 1.5])
+            for layer in [casing, bus, walk, diversion] {
                 if let stops = style.layer(withIdentifier: Self.stopRingsLayer) {
                     style.insertLayer(layer, below: stops)
                 } else {

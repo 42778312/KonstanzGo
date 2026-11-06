@@ -4,13 +4,16 @@ import SwiftUI
 
 extension Journey {
     /// The journey as map lines: rides coral along the road, walks dotted (plan M7).
-    var mapLines: [MapLine] {
-        legs.map { leg in
+    var mapLines: [MapLine] { mapLines(closures: StopClosures()) }
+
+    /// The same, with stretches past closed stops marked as diversions, whose real streets aren't known.
+    func mapLines(closures: StopClosures) -> [MapLine] {
+        legs.flatMap { leg -> [MapLine] in
             switch leg {
             case let .walk(walk):
-                MapLine(kind: .walk, points: walk.path.count > 1 ? walk.path : [])
+                [MapLine(kind: .walk, points: walk.path.count > 1 ? walk.path : [])]
             case let .ride(ride):
-                MapLine(kind: .bus, points: ride.path.count > 1 ? ride.path : ride.stops.map(\.platform.coordinate))
+                ride.stretches(closures: closures).map { MapLine(kind: $0.isDiverted ? .diversion : .bus, points: $0.points) }
             }
         }
         .filter { $0.points.count > 1 }
@@ -125,7 +128,7 @@ struct JourneyMap: View {
         .allowsHitTesting(true)
         .ignoresSafeArea()
         .onAppear {
-            model.lines = journey.mapLines
+            model.lines = journey.mapLines(closures: services.live.closures)
             model.closedStations = services.live.closures.stations.compactMap { services.transit.station(id: $0) }
             model.insets = MapInsets(top: 110, bottom: bottomInset)
             model.onTapMap = onTap
@@ -136,6 +139,7 @@ struct JourneyMap: View {
             model.pins = ends
             model.move(.fitting(focus ?? journey.allPoints, animated: false))
         }
+        .onChange(of: services.live.closures) { _, closures in model.lines = journey.mapLines(closures: closures) }
         .onChange(of: services.location.coordinate) { _, point in model.userLocation = point }
         .onChange(of: services.location.heading, initial: true) { _, heading in model.userHeading = heading }
         .onChange(of: bottomInset) { _, inset in model.insets.bottom = inset }

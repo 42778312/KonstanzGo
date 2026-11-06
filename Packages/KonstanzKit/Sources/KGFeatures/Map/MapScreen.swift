@@ -114,6 +114,7 @@ public struct MapScreen: View {
         .task { await services.live.keepFresh() }
         .onChange(of: services.live.closures.stations, initial: true) { _, closed in
             map.closedStations = closed.compactMap { transit.station(id: $0) }
+            redrawOpenTrip()
         }
         .environment(\.stopClosures, services.live.closures)
         .onAppear(perform: appear)
@@ -172,6 +173,13 @@ public struct MapScreen: View {
             MapOverlays(map: map)
         }
         .ignoresSafeArea()
+    }
+
+    /// A closure began or ended while a trip is open: its diversion marking follows.
+    private func redrawOpenTrip() {
+        guard case let .trip(tripID, day, fromStation) = sheet,
+              let ride = TripScreen.ride(services: services, tripID: tripID, day: day, fromStation: fromStation) else { return }
+        map.lines = Journey(legs: [.ride(ride)]).mapLines(closures: services.live.closures)
     }
 
     private var layersSheet: some View {
@@ -312,7 +320,7 @@ public struct MapScreen: View {
         case let .trip(tripID, day, fromStation):
             map.selectedStationID = nil
             if let ride = TripScreen.ride(services: services, tripID: tripID, day: day, fromStation: fromStation) {
-                map.lines = Journey(legs: [.ride(ride)]).mapLines
+                map.lines = Journey(legs: [.ride(ride)]).mapLines(closures: services.live.closures)
                 map.pins = [MapPin(id: "place", coordinate: ride.alighting.platform.coordinate)]
                 map.insets.bottom = half
                 map.move(.fitting(ride.stops.map(\.platform.coordinate)))

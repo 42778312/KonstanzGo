@@ -1,6 +1,16 @@
 {
   "sourceLanguage": "de",
   "strings": {
+    "Umleitung, Weg unbekannt. Die Linie auf der Karte zeigt nicht die echte Strecke.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diversion, route unknown. The line on the map doesn't show the real streets."
+          }
+        }
+      }
+    },
     "Ankunft teilen": {
       "localizations": {
         "en": {

@@ -80,6 +80,53 @@ public struct StopClosures: Sendable, Hashable {
     }
 }
 
+/// A piece of a ride's way. A diverted piece runs past stops it doesn't serve, so its real streets are unknown.
+public struct RideStretch: Sendable, Hashable {
+    public var points: [Coordinate]
+    public var isDiverted: Bool
+
+    public init(points: [Coordinate], isDiverted: Bool) {
+        self.points = points
+        self.isDiverted = isDiverted
+    }
+}
+
+extension RideLeg {
+    /// The ride's way, split around closed stops: from the stop before the closed ones to the stop after them.
+    public func stretches(closures: StopClosures) -> [RideStretch] {
+        let way = path.count > 1 ? path : stops.map(\.platform.coordinate)
+        let closed = stops.indices.filter { closures.isClosed(station: stops[$0].station.id, line: line.name) }
+        guard !closed.isEmpty else { return [RideStretch(points: way, isDiverted: false)] }
+        // Where each stop lies along the way, never going backwards.
+        var places: [Int] = []
+        var from = 0
+        for stop in stops {
+            let spot = stop.platform.coordinate
+            let place = (from..<way.count).min { way[$0].distance(to: spot) < way[$1].distance(to: spot) } ?? from
+            places.append(place)
+            from = place
+        }
+        var result: [RideStretch] = []
+        var done = 0
+        var at = 0
+        while at < closed.count {
+            let first = closed[at]
+            while at + 1 < closed.count, closed[at + 1] == closed[at] + 1 { at += 1 }
+            let start = places[max(first - 1, 0)], end = places[min(closed[at] + 1, stops.count - 1)]
+            if start > done { result.append(RideStretch(points: Array(way[done...start]), isDiverted: false)) }
+            if end > start { result.append(RideStretch(points: Array(way[start...end]), isDiverted: true)) }
+            done = max(done, end)
+            at += 1
+        }
+        if done < way.count - 1 { result.append(RideStretch(points: Array(way[done...]), isDiverted: false)) }
+        return result
+    }
+
+    public func isDiverted(closures: StopClosures) -> Bool {
+        stops.contains { closures.isClosed(station: $0.station.id, line: line.name) }
+    }
+}
+
 /// Reads EFA-BW's disruption list (`XML_ADDINFO_REQUEST`, rapidJSON) for Konstanz. The feed names lines and
 /// stops as data; the words only decide whether a named stop is closed and which stops it suggests, and when
 /// they don't say so the notice is only listed.

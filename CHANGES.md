@@ -15,6 +15,7 @@ Each change maps to a finding in `REVIEW.md`.
 |---|---|---|---|
 | R-07 | `LiveModel` and `EFADepartures`: stop sheets show live times, late buses move on the map, cancelled ones disappear | The app only knew the timetable | `LiveTests`, real data in the simulator |
 | R-08 | `LiveModel` and `EFANotices`: notices are read when online and kept on the phone. Closed stops get an X, leave the planner and are crossed out in stop lists. Seeri announces new notices once; a pill and sheet list them with alternatives | The app knew nothing about disruptions | `LiveTests`, `LiveNoticesTests`, real closure in the simulator |
+| R-23 | P4-14 | A ride past closed stops draws that stretch dashed in orange and the trip panel says "Umleitung, Weg unbekannt"; X marks stay | A confident line on the normal road was false during a diversion | `DiversionTests`, `testADivertedBusAdmitsItsWayIsUnknown`, seen in the simulator; ending at the notice's end time is unit tested |
 
 ## Missed connections
 

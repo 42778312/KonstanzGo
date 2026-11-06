@@ -59,4 +59,43 @@ final class LiveNoticesTests: XCTestCase {
         from.press(forDuration: 0.05, thenDragTo: from.withOffset(CGVector(dx: 0, dy: -180)))
         XCTAssertTrue(app.buttons["openFavorites"].waitForExistence(timeout: 5), "the menu didn't rise")
     }
+
+    /// A bus through the closed stops says its way is unknown, and the map shows that stretch dashed.
+    @MainActor
+    func testADivertedBusAdmitsItsWayIsUnknown() {
+        XCTAssertTrue(app.buttons["mapSearch"].waitForExistence(timeout: 10))
+        app.buttons["mapSearch"].tap()
+        let field = app.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        field.tap()
+        field.typeText("Döbelestraße")
+        let result = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Döbelestraße'")).element(boundBy: 1)
+        XCTAssertTrue(result.waitForExistence(timeout: 5))
+        result.tap()
+        // Picked in the search, the stop is the target; tapped on the map, it shows its departures.
+        XCTAssertTrue(app.buttons["placeTo"].waitForExistence(timeout: 5))
+        app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.36)).tap()
+        XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5))
+        // Tomorrow morning, so lines 5 and 9 run whatever the hour.
+        app.buttons["stationTime"].tap()
+        app.buttons["Morgen früh"].tap()
+        app.buttons["applyTime"].tap()
+        let rows = app.buttons.matching(NSPredicate(format: "label CONTAINS 'laut Fahrplan'"))
+        XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 5))
+        for index in 0..<min(rows.count, 8) {
+            rows.element(boundBy: index).tap()
+            XCTAssertTrue(app.buttons["tripBack"].waitForExistence(timeout: 5))
+            if app.descendants(matching: .any)["divertedRide"].waitForExistence(timeout: 1) {
+                sleep(3)  // The route draws in.
+                let shot = XCTAttachment(screenshot: app.screenshot())
+                shot.name = "diverted"
+                shot.lifetime = .keepAlways
+                add(shot)
+                return
+            }
+            app.buttons["tripBack"].tap()
+            XCTAssertTrue(app.buttons["closeStation"].waitForExistence(timeout: 5))
+        }
+        XCTFail("no bus through the closed stops")
+    }
 }

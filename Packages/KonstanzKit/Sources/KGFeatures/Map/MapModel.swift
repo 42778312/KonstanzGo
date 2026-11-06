@@ -179,7 +179,7 @@ public struct CameraMove: Equatable, Sendable {
 
 /// A line on the map.
 public struct MapLine: Hashable, Sendable {
-    public enum Kind: String, Sendable { case bus, walk }
+    public enum Kind: String, Sendable { case bus, walk, diversion }
 
     public var kind: Kind
     public var points: [Coordinate]

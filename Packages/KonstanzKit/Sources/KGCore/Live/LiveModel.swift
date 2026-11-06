@@ -180,6 +180,9 @@ public final class LiveModel {
         for read in reads { await read.value }
     }
 
+    /// When a stop's reports were last read, if recently.
+    public func readTime(ofStation id: Int) -> Date? { boards[id]?.at }
+
     /// What's known right now, for checking a journey.
     public var state: LiveState { LiveState(delays: tripDelays, cancelled: cancelledTrips, closures: closures) }
 

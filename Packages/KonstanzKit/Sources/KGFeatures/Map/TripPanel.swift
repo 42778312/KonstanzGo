@@ -48,6 +48,9 @@ struct TripPanel: View {
                 KGSectionHeader(Text("Haltestellen", bundle: .module))
                     .padding(.horizontal, KGSpace.xxs)
                 StopsTimeline(ride: ride, now: now)
+                Text("Die Position auf der Karte ist aus Fahrplan und Verspätung berechnet, nicht per GPS gemessen.", bundle: .module)
+                    .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                    .accessibilityIdentifier("calculatedPosition")
             }
             .padding(.horizontal, KGSpace.screen)
             .padding(.top, KGSpace.medium)

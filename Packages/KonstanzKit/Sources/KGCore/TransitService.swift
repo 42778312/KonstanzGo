@@ -95,6 +95,7 @@ public final class OfflineTransit: TransitService {
     public func lines(at stationID: Int) throws -> [Line] { try store.lines(at: stationID) }
     public func trip(id: Int, on day: ServiceDay) throws -> Trip? { try store.trip(id: id, on: day) }
     public func plan(_ request: PlanRequest) throws -> [Journey] { try planner.plan(request) }
+    public func plan(_ request: PlanRequest, live: LiveState) throws -> [Journey] { try planner.plan(request, live: live) }
 
     public func search(_ query: String, near point: Coordinate) -> [SearchResult] {
         placeSearch.search(query, near: point)

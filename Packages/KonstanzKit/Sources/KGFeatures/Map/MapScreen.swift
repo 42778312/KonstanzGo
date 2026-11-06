@@ -605,7 +605,7 @@ private struct StatusCorner: View {
                 KGStatusPill(Text("Fahrplan abgelaufen", bundle: .module), isWarning: true)
             } else if info?.validity() == .endingSoon {
                 KGStatusPill(Text("Fahrplan endet bald", bundle: .module), isWarning: true)
-            } else if let reading = weather.reading {
+            } else if let reading = weather.reading, reading.isFresh(at: .now) {
                 WeatherChip(reading: reading)
                     .transition(.opacity)
             }
@@ -631,10 +631,12 @@ private struct LayersSheet: View {
             }
             KGToggleRow(Text("Haltestellen", bundle: .module), isOn: $showsStops)
             KGToggleRow(Text("Busse & Züge", bundle: .module), isOn: $showsVehicles)
+            Text("Positionen sind aus Fahrplan und Verspätungen berechnet, nicht per GPS gemessen.", bundle: .module)
+                .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
             Spacer(minLength: 0)
         }
         .padding(KGSpace.large)
-        .presentationDetents([.height(250)])
+        .presentationDetents([.height(300)])
         .kgGlassSheet()
         .presentationCornerRadius(KGRadius.card)
     }

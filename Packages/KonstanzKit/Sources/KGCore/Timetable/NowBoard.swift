@@ -114,10 +114,20 @@ public enum NowBoard {
             let tooFar = (stop.walkMinutes ?? 0) > nearest + similarWalkMinutes
             return (stop.isSaved ? 0 : 1, tooFar ? 1 : 0, stop.rows.first?.departure.expected ?? .distantFuture)
         }
-        return Array(all.enumerated().sorted { lhs, rhs in
+        let ranked = all.enumerated().sorted { lhs, rhs in
             let (left, right) = (rank(lhs.element), rank(rhs.element))
             return (left.0, left.1, left.2, lhs.offset) < (right.0, right.1, right.2, rhs.offset)
-        }.prefix(maxStops).map(\.element))
+        }.map(\.element)
+        // The same bus passing two nearby stops is only worth one row: the better stop's.
+        var result: [NowStop] = []
+        var shownTrips = Set<Int>()
+        for var stop in ranked where result.count < maxStops {
+            stop.rows.removeAll { shownTrips.contains($0.departure.tripID) }
+            guard !stop.rows.isEmpty else { continue }
+            shownTrips.formUnion(stop.rows.map(\.departure.tripID))
+            result.append(stop)
+        }
+        return result
     }
 
     private static func rows(_ candidate: NowCandidate, now: Date) -> [NowRow] {

@@ -23,6 +23,7 @@ struct MoreScreen: View {
     @State private var path: [MoreRoute] = []
     @State private var notifications = false
     @AppStorage("alarm.minutes") private var alarmMinutes = 2
+    @AppStorage(GetOffAlerts.enabledKey) private var getOffAlerts = true
     @State private var choosingMinutes = false
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
@@ -47,6 +48,9 @@ struct MoreScreen: View {
                         KGSettingsRow(Text("Mitteilungen", bundle: .module), icon: .bell, tile: KGColor.tileRed,
                                       isOn: Binding { notifications } set: { setNotifications($0) })
                         alarmRow
+                        KGSettingsRow(Text("Hinweis vor dem Aussteigen", bundle: .module), icon: .bell, tile: KGColor.location,
+                                      isOn: $getOffAlerts)
+                            .accessibilityIdentifier("getOffAlerts")
                     }
                     .riseIn(after: 0.1)
                     KGSettingsGroup {

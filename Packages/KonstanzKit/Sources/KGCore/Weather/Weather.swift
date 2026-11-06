@@ -4,6 +4,11 @@ import Observation
 /// The weather at the Deutscher Wetterdienst's Konstanz station (10929), as last read: the temperature and
 /// what the sky is doing. Kept on the phone, so the map shows the last reading when there is no internet.
 public struct WeatherReading: Codable, Sendable, Equatable {
+    /// Older than this says little about the weather now, so it isn't shown.
+    static let freshFor: TimeInterval = 6 * 3600
+
+    public func isFresh(at date: Date) -> Bool { date.timeIntervalSince(observed) < Self.freshFor }
+
     /// °C, 2 m above ground.
     public var temperature: Double
     public var condition: WeatherCondition
@@ -145,16 +150,19 @@ public enum SunPosition {
 @Observable
 public final class WeatherModel {
     public private(set) var reading: WeatherReading?
-    private var lastAsked = Date.distantPast
+    private var lastAsked: Date
+    private var failures = 0
     private let defaults: UserDefaults
     private let fetch: @Sendable () async throws -> Data
     private static let key = "kg.weather.reading"
+    private static let askedKey = "kg.weather.asked"
     static let interval: TimeInterval = 20 * 60
 
     public init(defaults: UserDefaults = .standard,
                 fetch: @escaping @Sendable () async throws -> Data = WeatherModel.download) {
         self.defaults = defaults
         self.fetch = fetch
+        lastAsked = defaults.object(forKey: Self.askedKey) as? Date ?? .distantPast
         reading = defaults.data(forKey: Self.key).flatMap { try? JSONDecoder().decode(WeatherReading.self, from: $0) }
     }
 
@@ -164,10 +172,13 @@ public final class WeatherModel {
         lastAsked = now
         guard let data = try? await fetch(), let text = String(data: data, encoding: .isoLatin1) ?? String(data: data, encoding: .utf8),
               let new = DWDReport.parse(text) else {
-            // Offline or a bad answer: try again in two minutes, not twenty.
-            lastAsked = now.addingTimeInterval(-Self.interval + 120)
+            // Offline or a bad answer: try again in two minutes, then longer, up to the usual twenty.
+            failures += 1
+            lastAsked = now.addingTimeInterval(-Self.interval + min(Self.interval, 120 * pow(2, Double(failures - 1))))
             return
         }
+        failures = 0
+        defaults.set(now, forKey: Self.askedKey)
         if reading.map({ new.observed >= $0.observed }) ?? true {
             reading = new
             defaults.set(try? JSONEncoder().encode(new), forKey: Self.key)

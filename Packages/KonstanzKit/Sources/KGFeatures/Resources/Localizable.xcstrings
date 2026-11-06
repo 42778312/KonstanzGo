@@ -1021,6 +1021,16 @@
         }
       }
     },
+    "Die Position auf der Karte ist aus Fahrplan und Verspätung berechnet, nicht per GPS gemessen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The position on the map is calculated from the timetable and delays, not measured by GPS."
+          }
+        }
+      }
+    },
     "Die Suche kommt als Nächstes.": {
       "extractionState": "stale",
       "localizations": {
@@ -1108,6 +1118,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Real times at every stop"
+          }
+        }
+      }
+    },
+    "Echtzeit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live"
+          }
+        }
+      }
+    },
+    "Echtzeit · Stand %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live · as of %@"
           }
         }
       }
@@ -1954,6 +1984,16 @@
         }
       }
     },
+    "Hinweis vor dem Aussteigen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder before your stop"
+          }
+        }
+      }
+    },
     "Hält hier gerade nicht": {
       "localizations": {
         "en": {
@@ -2050,6 +2090,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Now"
+          }
+        }
+      }
+    },
+    "Jetzt aussteigen vorbereiten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get ready to get off"
           }
         }
       }
@@ -2814,6 +2864,16 @@
         }
       }
     },
+    "Noch 2 Halte bis %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 stops to %@"
+          }
+        }
+      }
+    },
     "Noch kein Ort gemerkt": {
       "localizations": {
         "en": {
@@ -2910,6 +2970,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nearest stop · %lld min walk"
+          }
+        }
+      }
+    },
+    "Nächster Halt: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next stop: %@"
           }
         }
       }
@@ -3030,6 +3100,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pin dropped"
+          }
+        }
+      }
+    },
+    "Positionen sind aus Fahrplan und Verspätungen berechnet, nicht per GPS gemessen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Positions are calculated from the timetable and delays, not measured by GPS."
           }
         }
       }

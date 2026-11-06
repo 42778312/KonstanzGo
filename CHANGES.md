@@ -86,7 +86,21 @@ First full run after the work above: 14 of 274 failed, none a bug in the app. 3 
 | P1-29 | MetricKit reports stay on the phone, shareable from About | `keepsOnlyTheNewestReports` |
 | P1-12, P1-13, P1-15, P1-16 | Signed data sets and settings, verified download, swap on next launch, automatic rollback, "Stand:" (R-17). Off until `DataHost.base` is set (P1-14) | 18 `DataSyncTests`, Python signature checked in Swift, end-to-end in the simulator from a `file:` host |
 
-Known flaky test: `testEveryListIsGlass` failed once of four runs at its pull-up drag; 3 of 3 alone. Worth steadier gesture code when next touched.
+## Phase 2 so far, 6 Nov 2026
+
+| Plan task | What changed | Checked by |
+|---|---|---|
+| P2-02 to P2-05, P2-07, P2-08 | Jetzt card: saved and nearest stops, next bus per line and direction, live times, when to leave, empty states, folds away | `NowBoardTests` (11), simulator |
+| P2-06 | A visible settings button on the map; the pull-up stays. Seeri's one job: what's going on now | UI suite |
+| P2-10 | Bus options that lose on every count are dropped; walking always stays | `noOptionLosesOnEveryCount` |
+| P2-11 | "Now" plans leave out cancelled buses and changes a delay has broken. Offline and later times are unchanged | `RescueTests` |
+| P2-12 | The place sheet's walking time matches the walking option | Simulator |
+| P2-13 | Reminders before your stop, on a locked phone, by the delays known when last open; can be turned off | `remindersComeBeforeTheStopAndFollowADelay`. Not yet tried on a real ride |
+| P2-14 | "Echtzeit · Stand 22:25", and the map and trip screens say positions are calculated | Simulator |
+| P2-15 | Weather older than 6 hours is hidden; the request limit survives restarts; failures back off (R-10, R-11, R-16) | `WeatherTests` |
+| P2-17 | Bus numbers that would overlap give way; buses always show | Simulator. Check for flicker on a real iPhone |
+| P2-19 | A fade keeps the clock readable | Simulator |
+| P2-23 | Start logo 0.5 s (was 0.6) and still skippable by a tap. iPhone start time still unmeasured | Not measured |
 
 ## Not changed yet
 

@@ -13,7 +13,7 @@ public struct StartScreen: View {
     }
 
     /// How long the start screen stays.
-    static let length = 0.6
+    static let length = 0.5
 
     public var body: some View {
         GeometryReader { proxy in

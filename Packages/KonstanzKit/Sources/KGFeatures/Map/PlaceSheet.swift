@@ -83,11 +83,12 @@ struct PlaceSheet: View {
         HStack(alignment: .top, spacing: KGSpace.small) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: isPicked ? target.name : query.to.name).kgFont(.title).foregroundStyle(KGColor.ink)
-                    .lineLimit(2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                     .accessibilityAddTraits(.isHeader)
                 if isPicked, !subtitle.isEmpty {
                     Text(verbatim: subtitle).kgFont(.footnote.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
-                        .lineLimit(2)
+                        .lineLimit(1)
                 }
                 // A dropped pin: its exact latitude and longitude (about a metre), selectable to copy.
                 if isPicked, case .point = target {
@@ -124,7 +125,9 @@ struct PlaceSheet: View {
             parts.append(String(localized: "Haltestelle", bundle: .module))
         }
         if services.here != nil {
-            let minutes = max(1, Int((target.coordinate.distance(to: services.anchor) * 1.25 / 80).rounded(.up)))
+            // The same number as the walking option below, when there is one.
+            let walkOption = query.from.coordinate == services.here?.coordinate ? journeys.first { $0.rides.isEmpty } : nil
+            let minutes = walkOption?.minutes ?? max(1, Int((target.coordinate.distance(to: services.anchor) * 1.25 / 80).rounded(.up)))
             // Further than this nobody walks: saying "137 Min. zu Fuß" only confuses.
             if minutes <= 45 { parts.append(String(localized: "\(minutes) Min. zu Fuß", bundle: .module)) }
         }
@@ -232,7 +235,9 @@ struct PlaceSheet: View {
         searching = true
         let request = query.request()
         let transit = services.transit
-        let found = await Task.detached(priority: .userInitiated) { (try? transit.plan(request)) ?? [] }.value
+        // Now, what's known counts; a later time goes by the timetable.
+        let live = query.when == .now ? services.live.state : LiveState()
+        let found = await Task.detached(priority: .userInitiated) { (try? transit.plan(request, live: live)) ?? [] }.value
         guard !Task.isCancelled else { return }
         let ranked = JourneyPlanner.ranked(found, by: query.preference, arriveBy: request.arriveBy)
         withAnimation(.easeOut(duration: 0.2)) {

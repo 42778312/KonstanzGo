@@ -37,27 +37,28 @@ final class GlassListsTests: XCTestCase {
         XCTAssertTrue(favorites.waitForExistence(timeout: 5))
         sleep(1)
         shot("01-more-half")
-        pullUp(above: favorites)
+        // From the title, as a press just above a row can count as a tap on it.
+        pullUp(above: app.staticTexts["Einstellungen"].firstMatch)
         shot("02-more-full")
         // Waits, as the sheet can still be settling after the pull.
         XCTAssertTrue(favorites.waitForExistence(timeout: 5))
         favorites.tap()
         sleep(1)
         shot("03-favourites")
-        app.buttons.matching(NSPredicate(format: "label == 'Einstellungen'")).firstMatch.tap()
+        app.buttons["backLink"].firstMatch.tap()
         sleep(1)
         let offline = app.buttons["offlineCard"]
         XCTAssertTrue(offline.waitForExistence(timeout: 3))
         offline.tap()
         sleep(1)
         shot("04-offline")
-        app.buttons.matching(NSPredicate(format: "label == 'Einstellungen'")).firstMatch.tap()
+        app.buttons["backLink"].firstMatch.tap()
         sleep(1)
         let privacy = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Datenschutz'")).firstMatch
         privacy.tap()
         sleep(1)
         shot("05-privacy")
-        app.buttons.matching(NSPredicate(format: "label == 'Einstellungen'")).firstMatch.tap()
+        app.buttons["backLink"].firstMatch.tap()
         sleep(1)
         let about = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Über'")).firstMatch
         about.tap()

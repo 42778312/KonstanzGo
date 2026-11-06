@@ -72,6 +72,16 @@ struct NowBoardTests {
         #expect(NowBoard.stops(from: [near, far], now: now).map(\.station.id) == [stations[0].id, stations[2].id])
     }
 
+    @Test func theSameBusIsListedOnce() throws {
+        let stations = try transit.store.stations
+        let shared = try departure(1, "Staad", in: 8, trip: 42)
+        let first = NowCandidate(station: stations[0], walkMinutes: 2, isSaved: false, departures: [shared, try departure(9, "Uni", in: 12)])
+        let second = NowCandidate(station: stations[1], walkMinutes: 3, isSaved: false, departures: [shared, try departure(2, "W", in: 15)])
+        let board = NowBoard.stops(from: [first, second], now: now)
+        #expect(board.flatMap(\.rows).filter { $0.departure.tripID == 42 }.count == 1)
+        #expect(board.count == 2)
+    }
+
     @Test func noAdviceWithoutAPositionOrRightAtTheStop() throws {
         #expect(NowBoard.stops(from: [try stop([try departure(1, "S", in: 5)])], now: now).first?.rows.first?.advice == nil)
         #expect(NowBoard.stops(from: [try stop([try departure(1, "S", in: 5)], walk: 1)], now: now).first?.rows.first?.advice == nil)

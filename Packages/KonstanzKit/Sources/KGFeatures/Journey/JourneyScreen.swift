@@ -91,6 +91,7 @@ struct JourneyScreen: View {
             while !Task.isCancelled {
                 await services.live.follow(journey)
                 now = .now
+                await GetOffAlerts.update(journey: journey, live: live, now: now)
                 try? await Task.sleep(for: .seconds(30))
             }
         }
@@ -231,6 +232,7 @@ struct JourneyScreen: View {
     /// ✕ goes back to the connections, so another one can be picked.
     private func endTrip() {
         TripActivity.end()
+        Task { await GetOffAlerts.clear() }
         showsSheet = false
         Task {
             // Let the sheet go before the map's own comes back.
@@ -283,6 +285,7 @@ struct JourneyScreen: View {
                                 to: (journey.rides.last ?? ride).alighting.station.shortName)
         services.updateUser { try $0.addFinishedTrip(trip) }
         TripActivity.end()
+        Task { await GetOffAlerts.clear() }
     }
 }
 

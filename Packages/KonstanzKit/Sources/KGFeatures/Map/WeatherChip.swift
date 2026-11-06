@@ -8,7 +8,7 @@ struct WeatherChip: View {
     let reading: WeatherReading
 
     var body: some View {
-        let night = SunPosition.isNight(at: reading.observed)
+        let night = SunPosition.isNight(at: .now)
         HStack(spacing: KGSpace.xs) {
             Image(systemName: reading.condition.symbol(night: night))
                 .symbolRenderingMode(.multicolor)

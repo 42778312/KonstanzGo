@@ -210,7 +210,9 @@ struct RoutesScreen: View {
         let request = query.request()
         let transit = services.transit
         let started = ContinuousClock.now
-        let work = Task.detached(priority: .userInitiated) { (try? transit.plan(request)) ?? [] }
+        // Now, what's known counts; a later time goes by the timetable.
+        let live = query.when == .now ? services.live.state : LiveState()
+        let work = Task.detached(priority: .userInitiated) { (try? transit.plan(request, live: live)) ?? [] }
         let reveal = Task {
             try? await Task.sleep(for: .milliseconds(300))
             if !Task.isCancelled { withAnimation { showsFinding = true } }

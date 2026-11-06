@@ -18,6 +18,54 @@ struct RescueTests {
         clock.date(ServiceDay(yyyymmdd: 20261105), minutes: hour * 60 + minute)
     }
 
+    private func sameTrip(as journey: Journey) throws -> PlanRequest {
+        let last = try #require(journey.rides.last)
+        return PlanRequest(from: Endpoint(name: "A", coordinate: journey.rides[0].boarding.platform.coordinate),
+                           to: Endpoint(name: "B", coordinate: last.alighting.platform.coordinate), time: journey.rides[0].start)
+    }
+
+    @Test func aPlanLeavesOutCancelledBuses() throws {
+        let journey = try journeyWithChange()
+        let request = try sameTrip(as: journey)
+        let first = journey.rides[0].tripID
+        let plain = try planner.plan(request)
+        #expect(plain.contains { $0.rides.contains { $0.tripID == first } })
+        let live = LiveState(cancelled: [first])
+        #expect(try !planner.plan(request, live: live).contains { $0.rides.contains { $0.tripID == first } })
+    }
+
+    @Test func aPlanLeavesOutAChangeADelayHasBroken() throws {
+        let journey = try journeyWithChange()
+        let request = try sameTrip(as: journey)
+        let live = LiveState(delays: [journey.rides[0].tripID: 40 * 60])
+        #expect(journey.risk(at: request.time, live: live).isBroken)
+        let planned = try planner.plan(request, live: live)
+        #expect(!planned.contains { $0.id == journey.id })
+        #expect(planned.allSatisfy { !$0.risk(at: request.time, live: live).isBroken })
+    }
+
+    @Test func withNothingKnownThePlanIsTheTimetables() throws {
+        let request = try sameTrip(as: try journeyWithChange())
+        #expect(try planner.plan(request, live: LiveState()).map(\.id) == planner.plan(request).map(\.id))
+    }
+
+    @Test func noOptionLosesOnEveryCount() throws {
+        let planned = try planner.plan(try sameTrip(as: try journeyWithChange()))
+        #expect(JourneyPlanner.withoutDominated(planned).map(\.id) == planned.map(\.id))
+    }
+
+    @Test func remindersComeBeforeTheStopAndFollowADelay() throws {
+        let journey = try journeyWithChange()
+        let ride = journey.rides[0]
+        let before = journey.start.addingTimeInterval(-60)
+        let moments = journey.getOffMoments(live: LiveState(), now: before)
+        let first = try #require(moments.first { $0.stop == ride.alighting.station.shortName && $0.kind == .nextStop })
+        #expect(first.date == ride.stops[ride.stops.count - 2].departure)
+        let late = journey.getOffMoments(live: LiveState(delays: [ride.tripID: 300]), now: before)
+        #expect(late.first { $0.stop == first.stop && $0.kind == .nextStop }?.date == first.date.addingTimeInterval(300))
+        #expect(journey.getOffMoments(live: LiveState(), now: journey.end).isEmpty, "nothing after arriving")
+    }
+
     /// A real journey with a change in Konstanz at midday.
     func journeyWithChange() throws -> Journey {
         let from = try #require(store.stations.first { $0.shortName == "Sternenplatz" })

@@ -102,7 +102,7 @@ public final class JourneyPlanner: Sendable {
         if let walk = walkOnly(request, quickestBus: journeys.map(\.minutes).min()) {
             journeys.append(walk)
         }
-        return Self.ranked(journeys, by: request.preference, arriveBy: request.arriveBy)
+        return Self.ranked(Self.withoutDominated(journeys), by: request.preference, arriveBy: request.arriveBy)
     }
 
     /// Up to four bus options: one per set of trips, none beaten by another on both leave and arrival time.

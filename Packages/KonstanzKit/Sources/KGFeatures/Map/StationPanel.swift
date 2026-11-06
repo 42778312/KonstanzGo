@@ -44,7 +44,11 @@ struct StationPanel: View {
                 if departures.contains(where: \.status.isLive) {
                     HStack(spacing: KGSpace.xxs) {
                         Circle().fill(KGColor.live).frame(width: 8, height: 8)
-                        Text("Live", bundle: .module)
+                        if let read = services.live.readTime(ofStation: station.id) {
+                            Text("Echtzeit · Stand \(KGStrings.clock(read))", bundle: .module)
+                        } else {
+                            Text("Echtzeit", bundle: .module)
+                        }
                     }
                     .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.live)
                     .accessibilityIdentifier("liveTimes")

@@ -77,6 +77,23 @@ struct WeatherTests {
         #expect(offline.reading?.degrees == "9°")
     }
 
+    @Test("an old reading isn't shown, and a new start doesn't ask again within 20 minutes")
+    @MainActor
+    func age() async throws {
+        let defaults = try #require(UserDefaults(suiteName: "weather-\(UUID().uuidString)"))
+        let report = Data(Self.report.utf8)
+        let calls = Counter()
+        let model = WeatherModel(defaults: defaults) { await calls.add(); return report }
+        let start = Date.now
+        await model.refresh(now: start)
+        let reading = try #require(model.reading)
+        #expect(reading.isFresh(at: reading.observed.addingTimeInterval(5 * 3600)))
+        #expect(!reading.isFresh(at: reading.observed.addingTimeInterval(7 * 3600)))
+        let again = WeatherModel(defaults: defaults) { await calls.add(); return report }
+        await again.refresh(now: start.addingTimeInterval(60))
+        #expect(await calls.count == 1)
+    }
+
     @Test("asks DWD at most every 20 minutes, sooner again after a failure")
     @MainActor
     func throttles() async throws {

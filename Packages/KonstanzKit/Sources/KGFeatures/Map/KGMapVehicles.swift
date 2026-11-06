@@ -100,6 +100,9 @@ extension KGMapView.Coordinator {
         blink.predicate = NSPredicate(format: "blink != ''")
         style.addLayer(blink)
         let label = layer("kg-vehicles-label", image: "label")
+        // The buses always show; numbers that would overlap give way, so a crowded map stays readable.
+        label.iconAllowsOverlap = NSExpression(forConstantValue: false)
+        label.iconIgnoresPlacement = NSExpression(forConstantValue: false)
         label.minimumZoomLevel = 12
         label.iconOffset = NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: 0, dy: -18)))
         style.addLayer(label)

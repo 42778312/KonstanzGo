@@ -86,6 +86,8 @@ First full run after the work above: 14 of 274 failed, none a bug in the app. 3 
 | P1-29 | MetricKit reports stay on the phone, shareable from About | `keepsOnlyTheNewestReports` |
 | P1-12, P1-13, P1-15, P1-16 | Signed data sets and settings, verified download, swap on next launch, automatic rollback, "Stand:" (R-17). Off until `DataHost.base` is set (P1-14) | 18 `DataSyncTests`, Python signature checked in Swift, end-to-end in the simulator from a `file:` host |
 
+Known flaky test: `testEveryListIsGlass` failed once of four runs at its pull-up drag; 3 of 3 alone. Worth steadier gesture code when next touched.
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).

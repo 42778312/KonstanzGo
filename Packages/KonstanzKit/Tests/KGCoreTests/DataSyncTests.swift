@@ -1,3 +1,4 @@
+import Compression
 import CryptoKit
 import Foundation
 import Testing
@@ -25,19 +26,14 @@ final class FakeHost: @unchecked Sendable {
     }
 }
 
-/// gzip around a stored (uncompressed) DEFLATE stream is what `Gzip` reads only through zlib's raw decoder, so the
-/// test data is packed by the system's gzip.
+/// A gzip file around Apple's raw DEFLATE: the header, the stream, and a trailer with the size (`Gzip` reads no checksum).
 private func gzipped(_ data: Data) throws -> Data {
-    let folder = URL.temporaryDirectory.appending(path: UUID().uuidString)
-    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-    let file = folder.appending(path: "f")
-    try data.write(to: file)
-    let process = Process()
-    process.executableURL = URL(filePath: "/usr/bin/gzip")
-    process.arguments = ["-n", file.path]
-    try process.run()
-    process.waitUntilExit()
-    return try Data(contentsOf: folder.appending(path: "f.gz"))
+    let source = [UInt8](data)
+    var deflated = [UInt8](repeating: 0, count: source.count + 1_024)
+    let written = compression_encode_buffer(&deflated, deflated.count, source, source.count, nil, COMPRESSION_ZLIB)
+    let size = UInt32(source.count)
+    let trailer = [0, 0, 0, 0, UInt8(size & 255), UInt8(size >> 8 & 255), UInt8(size >> 16 & 255), UInt8(size >> 24 & 255)]
+    return Data([0x1F, 0x8B, 8, 0, 0, 0, 0, 0, 0, 255] + deflated.prefix(written) + trailer)
 }
 
 @Suite("Data updates", .serialized)

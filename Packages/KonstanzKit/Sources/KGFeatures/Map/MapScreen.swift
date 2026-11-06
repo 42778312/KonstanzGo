@@ -495,7 +495,7 @@ extension MapScreen {
                 await live.warm(stations: [Self.hubs[round % Self.hubs.count]] + turn)
                 round += 1
             }
-            try? await Task.sleep(for: .seconds(30))
+            try? await Task.sleep(for: .seconds(services.config.stopReadSeconds))
         }
     }
 

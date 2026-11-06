@@ -15,6 +15,7 @@ Package.resolved.bak
 # Data pipeline: inputs are large and re-downloadable (see DataPipeline/README.md)
 DataPipeline/.venv/
 DataPipeline/*/data/
+DataPipeline/publish/
 __pycache__/
 
 # macOS

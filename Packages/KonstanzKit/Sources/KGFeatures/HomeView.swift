@@ -33,6 +33,7 @@ public struct HomeView: View {
             if phase == .active {
                 location.start()
                 UserStore.resume()
+                if let services { Task { await services.refreshOnline() } }
             } else if phase == .background {
                 location.stop()
                 UserStore.suspend()
@@ -54,6 +55,7 @@ public struct HomeView: View {
                     new.open(url: url)
                 }
                 Task { await AlarmScheduler.refresh(store: new.user) }
+                Task { await new.refreshOnline() }
             }
         }
     }

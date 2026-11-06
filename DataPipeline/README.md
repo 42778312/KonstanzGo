@@ -33,6 +33,35 @@ feed does not contain yet. Remove it once a feed with the new lines is imported.
 3. Commit the changed files in `App/Resources/Data/` and `gtfs-import/station_ids.json`. That file keeps
    each stop's number across timetables, because favourites and alarms on phones store those numbers.
 
+If the timetable has under 30 days left, `check.py` fails the build. For an emergency build, run
+`check.py --allow-short-validity` after the other steps.
+
+## Publishing without an app release
+
+The app can download a new timetable, search index and walking network (the map stays in the app).
+
+```sh
+DataPipeline/.venv/bin/python DataPipeline/publish.py keygen   # once; back up ~/.konstanzgo
+DataPipeline/.venv/bin/python DataPipeline/publish.py data
+DataPipeline/.venv/bin/python DataPipeline/publish.py config path/to/config.json
+```
+
+Upload `DataPipeline/publish/out/` to the host, the numbered folder first and `manifest.*` last. The app checks
+at most once a day, verifies the signature and hashes, opens the new database to test it, and uses the set from
+its next launch. A set that doesn't start is dropped automatically. The host address goes in `DataHost.base`
+(`KGCore/Data/DataSync.swift`); while it is nil, the app makes no such requests.
+
+`config.json` switches things off without a release; every field is optional:
+
+```json
+{"liveEnabled": true, "stopReadSeconds": 30, "bannerID": "2026-12-a", "bannerDE": "…", "bannerEN": "…"}
+```
+
+## Feed watch
+
+`check_feed.py` runs daily in `.github/workflows/feed-watch.yml`. It opens a GitHub issue when NVBW publishes a
+newer file, and when the timetable has 30, 14 or 7 days left.
+
 ## Licences
 
 - Timetable: "Datensatz der NVBW GmbH", Datenlizenz Deutschland – Namensnennung – Version 2.0

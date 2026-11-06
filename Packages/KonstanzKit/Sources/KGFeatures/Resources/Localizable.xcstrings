@@ -861,6 +861,16 @@
         }
       }
     },
+    "Das ist der neueste Stand.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is the latest data."
+          }
+        }
+      }
+    },
     "Das konnte ich gerade nicht speichern.": {
       "localizations": {
         "en": {
@@ -1589,6 +1599,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No other way right now"
+          }
+        }
+      }
+    },
+    "Gerade nicht erreichbar. Deine Daten bleiben unverändert.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can't be reached right now. Your data stays as it is."
           }
         }
       }
@@ -2614,6 +2634,16 @@
         }
       }
     },
+    "Nach neuen Daten suchen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for new data"
+          }
+        }
+      }
+    },
     "Name": {
       "localizations": {
         "en": {
@@ -2630,6 +2660,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "fog"
+          }
+        }
+      }
+    },
+    "Neue Daten geladen. Sie gelten beim nächsten Start der App.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New data loaded. It applies the next time the app starts."
           }
         }
       }
@@ -3420,6 +3460,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Search"
+          }
+        }
+      }
+    },
+    "Suche nach neuen Daten …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for new data …"
           }
         }
       }

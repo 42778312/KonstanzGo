@@ -22,6 +22,8 @@ public final class LiveModel {
     /// Per trip, what the last report said: seconds late, for the buses on the map.
     public private(set) var tripDelays: [Int: Double] = [:]
     public private(set) var cancelledTrips: Set<Int> = []
+    /// Off by remote settings: nothing is asked, and the app runs on the timetable.
+    public var isEnabled = true
 
     public typealias Fetch = @Sendable (URL) async throws -> Data
 
@@ -91,7 +93,7 @@ public final class LiveModel {
 
     /// Reads the disruptions unless that happened just now. Offline or on a bad answer the kept ones stay.
     public func refresh(at date: Date = .now, force: Bool = false) async {
-        guard !refreshing else { return }
+        guard !refreshing, isEnabled else { return }
         let wait = failures == 0 ? Self.interval : min(60 * pow(2, Double(failures - 1)), 15 * 60)
         guard force || date.timeIntervalSince(lastAsked) >= wait else { return }
         refreshing = true
@@ -221,7 +223,7 @@ public final class LiveModel {
         if let board = boards[id], date.timeIntervalSince(board.at) < Self.boardLife { return board.events }
         // Someone is already asking for this stop: wait for that answer.
         if let running = reading[id] { return await running.value }
-        guard isOnline, date >= liveRetryAt, let area = store.stopArea(ofStation: id),
+        guard isOnline, isEnabled, date >= liveRetryAt, let area = store.stopArea(ofStation: id),
               let url = EFADepartures.url(stopArea: area) else { return nil }
         let fetch = fetch
         let task = Task<[LiveEvent]?, Never> {

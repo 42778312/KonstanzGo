@@ -1,3 +1,4 @@
-# Only import_places.py needs these; the other tools use the standard library.
+# import_places.py needs the first two; publish.py needs cryptography; the rest use the standard library.
 pmtiles
 mapbox-vector-tile
+cryptography

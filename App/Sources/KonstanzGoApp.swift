@@ -6,10 +6,15 @@ import SwiftUI
 @main
 struct KonstanzGoApp: App {
     /// Read once at launch; nil if the bundled data is missing or broken (shown as an error).
-    private let timetable: TimetableInfo? = {
-        guard let data = BundledData(bundle: .main) else { return nil }
-        return try? TimetableInfo.read(from: data.timetable)
-    }()
+    private let timetable: TimetableInfo?
+    /// The bundle, plus any newer data downloaded since.
+    private let data: BundledData?
+
+    init() {
+        let data = BundledData.forApp()
+        self.data = data
+        timetable = data.flatMap { try? TimetableInfo.read(from: $0.timetable) }
+    }
 
     /// The real permission prompts; UI tests answer them with `-KGPermissions allow|deny` (debug builds).
     private let permissions: PermissionAsking = {
@@ -43,10 +48,10 @@ struct KonstanzGoApp: App {
             if UserDefaults.standard.bool(forKey: "KGDesignSystem") {
                 DesignSystemScreen()
             } else {
-                RootView(info: timetable, data: BundledData(bundle: .main), permissions: permissions)
+                RootView(info: timetable, data: data, permissions: permissions)
             }
             #else
-            RootView(info: timetable, data: BundledData(bundle: .main), permissions: permissions)
+            RootView(info: timetable, data: data, permissions: permissions)
             #endif
         }
     }

@@ -28,6 +28,13 @@ public final class AppServices {
     public var showsMenu = false
     /// Set to open the map's search sheet (links and Favoriten); the map clears it.
     public var wantsSearch = false
+    /// Keeps the offline data fresh without an app release.
+    public let sync: DataSync
+    /// How the last check for new data went; nil before the first.
+    public private(set) var dataStatus: DataSyncOutcome?
+    public private(set) var isCheckingData = false
+    /// Settings from the host; the last ones read, offline.
+    public private(set) var config = RemoteConfig.cached()
     /// False while the app isn't in front: nobody sees the map, so it asks nothing and moves nothing.
     public var isActive = true
     /// Bumped whenever the user store changes, so lists re-read it.
@@ -39,6 +46,7 @@ public final class AppServices {
         self.location = location
         live = Self.makeLive(transit)
         Diagnostics.shared.start()
+        sync = Self.makeSync(data)
         do {
             let opened = try UserStore.sharedRecovering()
             user = opened.store
@@ -52,6 +60,41 @@ public final class AppServices {
         #if KGMETER && canImport(UIKit)
         FrameMeter.start()
         #endif
+        apply(config)
+    }
+
+    private static func makeSync(_ data: BundledData) -> DataSync {
+        let build = Int(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "") ?? 0
+        let feed = (try? TimetableInfo.read(from: data.bundled.timetable))?.feedVersion ?? ""
+        #if DEBUG
+        // `-KGDataHost <url>`: a test host.
+        if let host = UserDefaults.standard.string(forKey: "KGDataHost").flatMap(URL.init(string:)) {
+            return DataSync(base: host, appBuild: build, bundledFeed: feed)
+        }
+        #endif
+        return DataSync(appBuild: build, bundledFeed: feed)
+    }
+
+    /// New data and settings, when due. A set found now counts from the next launch.
+    public func refreshOnline(force: Bool = false) async {
+        guard !isCheckingData else { return }
+        isCheckingData = true
+        dataStatus = await sync.refresh(force: force)
+        isCheckingData = false
+        if let new = await sync.refreshConfig() {
+            config = new
+            apply(new)
+        }
+    }
+
+    private func apply(_ config: RemoteConfig) {
+        live.isEnabled = config.liveEnabled
+        let defaults = UserDefaults.standard
+        guard let id = config.bannerID, defaults.string(forKey: "config.bannerSeen") != id else { return }
+        let german = Locale.current.language.languageCode?.identifier == "de"
+        guard let words = german ? config.bannerDE : config.bannerEN ?? config.bannerDE else { return }
+        defaults.set(id, forKey: "config.bannerSeen")
+        userMessage = Text(verbatim: words)
     }
 
     private static func makeLive(_ transit: OfflineTransit) -> LiveModel {

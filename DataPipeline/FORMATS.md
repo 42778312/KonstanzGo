@@ -71,3 +71,9 @@ Current size: 29,277 vertices, 37,861 edges, 1,564 street names.
 
 MapLibre style. Sources and glyphs use `asset://` URLs (Android); the iOS app replaces
 `asset://` with the file URL of `Data/` in the app bundle when it loads the style.
+
+## manifest.json and config.json (published, signed)
+
+`manifest.json`: `version` (seconds since 1970, rising), `feedVersion`, `schema`, `minAppBuild`, and `files`, each with
+`path` in the data folder, `url` of its gzip file relative to the host, and `sha256` of the unpacked file. `manifest.sig`
+is the raw Ed25519 signature of those exact bytes. `config.json` and `config.sig` work the same way.

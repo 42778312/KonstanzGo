@@ -230,6 +230,22 @@ struct OfflineDataScreen: View {
         ]
     }
 
+    /// "11.10.2026", the date of the timetable in use.
+    private var stand: String? {
+        guard let version = services.transit.timetableInfo?.feedVersion, version.count == 8, let number = Int(version) else { return nil }
+        return String(format: "%02d.%02d.%d", number % 100, number / 100 % 100, number / 10_000)
+    }
+
+    private var dataStatusText: Text? {
+        if services.isCheckingData { return Text("Suche nach neuen Daten …", bundle: .module) }
+        switch services.dataStatus {
+        case .upToDate: return Text("Das ist der neueste Stand.", bundle: .module)
+        case .installed: return Text("Neue Daten geladen. Sie gelten beim nächsten Start der App.", bundle: .module)
+        case .failed: return Text("Gerade nicht erreichbar. Deine Daten bleiben unverändert.", bundle: .module)
+        case .noHost, .notDue, nil: return nil
+        }
+    }
+
     var body: some View {
         let parts = self.parts
         let total = parts.reduce(0) { $0 + $1.bytes }
@@ -255,6 +271,11 @@ struct OfflineDataScreen: View {
                             }
                             OfflineStatusText(info: services.transit.timetableInfo)
                                 .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                            if let stand {
+                                Text("Stand: \(stand)", bundle: .module)
+                                    .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                                    .accessibilityIdentifier("dataVersion")
+                            }
                         }
                         .foregroundStyle(KGColor.ink)
                     }
@@ -275,6 +296,16 @@ struct OfflineDataScreen: View {
                             }
                             .kgFont(.caption.weighted(KGFont.bold)).foregroundStyle(KGColor.ink2)
                         }
+                    }
+                    if services.sync.hasHost {
+                        KGTextButton(Text("Nach neuen Daten suchen", bundle: .module)) {
+                            Task { await services.refreshOnline(force: true) }
+                        }
+                        .disabled(services.isCheckingData)
+                        .accessibilityIdentifier("checkData")
+                    }
+                    if let dataStatusText {
+                        dataStatusText.kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
                     }
                 }
                 .padding(KGSpace.screen)

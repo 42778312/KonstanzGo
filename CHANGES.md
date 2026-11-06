@@ -69,6 +69,23 @@ First full run after the work above: 14 of 274 failed, none a bug in the app. 3 
 | Light-mode snapshots | They show the glass on light backgrounds, which the always-dark app and the widgets never display | Later clean-up |
 | Rainbow block in the map snapshot | Also in the old picture; from the test gallery, not a screen | Later clean-up |
 
+## Phase 1 fixes, 6 Nov 2026
+
+| Plan task | What changed | Checked by |
+|---|---|---|
+| P1-06 | CI: package tests, lint and data check per push; full app tests on main or by hand | Workflow files parse; a real run still needs checking on GitHub |
+| P1-07 | Full `build.sh` reproduces the shipped data; only `built_at` and the gzip timestamp differ. `check.py` verifies 9A and 9B | Table-by-table comparison |
+| P1-08 | Daily feed watch opens GitHub issues | `test_check_feed.py`; a real run still needs checking on GitHub |
+| P1-17 | Cards count door to door and say when to leave | `cardsCountFromTheDoor`, simulator |
+| P1-18 | Buses a minute or more early are shown as early | `earlyBuses` |
+| P1-19 | Lists sort by real time. New bug fixed: a late bus used to vanish when its timetable minute passed | `listsFollowRealTimes` |
+| P1-20 | Without a location, routes say "Altstadt (ohne Standort)" | Code path shared by all three screens; UI suite |
+| P1-21 | Privacy text and permission text no longer say location can't be inferred | Each sentence checked against the code |
+| P1-22, P1-23 | Damaged user database is kept aside and replaced; failed saves are reported; suspension handling | `aDamagedFileIsKeptAndANewOneStarts`, `worksAgainAfterSuspension` |
+| P1-27 | Failed stop reads back off across stops and honour `Retry-After`; no requests while not in front | `stopReadsBackOff`, `plainFailuresDouble` |
+| P1-29 | MetricKit reports stay on the phone, shareable from About | `keepsOnlyTheNewestReports` |
+| P1-12, P1-13, P1-15, P1-16 | Signed data sets and settings, verified download, swap on next launch, automatic rollback, "Stand:" (R-17). Off until `DataHost.base` is set (P1-14) | 18 `DataSyncTests`, Python signature checked in Swift, end-to-end in the simulator from a `file:` host |
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).

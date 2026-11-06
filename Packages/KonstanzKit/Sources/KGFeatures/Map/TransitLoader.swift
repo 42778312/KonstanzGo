@@ -8,7 +8,7 @@ import Observation
 public final class TransitLoader {
     public private(set) var transit: OfflineTransit?
     public private(set) var failed = false
-    let data: BundledData?
+    private(set) var data: BundledData?
 
     public init(data: BundledData?) {
         self.data = data
@@ -17,7 +17,18 @@ public final class TransitLoader {
             return
         }
         Task {
-            let loaded = await Task.detached(priority: .userInitiated) { try? OfflineTransit(data: data) }.value
+            var loaded = await Task.detached(priority: .userInitiated) { try? OfflineTransit(data: data) }.value
+            if data.overlay != nil {
+                if loaded == nil {
+                    // A downloaded set that doesn't open: back to what the app shipped with, right now.
+                    DataStore.shared.rollBack()
+                    let bundled = data.bundled
+                    self.data = bundled
+                    loaded = await Task.detached(priority: .userInitiated) { try? OfflineTransit(data: bundled) }.value
+                } else {
+                    DataStore.shared.confirm()
+                }
+            }
             self.transit = loaded
             self.failed = loaded == nil
         }

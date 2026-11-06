@@ -84,6 +84,27 @@ def clean_name(name):
     return (name[: m.start()], m.group(1) or m.group(2)) if m else (name, None)
 
 
+# The feed calls every trip of line 9 "9". Stadtwerke's printed timetable (valid from 7 April 2026) letters the daytime
+# loops from the university: "A: Friedrichstraße - Paradies - Friedrichstraße", "B: Sonnenbühlstraße - Laube -
+# Sonnenbühlstraße". Evening, weekend, Pfeiferhölzle and part-way trips have no letter there, so none here either.
+LINE_9 = "vhb-0-009-1"
+LINE_9_LETTERED_UNTIL = minutes("20:14:00")
+LINE_9_VARIANTS = {
+    "9A": ({"Konstanz Friedrichstraße", "Konstanz Ellenrieder Gymnasium"},
+           "Uni - Friedrichstr. - Paradies - Bahnhof - Friedrichstr. - Uni"),
+    "9B": ({"Konstanz Sonnenbühlstraße", "Konstanz Bürgerbüro"},
+           "Uni - Sonnenbühlstr. - Laube - Bahnhof - Sonnenbühlstr. - Uni"),
+}
+
+
+def line_9_variant(trip_calls, stops):
+    """ "9A" or "9B" for a trip of line 9 the timetable letters, else None."""
+    names = [clean_name(stops[s]["stop_name"])[0] for _, s, _, _ in trip_calls]
+    if names[0] != "Konstanz Universität" or trip_calls[0][3] > LINE_9_LETTERED_UNTIL or "Konstanz Pfeiferhölzle" in names:
+        return None
+    return next((name for name, (via, _) in LINE_9_VARIANTS.items() if via <= set(names)), None)
+
+
 BUS_SUFFIX = re.compile(r"\s*\(Bus\)$")
 
 
@@ -379,6 +400,12 @@ def main():
         db.execute("INSERT INTO route VALUES (?,?,?,?,?,?,?)",
                    (rid, r, line_name(row["route_short_name"]), row["route_long_name"].strip(), int(row["route_type"]),
                     row["agency_id"], row["agency_id"] == CITY_AGENCY))
+    variant_id = {}
+    if LINE_9 in route_id:
+        for rid, (name, (_, long_name)) in enumerate(LINE_9_VARIANTS.items(), start=len(used_routes) + 1):
+            variant_id[name] = rid
+            db.execute("INSERT INTO route VALUES (?,?,?,?,?,?,?)",
+                       (rid, f"{LINE_9}-{name}", name, long_name, int(routes[LINE_9]["route_type"]), CITY_AGENCY, True))
 
     shapes = read_shapes(zf, {trips[t]["shape_id"] for t in calls if trips[t]["shape_id"]})
     shape_id = {}
@@ -390,10 +417,14 @@ def main():
     db.executemany("INSERT INTO service_date VALUES (?,?)",
                    ((service_id[s], d) for s in used_services for d in sorted(dates[s])))
 
+    def line_of(route, trip_calls):
+        variant = line_9_variant(trip_calls, stops) if route == LINE_9 else None
+        return variant_id[variant] if variant else route_id[route]
+
     for tid, t in enumerate(sorted(calls), start=1):
         row = trips[t]
         db.execute("INSERT INTO trip (id, gtfs_id, route_id, service_id, headsign, direction, shape_id) VALUES (?,?,?,?,?,?,?)",
-                   (tid, t, route_id[row["route_id"]], service_id[row["service_id"]],
+                   (tid, t, line_of(row["route_id"], calls[t]), service_id[row["service_id"]],
                     row["trip_headsign"].strip(), int(row["direction_id"] or 0), shape_id.get(row["shape_id"])))
         db.executemany("INSERT INTO stop_time VALUES (?,?,?,?,?)",
                        ((tid, seq, platform_id[s], arr, dep) for seq, s, arr, dep in calls[t]))

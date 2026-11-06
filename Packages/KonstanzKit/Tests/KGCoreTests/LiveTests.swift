@@ -131,7 +131,7 @@ struct LiveTests {
         let during = try transit.departures(at: stop, from: at(20261106, 12, 0), limit: 10)
         #expect(!during.isEmpty)
         for departure in during {
-            #expect((departure.status == .stopClosed) == ["1", "5", "9"].contains(departure.line.name))
+            #expect((departure.status == .stopClosed) == ["1", "5", "9"].contains(Line.feedNumber(departure.line.name)))
         }
         let later = try transit.departures(at: stop, from: at(20261109, 12, 0), limit: 10)
         #expect(later.allSatisfy { $0.status == .scheduled })
@@ -153,6 +153,14 @@ struct LiveTests {
         #expect(events[0].delay == 246)
         #expect(events[1].line == "S6" && events[1].delay == nil)
         #expect(events[2].isCancelled)
+    }
+
+    @Test("the feed's \"9\" lands on the timetable's 9A and 9B")
+    func letteredLinesGetReports() throws {
+        var departure = try #require(try store.departures(at: 15, from: at(20261105, 12, 0), limit: 1).first)
+        departure.line.name = "9B"
+        let report = LiveEvent(line: "9", planned: departure.scheduled, delay: 120)
+        #expect(EFADepartures.merge([departure], with: [report])[0].status == .live(delayMinutes: 2))
     }
 
     @Test("reports land on the matching bus; others stay timetable times")

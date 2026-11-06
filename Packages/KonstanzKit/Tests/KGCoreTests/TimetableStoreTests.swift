@@ -39,7 +39,7 @@ struct TimetableStoreTests {
         #expect(departures.allSatisfy { $0.scheduled >= from })
         #expect(departures.map(\.scheduled) == departures.map(\.scheduled).sorted())
         #expect(departures.allSatisfy { $0.status == .scheduled })
-        #expect(Set(departures.map(\.line.name)).isSuperset(of: ["1", "5", "9"]))
+        #expect(Set(departures.map(\.line.name)).isSuperset(of: ["1", "5", "9A", "9B"]))
     }
 
     @Test func arrivalsAtTheLastStopAreNotDepartures() throws {
@@ -50,7 +50,7 @@ struct TimetableStoreTests {
 
     @Test func headsignsAreShortened() throws {
         let departures = try store.departures(at: sternenplatz, from: at(20261028, 14, 0), limit: 60)
-        #expect(departures.contains { $0.line.name == "9" && $0.headsign == "Universität" })
+        #expect(departures.contains { $0.line.name == "9A" && $0.headsign == "Universität" })
         #expect(!departures.contains { $0.headsign.hasPrefix("Konstanz ") })
         #expect(store.displayName(headsign: "Friedrichshafen Hafenbahnhof") == "Friedrichshafen Hafenbahnhof")
         #expect(store.displayName(headsign: "Konstanz, Zähringerplatz") == "Zähringerplatz")
@@ -106,9 +106,9 @@ struct TimetableStoreTests {
 
     @Test func tripHasAllStopsInOrderAndAShape() throws {
         let departure = try #require(try store.departures(at: sternenplatz, from: at(20261028, 14, 0))
-            .first { $0.line.name == "9" })
+            .first { $0.line.name == "9A" })
         let trip = try #require(try store.trip(id: departure.tripID, on: ServiceDay(yyyymmdd: 20261028)))
-        #expect(trip.line.name == "9")
+        #expect(trip.line.name == "9A")
         #expect(trip.stops.count > 5)
         #expect(trip.stops.map(\.departure) == trip.stops.map(\.departure).sorted())
         #expect(trip.stops.contains { $0.station.id == sternenplatz && $0.departure == departure.scheduled })

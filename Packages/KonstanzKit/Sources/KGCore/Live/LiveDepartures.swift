@@ -85,6 +85,6 @@ public enum EFADepartures {
     }
 
     private static func key(_ line: String, _ date: Date) -> String {
-        "\(line)|\(Int(date.timeIntervalSince1970 / 60))"
+        "\(Line.feedNumber(line))|\(Int(date.timeIntervalSince1970 / 60))"
     }
 }

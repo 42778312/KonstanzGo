@@ -84,6 +84,12 @@ public struct Line: Sendable, Hashable, Identifiable, Codable {
         self.agency = agency
     }
 
+    /// The number the live feed and the notices use. They know line 9 only as "9"; "9A" and "9B" are the printed
+    /// timetable's letters for its two daytime routes.
+    public static func feedNumber(_ name: String) -> String {
+        name == "9A" || name == "9B" ? "9" : name
+    }
+
     /// Drawn yellow with a black number on the map: the Swiss buses over the border to Kreuzlingen (908, 925,
     /// EV1–EV4), the RAB bus 700 and the district bus 203 (with its school runs 203S).
     public var isYellowBus: Bool {

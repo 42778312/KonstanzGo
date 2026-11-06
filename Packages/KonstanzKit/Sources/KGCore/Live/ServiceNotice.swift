@@ -76,7 +76,7 @@ public struct StopClosures: Sendable, Hashable {
 
     public func isClosed(station: Int, line: String) -> Bool {
         guard let lines = byStation[station] else { return false }
-        return lines.isEmpty || lines.contains(line)
+        return lines.isEmpty || lines.contains(line) || lines.contains(Line.feedNumber(line))
     }
 }
 

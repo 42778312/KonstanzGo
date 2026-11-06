@@ -127,7 +127,8 @@ struct PlaceSheet: View {
         }
         if services.here != nil {
             let minutes = max(1, Int((target.coordinate.distance(to: services.anchor) * 1.25 / 80).rounded(.up)))
-            parts.append(String(localized: "\(minutes) Min. zu Fuß", bundle: .module))
+            // Further than this nobody walks: saying "137 Min. zu Fuß" only confuses.
+            if minutes <= 45 { parts.append(String(localized: "\(minutes) Min. zu Fuß", bundle: .module)) }
         }
         return parts.filter { !$0.isEmpty }.joined(separator: " · ")
     }

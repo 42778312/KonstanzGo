@@ -39,6 +39,8 @@ final class GlassListsTests: XCTestCase {
         shot("01-more-half")
         pullUp(above: favorites)
         shot("02-more-full")
+        // Waits, as the sheet can still be settling after the pull.
+        XCTAssertTrue(favorites.waitForExistence(timeout: 5))
         favorites.tap()
         sleep(1)
         shot("03-favourites")

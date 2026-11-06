@@ -1,6 +1,26 @@
 {
   "sourceLanguage": "de",
   "strings": {
+    "Bei Regen weniger laufen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk less in rain"
+          }
+        }
+      }
+    },
+    "Regen gemeldet: %lld Min. weniger zu Fuß": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain reported: %lld min less walking"
+          }
+        }
+      }
+    },
     "Umleitung, Weg unbekannt. Die Linie auf der Karte zeigt nicht die echte Strecke.": {
       "localizations": {
         "en": {

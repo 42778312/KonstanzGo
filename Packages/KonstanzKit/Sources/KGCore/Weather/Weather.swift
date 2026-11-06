@@ -9,6 +9,15 @@ public struct WeatherReading: Codable, Sendable, Equatable {
 
     public func isFresh(at date: Date) -> Bool { date.timeIntervalSince(observed) < Self.freshFor }
 
+    /// Rain or snow reported in the last two hours. Older readings say nothing about walking now.
+    public func isWet(at date: Date) -> Bool {
+        guard date.timeIntervalSince(observed) < 2 * 3600 else { return false }
+        return switch condition {
+        case .drizzle, .rain, .heavyRain, .sleet, .snow, .hail, .thunder: true
+        case .clear, .partlyCloudy, .cloudy, .fog, .wind: false
+        }
+    }
+
     /// °C, 2 m above ground.
     public var temperature: Double
     public var condition: WeatherCondition

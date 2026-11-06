@@ -116,3 +116,49 @@ private actor Counter {
     var count = 0
     func add() { count += 1 }
 }
+
+@Suite("Rain advice")
+struct RainAdviceTests {
+    private let start = Date(timeIntervalSince1970: 1_800_000_000)
+
+    private func stop(_ id: Int, minutes: Double) -> TripStop {
+        let spot = Coordinate(latitude: 47.66, longitude: 9.17)
+        let time = start.addingTimeInterval(minutes * 60)
+        return TripStop(station: Station(id: id, name: "\(id)", shortName: "\(id)", coordinate: spot),
+                        platform: Platform(id: id, stationID: id, code: nil, coordinate: spot, direction: nil),
+                        arrival: time, departure: time)
+    }
+
+    /// Walks, then rides, ending `arrives` minutes from the start.
+    private func journey(walk: Double, arrives: Double, trip: Int) -> Journey {
+        Journey(legs: [
+            .walk(WalkLeg(start: start, end: start.addingTimeInterval(walk * 60), metres: Int(walk) * 80, destinationName: "A")),
+            .ride(RideLeg(tripID: trip, line: Line(id: 1, name: "9A", longName: "", isCity: true), headsign: "B",
+                          stops: [stop(trip * 10, minutes: walk), stop(trip * 10 + 1, minutes: arrives)])),
+        ])
+    }
+
+    private func rain(_ condition: WeatherCondition = .rain, ageHours: Double = 0.5) -> WeatherReading {
+        WeatherReading(temperature: 8, condition: condition, observed: start.addingTimeInterval(-ageHours * 3600))
+    }
+
+    private var options: [Journey] { [journey(walk: 8, arrives: 20, trip: 1), journey(walk: 2, arrives: 25, trip: 2)] }
+
+    @Test func rainSuggestsLessWalking() {
+        let advice = JourneyPlanner.rainAdvice(for: options, weather: rain(), at: start)
+        #expect(advice == RainAdvice(journeyID: options[1].id, minutesSaved: 6))
+    }
+
+    @Test func oldOrDryWeatherChangesNothing() {
+        #expect(JourneyPlanner.rainAdvice(for: options, weather: rain(ageHours: 3), at: start) == nil)
+        #expect(JourneyPlanner.rainAdvice(for: options, weather: rain(.cloudy), at: start) == nil)
+        #expect(JourneyPlanner.rainAdvice(for: options, weather: nil, at: start) == nil)
+    }
+
+    @Test func notWorthItIsNotSuggested() {
+        let small = [journey(walk: 4, arrives: 20, trip: 1), journey(walk: 2, arrives: 22, trip: 2)]
+        #expect(JourneyPlanner.rainAdvice(for: small, weather: rain(), at: start) == nil)
+        let late = [journey(walk: 8, arrives: 20, trip: 1), journey(walk: 2, arrives: 45, trip: 2)]
+        #expect(JourneyPlanner.rainAdvice(for: late, weather: rain(), at: start) == nil)
+    }
+}

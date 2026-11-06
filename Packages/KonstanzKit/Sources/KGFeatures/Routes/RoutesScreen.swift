@@ -190,7 +190,10 @@ struct RoutesScreen: View {
         }
     }
 
-    private func card(_ journey: Journey) -> some View {
+    @ViewBuilder private func card(_ journey: Journey) -> some View {
+        if let rain = services.rainAdvice(for: journeys, when: query.when, now: now), rain.journeyID == journey.id {
+            RainNote(minutes: rain.minutesSaved)
+        }
         JourneyCard(journey: journey, tag: tags[journey.id]?.first, when: query.when,
                     isFirst: journey.id == journeys.first?.id, isSelected: journey.id == selected, now: now,
                     delay: journey.firstRide.map {

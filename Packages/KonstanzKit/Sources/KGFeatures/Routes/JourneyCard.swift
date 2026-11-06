@@ -77,3 +77,26 @@ struct JourneyCard: View {
         return text
     }
 }
+
+/// "Regen gemeldet: 5 Min. weniger zu Fuß", over the option it suggests (word it as a suggestion: the station's
+/// rain isn't rain everywhere).
+struct RainNote: View {
+    let minutes: Int
+
+    var body: some View {
+        Text("Regen gemeldet: \(minutes) Min. weniger zu Fuß", bundle: .module)
+            .kgFont(.caption).foregroundStyle(KGColor.location)
+            .padding(.horizontal, KGSpace.xxs)
+            .accessibilityIdentifier("rainNote")
+    }
+}
+
+extension AppServices {
+    static let rainAdviceKey = "routes.rainAdvice"
+
+    /// For leaving now only: today's rain says nothing about a trip tomorrow.
+    func rainAdvice(for journeys: [Journey], when: PlanQuery.When, now: Date) -> RainAdvice? {
+        guard case .now = when, UserDefaults.standard.object(forKey: Self.rainAdviceKey) as? Bool ?? true else { return nil }
+        return JourneyPlanner.rainAdvice(for: journeys, weather: weather.reading, at: now)
+    }
+}

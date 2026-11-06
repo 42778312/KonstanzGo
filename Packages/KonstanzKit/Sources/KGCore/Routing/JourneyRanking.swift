@@ -1,5 +1,11 @@
 import Foundation
 
+/// Which option to suggest in rain, and how much less walking it means.
+public struct RainAdvice: Sendable, Hashable {
+    public var journeyID: String
+    public var minutesSaved: Int
+}
+
 // Ordering and labelling of journey options, and fitting a trip's shape to the part ridden.
 extension JourneyPlanner {
     /// Sorts journeys by a preference; ties go to the earlier arrival.
@@ -34,6 +40,16 @@ extension JourneyPlanner {
             tags[fewest.id, default: []].insert(.fewestTransfers)
         }
         return tags
+    }
+
+    /// In rain, the option that saves clearly more walking than the first one without arriving much later.
+    /// Only a suggestion: the order stays, and old weather changes nothing.
+    public static func rainAdvice(for journeys: [Journey], weather: WeatherReading?, at date: Date) -> RainAdvice? {
+        guard weather?.isWet(at: date) == true, let first = journeys.first else { return nil }
+        let better = journeys.dropFirst().filter { $0.end.timeIntervalSince(first.end) <= 10 * 60 && !$0.rides.isEmpty }
+        guard let drier = better.min(by: { ($0.walkingMinutes, $0.end) < ($1.walkingMinutes, $1.end) }) else { return nil }
+        let saved = first.walkingMinutes - drier.walkingMinutes
+        return saved >= 3 ? RainAdvice(journeyID: drier.id, minutesSaved: saved) : nil
     }
 
     /// The part of a trip's shape along the platforms ridden, matched stop by stop (ring lines drive a street

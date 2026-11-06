@@ -24,6 +24,7 @@ struct MoreScreen: View {
     @State private var notifications = false
     @AppStorage("alarm.minutes") private var alarmMinutes = 2
     @AppStorage(GetOffAlerts.enabledKey) private var getOffAlerts = true
+    @AppStorage(AppServices.rainAdviceKey) private var rainAdvice = true
     @State private var choosingMinutes = false
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
@@ -51,6 +52,9 @@ struct MoreScreen: View {
                         KGSettingsRow(Text("Hinweis vor dem Aussteigen", bundle: .module), icon: .bell, tile: KGColor.location,
                                       isOn: $getOffAlerts)
                             .accessibilityIdentifier("getOffAlerts")
+                        KGSettingsRow(Text("Bei Regen weniger laufen", bundle: .module), icon: .walk, tile: KGColor.tileIndigo,
+                                      isOn: $rainAdvice)
+                            .accessibilityIdentifier("rainAdvice")
                     }
                     .riseIn(after: 0.1)
                     KGSettingsGroup {

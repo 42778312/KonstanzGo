@@ -133,6 +133,7 @@ struct NowCard: View {
             HStack(spacing: KGSpace.xs) {
                 if stop.isSaved { KGIconView(.star, size: 13).foregroundStyle(KGColor.warn) }
                 Text(verbatim: stop.station.shortName).kgFont(.callout).foregroundStyle(KGColor.ink).lineLimit(1)
+                    .accessibilityLabel(Text(verbatim: Self.spoken(stop.station.shortName)))
                 if let walk = stop.walkMinutes, walk > 1 {
                     Text("\(walk) Min. zu Fuß", bundle: .module).kgFont(.caption.weighted(KGFont.regular))
                         .foregroundStyle(KGColor.ink2).lineLimit(1)
@@ -199,7 +200,7 @@ struct NowCard: View {
                                          platform: row.departure.platform.code,
                                          minutes: KGMinutesValue(departure: row.departure.expected, now: now),
                                          isLive: row.departure.status.isLive),
-                     String(localized: "ab \(stop.station.shortName)", bundle: .module)]
+                     String(localized: "ab \(Self.spoken(stop.station.shortName))", bundle: .module)]
         switch row.advice {
         case let .leaveIn(minutes): parts.append(String(localized: "Los in \(minutes) Min.", bundle: .module))
         case .leaveNow: parts.append(String(localized: "Jetzt los", bundle: .module))
@@ -210,6 +211,11 @@ struct NowCard: View {
     }
 
     /// Nothing to show: says why, when the user can do something about it.
+    /// The stop's name for VoiceOver: "Konzilstr./Theater" reads as "Konzilstraße, Theater".
+    static func spoken(_ name: String) -> String {
+        name.replacingOccurrences(of: "str.", with: "straße").replacingOccurrences(of: "/", with: ", ")
+    }
+
     private var hint: AnyView? {
         let location = services.location
         if services.here != nil {

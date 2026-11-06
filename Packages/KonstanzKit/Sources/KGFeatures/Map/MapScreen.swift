@@ -472,21 +472,22 @@ extension MapScreen {
 // MARK: - Moving buses and trains
 
 extension MapScreen {
-    /// The busiest stops, once a minute: most buses pass them, and their reports move the buses on the map.
+    /// The busiest stops and the nearest ones, read ahead: most buses pass them, so their reports move the
+    /// buses on the map, and a stop opened next already has its real times.
     func followBuses() async {
         let transit = services.transit, live = services.live
         while !Task.isCancelled {
             if showsVehicles, services.router.path.isEmpty {
-                for hub in Self.hubs {
-                    let now = Date.now
-                    let departures = await Task.detached(priority: .utility) {
-                        (try? transit.store.departures(at: hub, from: now, limit: 60, within: 2)) ?? []
-                    }.value
-                    await live.followHub(station: hub, departures: departures, at: now)
-                }
+                await live.warm(stations: Self.hubs + nearby(transit))
             }
-            try? await Task.sleep(for: .seconds(60))
+            try? await Task.sleep(for: .seconds(45))
         }
+    }
+
+    /// The stops the user is most likely to open next.
+    private func nearby(_ transit: OfflineTransit) -> [Int] {
+        guard let here = location.coordinate else { return [] }
+        return transit.stations(near: here, within: 800, limit: 2).map(\.0.id)
     }
 
     /// Konstanz Bahnhof and Sternenplatz.

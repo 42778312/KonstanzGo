@@ -201,7 +201,8 @@ struct StationPanel: View {
 
     /// The timetable at once; then, for departures around now, what's really happening, every 30 s.
     private func followDepartures() async {
-        departures = load()
+        // The real times at once, from what's already known; fresher ones replace them a moment later.
+        departures = services.live.instant(load())
         guard abs(from.timeIntervalSinceNow) < 3600 else { return }
         while !Task.isCancelled {
             let shown = await services.live.live(load(), atStation: station.id)

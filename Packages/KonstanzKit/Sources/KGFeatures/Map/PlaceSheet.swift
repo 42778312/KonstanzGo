@@ -207,7 +207,8 @@ struct PlaceSheet: View {
         } else {
             ForEach(journeys) { journey in
                 JourneyCard(journey: journey, tag: tags[journey.id]?.first, when: query.when,
-                            isFirst: journey.id == journeys.first?.id, isSelected: false, now: now) {
+                            isFirst: journey.id == journeys.first?.id, isSelected: false, now: now,
+                            delay: journey.firstRide.map { services.live.status(ofTrip: $0.tripID, at: now).delayMinutes } ?? 0) {
                     services.router.open(.journey(journey))
                 }
             }

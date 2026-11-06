@@ -117,6 +117,8 @@ public enum KGPalette {
     public static let witchHat = KGColorValue(0x3B1F5C)
 
     // MARK: Map (light and dark styles)
+    /// The stop sign on the map: dark blue, so stops stay calm next to the coral buses.
+    public static let stopSign = KGColorValue(0x24405F)
     public static let mapLand = KGColorValue(0xF2F1ED, dark: 0x1E1E1E)
     public static let mapWater = KGColorValue(0xB9D8E8, dark: 0x182D38)
     public static let mapWaterLabel = KGColorValue(0x3F6FB0, dark: 0x6E9BD6)
@@ -152,6 +154,7 @@ public enum KGColor {
     public static let card = Color(KGPalette.card)
     /// Lists and cards on glass (the stop sheet's look): a light veil over whatever is behind, never solid black.
     public static let glassFill = Color.white.opacity(0.08)
+    public static let stopSign = Color(KGPalette.stopSign)
     public static let pressed = Color(KGPalette.pressed)
     public static let line = Color(KGPalette.line)
     public static let switchOff = Color(KGPalette.switchOff)

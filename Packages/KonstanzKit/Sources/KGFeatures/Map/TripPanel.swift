@@ -15,6 +15,13 @@ struct TripPanel: View {
     @State private var choosingAlarm = false
     @State private var alarmFailed = false
 
+    /// The ride with what's known about it right now.
+    private var shownRide: RideLeg {
+        var shown = ride
+        shown.status = services.live.status(ofTrip: ride.tripID, at: now)
+        return shown
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: KGSpace.medium) {
@@ -36,7 +43,7 @@ struct TripPanel: View {
                                       action: onClose)
                         .accessibilityIdentifier("closeTrip")
                 }
-                DepartureCard(ride: ride, now: now)
+                DepartureCard(ride: shownRide, now: now)
                 alarmButton
                 KGSectionHeader(Text("Haltestellen", bundle: .module))
                     .padding(.horizontal, KGSpace.xxs)

@@ -262,14 +262,14 @@ public struct KGMapView: UIViewRepresentable {
             let source = MLNShapeSource(identifier: Self.stopsSource, shape: shape, options: nil)
             style.addSource(source)
 
-            // Far out: small coral rings; from zoom 14.5: the bus tile (white bus on coral, white edge).
+            // Far out: small white dots; from zoom 14.5: the "H" sign. Only buses are coral.
             let rings = MLNCircleStyleLayer(identifier: Self.stopRingsLayer, source: source)
             rings.minimumZoomLevel = 12.5
             rings.maximumZoomLevel = 14.5
             rings.circleColor = NSExpression(forConstantValue: UIColor.white)
-            rings.circleRadius = NSExpression(forConstantValue: 3)
-            rings.circleStrokeColor = NSExpression(forConstantValue: UIColor(KGColor.coral))
-            rings.circleStrokeWidth = NSExpression(forConstantValue: 2.5)
+            rings.circleRadius = NSExpression(forConstantValue: 2.5)
+            rings.circleStrokeColor = NSExpression(forConstantValue: UIColor(KGColor.stopSign))
+            rings.circleStrokeWidth = NSExpression(forConstantValue: 1.5)
             style.addLayer(rings)
 
             if let tile = Self.stopTileImage() { style.setImage(tile, forName: Self.stopTileName) }

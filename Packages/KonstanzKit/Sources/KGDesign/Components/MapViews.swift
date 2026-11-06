@@ -155,6 +155,21 @@ public struct KGVehicleMarker: View {
     }
 }
 
+/// A stop on the map: the German "H" sign in a small white disc, quiet next to the bright buses.
+public struct KGStopSign: View {
+    public init() {}
+
+    public var body: some View {
+        Text(verbatim: "H")
+            .font(.system(size: 13, weight: .heavy, design: .rounded))
+            .foregroundStyle(KGColor.stopSign)
+            .frame(width: 22, height: 22)
+            .background(KGColor.white, in: .circle)
+            .overlay(Circle().strokeBorder(KGColor.stopSign, lineWidth: 1.5))
+            .shadow(color: .black.opacity(0.3), radius: 1.5, y: 1)
+    }
+}
+
 /// The nose of `KGVehicleMarker` alone, for drawing on a map layer that turns it.
 public struct KGVehicleNose: View {
     let isYellow: Bool

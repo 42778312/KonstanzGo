@@ -12,6 +12,8 @@ struct JourneyCard: View {
     let isFirst: Bool
     let isSelected: Bool
     let now: Date
+    /// How late the first bus is known to be, in minutes.
+    var delay = 0
     let action: () -> Void
 
     var body: some View {
@@ -49,8 +51,12 @@ struct JourneyCard: View {
             let at = journey.rides[1].boarding.station.shortName
             return Text("\(journey.transfers)× Umsteigen · ab \(at)", bundle: .module)
         }
-        let minutes = max(0, Int(first.start.timeIntervalSince(now) / 60))
+        let minutes = max(0, Int(first.start.timeIntervalSince(now) / 60) + delay)
         if case .now = when, minutes < 60 {
+            if delay > 0 {
+                return Text("Fährt in \(minutes) Min. ab \(first.boarding.station.shortName)", bundle: .module)
+                    + Text(verbatim: " · ") + Text("+\(delay) Min.", bundle: .module)
+            }
             return Text("Fährt in \(minutes) Min. ab \(first.boarding.station.shortName)", bundle: .module)
         }
         return Text("Ab \(first.boarding.station.shortName)", bundle: .module)

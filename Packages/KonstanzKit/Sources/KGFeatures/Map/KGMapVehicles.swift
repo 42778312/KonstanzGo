@@ -20,16 +20,10 @@ extension KGMapView.Coordinator {
         return renderer.uiImage
     }
 
-    /// The stop marker as an image for the map: 28 pt coral rounded square, white bus, white edge, shadow.
+    /// A stop on the map: the German "H" sign in a small white disc. Quiet and round, so it can't be taken for
+    /// a bus, which is a bright capsule with its line number.
     static func stopTileImage() -> UIImage? {
-        let tile = KGIconView(.bus, size: 16)
-            .foregroundStyle(KGColor.white)
-            .frame(width: 28, height: 28)
-            .background(KGColor.coral, in: .kgRounded(8))
-            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(KGColor.white, lineWidth: 2))
-            .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
-            .padding(4)
-            .environment(\.colorScheme, .light)
+        let tile = KGStopSign().padding(4).environment(\.colorScheme, .light)
         let renderer = ImageRenderer(content: tile)
         renderer.scale = 3
         return renderer.uiImage
@@ -117,8 +111,10 @@ extension KGMapView.Coordinator {
     static func markerImage(for vehicle: MapVehicle) -> UIImage? {
         switch vehicle.look {
         case let .vehicle(isTrain, isYellow, isLive):
+            // A soft glow in its own colour lifts a moving bus off the map and the quiet stops.
             image(of: KGVehicleMarker(line: vehicle.line, isTrain: isTrain, isKreuzlingen: isYellow, isLive: isLive)
-                .padding(6))
+                .shadow(color: (isYellow ? KGColor.kreuzlingen : KGColor.coral).opacity(0.75), radius: 5)
+                .padding(10))
         case .trip:
             image(of: KGBusMarker(line: vehicle.line, animated: false).padding(6))
         }

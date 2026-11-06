@@ -9,8 +9,16 @@ public final class PlaceSearch: Sendable {
     /// Where results are ranked from when the user's location is unknown: Konstanz's old town.
     public static let konstanzCentre = Coordinate(latitude: 47.6603, longitude: 9.1758)
 
-    private let entries: [Entry]
     private let store: TimetableStore
+    private let loading = DispatchGroup()
+    private let loaded = Mutex<[Entry]>([])
+
+    /// Everything to search. Read in the background, as it's nearly all of what the app's start would otherwise
+    /// wait for and the map doesn't need it; a search in that first moment waits for it here.
+    private var entries: [Entry] {
+        loading.wait()
+        return loaded.withLock { $0 }
+    }
 
     struct Entry: Sendable {
         var target: SearchEntryTarget
@@ -28,19 +36,26 @@ public final class PlaceSearch: Sendable {
 
     public init(indexURL: URL, store: TimetableStore) throws {
         self.store = store
-        let text = String(bytes: try Gzip.decompress(Data(contentsOf: indexURL)), encoding: .utf8) ?? ""
-        var entries: [Entry] = []
-        for line in text.split(separator: "\n", omittingEmptySubsequences: true) {
-            if let entry = Self.entry(line) { entries.append(entry) }
+        let packed = try Data(contentsOf: indexURL)
+        let stations = store.stations
+        loading.enter()
+        DispatchQueue.global(qos: .userInitiated).async { [self] in
+            defer { loading.leave() }
+            let bytes = (try? Gzip.decompress(packed)) ?? Data()
+            let text = String(bytes: bytes, encoding: .utf8) ?? ""
+            var entries: [Entry] = []
+            for line in text.split(separator: "\n", omittingEmptySubsequences: true) {
+                if let entry = Self.entry(line) { entries.append(entry) }
+            }
+            // Bus stations rank together with places (Android: rank 45, group "Stop"), by the short name people
+            // use and the design shows ("Sternenplatz", not "Konstanz Sternenplatz").
+            for station in stations {
+                entries.append(Self.makeEntry(target: .station(station), name: station.shortName, group: "Stop", rank: 45,
+                                              coordinate: station.coordinate,
+                                              keywords: "\(station.name) haltestelle bushaltestelle stop"))
+            }
+            loaded.withLock { $0 = entries }
         }
-        // Bus stations rank together with places (Android: rank 45, group "Stop"), by the short name people
-        // use and the design shows ("Sternenplatz", not "Konstanz Sternenplatz").
-        for station in store.stations {
-            entries.append(Self.makeEntry(target: .station(station), name: station.shortName, group: "Stop", rank: 45,
-                                          coordinate: station.coordinate,
-                                          keywords: "\(station.name) haltestelle bushaltestelle stop"))
-        }
-        self.entries = entries
     }
 
     public var count: Int { entries.count }

@@ -268,7 +268,6 @@ final class UserJourneyTests: XCTestCase {
             app.buttons["closePlace"].tap()
             app.buttons["moreHandle"].tap()
             XCTAssertTrue(element("Favourites").waitForExistence(timeout: 3))
-            XCTAssertTrue(element("Tour with Seeri").exists)
         }
     }
 

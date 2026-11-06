@@ -186,6 +186,75 @@ struct LiveTests {
         #expect(!without.contains { $0.tripID == bus.tripID })
     }
 
+    // MARK: Showing real times at once
+
+    @MainActor
+    func reporting(_ departures: [Departure], file: URL) -> LiveModel {
+        let first = departures[0]
+        let formatter = ISO8601DateFormatter()
+        let planned = formatter.string(from: first.scheduled)
+        let late = formatter.string(from: first.scheduled.addingTimeInterval(240))
+        let answer = #"{"stopEvents":[{"location":{"id":"\#(first.platform.gtfsID ?? "")"},"departureTimePlanned":"\#(planned)","#
+            + #""departureTimeEstimated":"\#(late)","transportation":{"number":"\#(first.line.name)"}}]}"#
+        return LiveModel(store: store, file: file) { _ in Data(answer.utf8) }
+    }
+
+    func tempFile() -> URL { URL.temporaryDirectory.appending(path: "live-\(UUID().uuidString).json") }
+
+    @MainActor
+    @Test("a bus reported at one stop shows its real time at once everywhere, without asking")
+    func instantFromAReport() async throws {
+        let date = at(20261106, 12, 0)
+        let departures = try store.departures(at: 15, from: date, limit: 5)
+        let model = reporting(departures, file: tempFile())
+        #expect(model.instant(departures, at: date)[0].status == .scheduled, "nothing known yet")
+        _ = await model.live(departures, atStation: 15, at: date)
+        let shown = model.instant(departures, at: date)
+        #expect(shown[0].status == .live(delayMinutes: 4))
+        #expect(shown[1].status == .scheduled)
+    }
+
+    @MainActor
+    @Test("an old report stops counting")
+    func instantExpires() async throws {
+        let date = at(20261106, 12, 0)
+        let departures = try store.departures(at: 15, from: date, limit: 5)
+        let model = reporting(departures, file: tempFile())
+        _ = await model.live(departures, atStation: 15, at: date)
+        #expect(model.instant(departures, at: date.addingTimeInterval(4 * 60))[0].status == .live(delayMinutes: 4))
+        #expect(model.instant(departures, at: date.addingTimeInterval(6 * 60))[0].status == .scheduled)
+    }
+
+    @MainActor
+    @Test("reopened within minutes, the app remembers how late the buses are")
+    func delaysSurviveARestart() async throws {
+        let file = tempFile()
+        var moved = try store.departures(at: 15, from: at(20261106, 12, 0), limit: 5)
+        moved[0].scheduled = .now
+        let model = reporting(moved, file: file)
+        _ = await model.live(moved, atStation: 15)
+        try await Task.sleep(for: .milliseconds(400))
+        let again = LiveModel(store: store, file: file) { _ in throw URLError(.notConnectedToInternet) }
+        #expect(again.instant(moved)[0].status == .live(delayMinutes: 4))
+    }
+
+    @MainActor
+    @Test("two lists opening the same stop ask only once")
+    func asksOnce() async throws {
+        let date = at(20261106, 12, 0)
+        let departures = try store.departures(at: 15, from: date, limit: 5)
+        let calls = Calls()
+        let model = LiveModel(store: store, file: tempFile()) { _ in
+            await calls.add()
+            try await Task.sleep(for: .milliseconds(50))
+            return Data(#"{"stopEvents":[]}"#.utf8)
+        }
+        async let first = model.live(departures, atStation: 15, at: date)
+        async let second = model.live(departures, atStation: 15, at: date)
+        _ = await (first, second)
+        #expect(await calls.count == 1)
+    }
+
     // MARK: Keeping the last update
 
     @MainActor

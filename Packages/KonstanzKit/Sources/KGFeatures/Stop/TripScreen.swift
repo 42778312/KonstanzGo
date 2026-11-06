@@ -120,8 +120,12 @@ struct DepartureCard: View {
             .padding(.top, KGSpace.mediumLarge)
             HStack(spacing: KGSpace.small) {
                 // "Pünktlich" only with live data (plan 0.3).
-                KGTag(ride.status.isLive ? Text("Pünktlich", bundle: .module) : Text("Laut Fahrplan", bundle: .module),
-                      tone: ride.status.isLive ? .live : .neutral)
+                switch ride.status {
+                case .cancelled: KGTag(Text("Fällt aus", bundle: .module), tone: .line)
+                case let .live(minutes) where minutes > 0: KGTag(Text("+\(minutes) Min.", bundle: .module), tone: .line)
+                case .live: KGTag(Text("Pünktlich", bundle: .module), tone: .live)
+                case .scheduled, .stopClosed: KGTag(Text("Laut Fahrplan", bundle: .module), tone: .neutral)
+                }
                 (Text(verbatim: KGMinutesValue(departure: ride.start, now: now).spoken + " · ")
                     + Text("\(Leg.ride(ride).minutes) Min. Fahrt", bundle: .module))
                     .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.ink2)

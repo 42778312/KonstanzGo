@@ -35,11 +35,22 @@ public final class LiveModel {
     private var monitor: NWPathMonitor?
     private var boards: [Int: (at: Date, events: [LiveEvent])] = [:]
     private var delaySeen: [Int: Date] = [:]
+    private var reading: [Int: Task<[LiveEvent]?, Never>] = [:]
+    private let delayFile: URL
+    private var delaysSaved = Date.distantPast
     /// Disruptions change rarely: every 5 minutes, and right away when the internet comes back.
     static let interval: TimeInterval = 5 * 60
     /// A delay this old says nothing any more: the bus goes back to its timetable position.
     static let delayLife: TimeInterval = 10 * 60
     static let boardLife: TimeInterval = 30
+    /// What's shown at once without asking: a report from the last few minutes still says how late that bus is.
+    static let instantLife: TimeInterval = 5 * 60
+
+    private struct SavedDelays: Codable {
+        var at: Date
+        var delays: [Int: Double]
+        var cancelled: Set<Int>
+    }
 
     public init(store: TimetableStore,
                 file: URL = URL.applicationSupportDirectory.appending(path: "live-notices.json"),
@@ -47,12 +58,14 @@ public final class LiveModel {
                 onChange: @escaping @Sendable ([ServiceNotice]) -> Void = { _ in }) {
         self.store = store
         self.file = file
+        delayFile = file.deletingLastPathComponent().appending(path: file.deletingPathExtension().lastPathComponent + "-delays.json")
         self.fetch = fetch
         self.onChange = onChange
         let saved = (try? Data(contentsOf: file)).flatMap { try? JSONDecoder().decode(Saved.self, from: $0) }
         notices = saved?.notices ?? []
         updated = saved?.updated
         onChange(notices)
+        restoreDelays()
     }
 
     // MARK: Disruptions
@@ -123,6 +136,37 @@ public final class LiveModel {
 
     // MARK: Delays
 
+    /// Departures with what's already known, without asking anyone: for the first frame of a list, so the real
+    /// time is there at once. Asking for fresher reports (`live`) follows.
+    public func instant(_ departures: [Departure], at date: Date = .now) -> [Departure] {
+        departures.map { departure in
+            var shown = departure
+            if departure.status != .stopClosed { shown.status = status(ofTrip: departure.tripID, at: date) }
+            return shown
+        }
+    }
+
+    /// What's known about a trip, if it was reported recently.
+    public func status(ofTrip trip: Int, at date: Date = .now) -> DepartureStatus {
+        guard let seen = delaySeen[trip], date.timeIntervalSince(seen) < Self.instantLife else { return .scheduled }
+        if cancelledTrips.contains(trip) { return .cancelled }
+        return tripDelays[trip].map { .live(delayMinutes: max(0, Int(($0 / 60).rounded()))) } ?? .scheduled
+    }
+
+    /// Reads these stops ahead of time, together, so opening one of them finds its buses already known.
+    public func warm(stations: [Int], at date: Date = .now) async {
+        let store = store
+        let reads = Set(stations).map { station in
+            Task {
+                let departures = await Task.detached(priority: .utility) {
+                    (try? store.departures(at: station, from: date, limit: 60, within: 2)) ?? []
+                }.value
+                _ = await live(departures, atStation: station, at: date)
+            }
+        }
+        for read in reads { await read.value }
+    }
+
     /// What's known right now, for checking a journey.
     public var state: LiveState { LiveState(delays: tripDelays, cancelled: cancelledTrips, closures: closures) }
 
@@ -164,9 +208,18 @@ public final class LiveModel {
 
     private func events(atStation id: Int, at date: Date) async -> [LiveEvent]? {
         if let board = boards[id], date.timeIntervalSince(board.at) < Self.boardLife { return board.events }
-        guard isOnline, let area = store.stopArea(ofStation: id), let url = EFADepartures.url(stopArea: area),
-              let data = try? await fetch(url), let events = try? EFADepartures.parse(data) else { return nil }
-        boards[id] = (date, events)
+        // Someone is already asking for this stop: wait for that answer.
+        if let running = reading[id] { return await running.value }
+        guard isOnline, let area = store.stopArea(ofStation: id), let url = EFADepartures.url(stopArea: area) else { return nil }
+        let fetch = fetch
+        let task = Task<[LiveEvent]?, Never> {
+            guard let data = try? await fetch(url) else { return nil }
+            return await Task.detached(priority: .utility) { try? EFADepartures.parse(data) }.value
+        }
+        reading[id] = task
+        let events = await task.value
+        reading[id] = nil
+        if let events { boards[id] = (date, events) }
         return events
     }
 
@@ -183,6 +236,28 @@ public final class LiveModel {
                 break
             }
         }
+        saveDelays(at: date)
+    }
+
+    private func saveDelays(at date: Date) {
+        guard date.timeIntervalSince(delaysSaved) > 20 else { return }
+        delaysSaved = date
+        let saved = SavedDelays(at: date, delays: tripDelays, cancelled: cancelledTrips)
+        let file = delayFile
+        Task.detached(priority: .utility) {
+            guard let data = try? JSONEncoder().encode(saved) else { return }
+            try? FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try? data.write(to: file, options: .atomic)
+        }
+    }
+
+    /// The last reports, if the app was closed only a moment ago: the buses have the same delays still.
+    private func restoreDelays(at date: Date = .now) {
+        guard let data = try? Data(contentsOf: delayFile), let saved = try? JSONDecoder().decode(SavedDelays.self, from: data),
+              date.timeIntervalSince(saved.at) < Self.instantLife else { return }
+        tripDelays = saved.delays
+        cancelledTrips = saved.cancelled
+        for trip in Set(saved.delays.keys).union(saved.cancelled) { delaySeen[trip] = saved.at }
     }
 
     private func pruneDelays(at date: Date = .now) {

@@ -33,10 +33,26 @@ public final class OfflineTransit: TransitService {
 
     /// Opens every data file; about a second on a phone, so the app does it behind the start animation.
     public init(data: BundledData) throws {
-        store = try TimetableStore(url: data.timetable)
-        walker = WalkRouter(graph: try WalkGraph.read(from: data.walkGraph))
+        let store = try TimetableStore(url: data.timetable)
+        self.store = store
+        // The two big files at the same time: this is what the app's start waits for.
+        let graph = Mutex<Result<WalkGraph, any Error>?>(nil)
+        let search = Mutex<Result<PlaceSearch, any Error>?>(nil)
+        DispatchQueue.concurrentPerform(iterations: 2) { part in
+            if part == 0 {
+                let read = Result { try WalkGraph.read(from: data.walkGraph) }
+                graph.withLock { $0 = read }
+            } else {
+                let read = Result { try PlaceSearch(indexURL: data.searchIndex, store: store) }
+                search.withLock { $0 = read }
+            }
+        }
+        guard let walkGraph = try graph.withLock({ $0 })?.get(), let places = try search.withLock({ $0 })?.get() else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        walker = WalkRouter(graph: walkGraph)
         planner = try JourneyPlanner(store: store, url: data.timetable, walker: walker)
-        placeSearch = try PlaceSearch(indexURL: data.searchIndex, store: store)
+        placeSearch = places
         tracker = try VehicleTracker(store: store, url: data.timetable, streets: walker)
         lookup = ReverseLookup(walk: walker, store: store)
         timetableInfo = try? TimetableInfo.read(from: data.timetable)

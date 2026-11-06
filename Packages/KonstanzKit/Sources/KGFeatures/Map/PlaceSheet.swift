@@ -32,9 +32,7 @@ struct PlaceSheet: View {
         self.target = target
         self.onClose = onClose
         self.onQuery = onQuery
-        let start = services.here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module),
-                                              coordinate: MapRegion.center)
-        _query = State(initialValue: saved ?? PlanQuery(from: start, to: Endpoint(name: target.name,
+        _query = State(initialValue: saved ?? PlanQuery(from: services.routeStart, to: Endpoint(name: target.name,
                                                                                   coordinate: target.coordinate)))
     }
 

@@ -166,7 +166,7 @@ struct SavedScreen: View {
     private func planQuick() async {
         let user = services.user
         let transit = services.transit
-        let start = services.here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module), coordinate: MapRegion.center)
+        let start = services.routeStart
         var result: [Favorite.Slot: Journey?] = [:]
         for slot in Favorite.Slot.allCases {
             guard let favorite = try? user?.slot(slot) else { continue }

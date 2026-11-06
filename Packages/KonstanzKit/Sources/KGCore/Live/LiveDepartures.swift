@@ -77,8 +77,8 @@ public enum EFADepartures {
             if event.isCancelled {
                 merged.status = .cancelled
             } else if let delay = event.delay {
-                merged.status = .live(delayMinutes: max(0, Int((Double(delay) / 60).rounded())))
-                merged.delaySeconds = max(0, delay)
+                merged.status = .live(delayMinutes: DepartureStatus.wholeMinutes(delaySeconds: Double(delay)))
+                merged.delaySeconds = delay
             }
             return merged
         }

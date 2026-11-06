@@ -155,6 +155,33 @@ struct LiveTests {
         #expect(events[2].isCancelled)
     }
 
+    @Test("an early bus is shown early; under a minute counts as on time")
+    func earlyBuses() throws {
+        let departure = try #require(try store.departures(at: 15, from: at(20261105, 12, 0), limit: 1).first)
+        func merged(_ seconds: Int) -> Departure {
+            EFADepartures.merge([departure], with: [LiveEvent(line: departure.line.name, planned: departure.scheduled,
+                                                              delay: seconds)])[0]
+        }
+        #expect(merged(-120).status == .live(delayMinutes: -2))
+        #expect(merged(-120).expected == departure.scheduled.addingTimeInterval(-120))
+        #expect(merged(-120).delaySeconds == -120)
+        #expect(merged(-59).status == .live(delayMinutes: 0))
+        #expect(merged(30).status == .live(delayMinutes: 1))
+    }
+
+    @Test("lists follow real times: a late bus stays and moves down, an early one leaves")
+    func listsFollowRealTimes() throws {
+        let from = at(20261105, 12, 0)
+        var all = try store.departures(at: 15, from: from, limit: 3)
+        #expect(all.count == 3)
+        let now = all[1].scheduled
+        all[0].status = .live(delayMinutes: 30)  // timetable time has passed, but it's still coming
+        all[2].status = .live(delayMinutes: -60)  // already gone
+        let shown = Departure.upcoming(all, from: now, limit: 5)
+        #expect(shown.map(\.tripID) == [all[1].tripID, all[0].tripID])
+        #expect(Departure.upcoming(all, from: now, limit: 1).count == 1)
+    }
+
     @Test("the feed's \"9\" lands on the timetable's 9A and 9B")
     func letteredLinesGetReports() throws {
         var departure = try #require(try store.departures(at: 15, from: at(20261105, 12, 0), limit: 1).first)

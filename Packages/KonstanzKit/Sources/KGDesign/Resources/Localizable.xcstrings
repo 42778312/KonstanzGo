@@ -61,6 +61,46 @@
         }
       }
     },
+    "%lld Minuten insgesamt": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minutes in total"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minutes in total"
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Minute insgesamt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Minuten insgesamt"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld Minuten zu Fuß": {
       "localizations": {
         "en": {

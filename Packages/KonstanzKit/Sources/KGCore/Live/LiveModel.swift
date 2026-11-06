@@ -150,7 +150,7 @@ public final class LiveModel {
     public func status(ofTrip trip: Int, at date: Date = .now) -> DepartureStatus {
         guard let seen = delaySeen[trip], date.timeIntervalSince(seen) < Self.instantLife else { return .scheduled }
         if cancelledTrips.contains(trip) { return .cancelled }
-        return tripDelays[trip].map { .live(delayMinutes: max(0, Int(($0 / 60).rounded()))) } ?? .scheduled
+        return tripDelays[trip].map { .live(delayMinutes: DepartureStatus.wholeMinutes(delaySeconds: $0)) } ?? .scheduled
     }
 
     /// Reads these stops ahead of time, together, so opening one of them finds its buses already known.

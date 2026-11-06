@@ -65,6 +65,15 @@ struct JourneyTests {
         #expect(journey.legs.map(\.minutes) == [2, 10, 2])
     }
 
+    @Test func cardsCountFromTheDoor() {
+        let journey = designJourney
+        #expect(journey.doorToDoor().start == start)
+        #expect(journey.doorToDoor().end == start.addingTimeInterval(840))
+        // A bus 3 minutes late: leave later, arrive later.
+        #expect(journey.doorToDoor(firstBusDelayMinutes: 3).start == start.addingTimeInterval(180))
+        #expect(journey.doorToDoor(firstBusDelayMinutes: 3).end == start.addingTimeInterval(1020))
+    }
+
     @Test func idDependsOnTheTripsRidden() {
         #expect(designJourney.id == designJourney.id)
         #expect(designJourney.id.contains("r7"))

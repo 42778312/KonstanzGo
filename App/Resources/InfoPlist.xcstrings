@@ -38,13 +38,13 @@
         "de": {
           "stringUnit": {
             "state": "new",
-            "value": "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone."
+            "value": "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Deine GPS-Position wird nicht übertragen."
           }
         },
         "en": {
           "stringUnit": {
             "state": "needs_review",
-            "value": "KonstanzGo shows you stops near you and the walk there. Your location stays on this iPhone."
+            "value": "KonstanzGo shows you stops near you and the walk there. Your GPS position is not sent."
           }
         }
       }

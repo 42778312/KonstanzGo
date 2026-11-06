@@ -2,13 +2,13 @@ import KGCore
 import KGDesign
 import SwiftUI
 
-/// One connection as a route card: first bus to last, the legs as walking and line chips, a tag
+/// One connection as a route card: door to door, the legs as walking and line chips, a tag
 /// ("Schnellste"), and a note on when it leaves or where to change. Used by screen 10 and the map's place sheet.
 struct JourneyCard: View {
     let journey: Journey
     let tag: JourneyTag?
     let when: PlanQuery.When
-    /// The first card says "Fährt in 4 Min." in green.
+    /// The first card says when to leave in green.
     let isFirst: Bool
     let isSelected: Bool
     let now: Date
@@ -17,10 +17,9 @@ struct JourneyCard: View {
     let action: () -> Void
 
     var body: some View {
-        // Cards count from the first bus (Design/README); walking is shown as legs only.
-        let start = journey.firstRide?.start ?? journey.start
-        let end = journey.rides.last?.end ?? journey.end
-        KGRouteCard(departure: start, arrival: end, tag: tagLabel, legs: legs, note: note,
+        // From leaving home to arriving, so every card compares fairly (Design/README).
+        let times = journey.doorToDoor(firstBusDelayMinutes: delay)
+        KGRouteCard(departure: times.start, arrival: times.end, tag: tagLabel, legs: legs, note: note,
                     noteIsLive: isFirst && journey.firstRide != nil, isSelected: isSelected, action: action)
             .accessibilityIdentifier("routeCard")
     }
@@ -43,22 +42,38 @@ struct JourneyCard: View {
         }
     }
 
+    /// When to leave and which bus to reach. The main times count from the door, so this says what the bus does.
     private var note: Text {
         guard let first = journey.firstRide else {
             return Text("Zu Fuß · \(journey.walkingMinutes) Min.", bundle: .module)
         }
-        if journey.transfers > 0 {
-            let at = journey.rides[1].boarding.station.shortName
-            return Text("\(journey.transfers)× Umsteigen · ab \(at)", bundle: .module)
-        }
-        let minutes = max(0, Int(first.start.timeIntervalSince(now) / 60) + delay)
-        if case .now = when, minutes < 60 {
-            if delay > 0 {
-                return Text("Fährt in \(minutes) Min. ab \(first.boarding.station.shortName)", bundle: .module)
-                    + Text(verbatim: " · ") + Text("+\(delay) Min.", bundle: .module)
+        let leave = journey.doorToDoor(firstBusDelayMinutes: delay).start
+        let bus = KGStrings.clock(first.start.addingTimeInterval(TimeInterval(delay * 60)))
+        let stop = first.boarding.station.shortName
+        let walksFirst = journey.start < first.start
+        var text: Text
+        if case .now = when, leave.timeIntervalSince(now) < 3600 {
+            let minutes = max(0, Int(leave.timeIntervalSince(now) / 60))
+            if journey.transfers > 0 {
+                let at = journey.rides[1].boarding.station.shortName
+                text = minutes == 0 ? Text("Jetzt los · \(journey.transfers)× Umsteigen · ab \(at)", bundle: .module)
+                    : Text("Los in \(minutes) Min. · \(journey.transfers)× Umsteigen · ab \(at)", bundle: .module)
+            } else if !walksFirst {
+                text = Text("Fährt in \(minutes) Min. ab \(stop)", bundle: .module)
+            } else {
+                text = minutes == 0 ? Text("Jetzt los · Bus \(bus) ab \(stop)", bundle: .module)
+                    : Text("Los in \(minutes) Min. · Bus \(bus) ab \(stop)", bundle: .module)
             }
-            return Text("Fährt in \(minutes) Min. ab \(first.boarding.station.shortName)", bundle: .module)
+        } else if journey.transfers > 0 {
+            text = Text("\(journey.transfers)× Umsteigen · ab \(journey.rides[1].boarding.station.shortName)", bundle: .module)
+        } else {
+            text = Text("Bus \(bus) ab \(stop)", bundle: .module)
         }
-        return Text("Ab \(first.boarding.station.shortName)", bundle: .module)
+        if delay > 0 {
+            text = text + Text(verbatim: " · ") + Text("+\(delay) Min.", bundle: .module)
+        } else if delay < 0 {
+            text = text + Text(verbatim: " · ") + Text("\(-delay) Min. früher", bundle: .module)
+        }
+        return text
     }
 }

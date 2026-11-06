@@ -318,7 +318,7 @@ struct PrivacyScreen: View {
                 Text("Deine Daten bleiben bei dir", bundle: .module).kgFont(.display.weighted(KGFont.bold))
                     .foregroundStyle(KGColor.ink).accessibilityAddTraits(.isHeader)
                 VStack(spacing: 0) {
-                    promise(.locate, KGColor.location, KGColor.locationTint, Text("Standort nur auf dem iPhone", bundle: .module),
+                    promise(.locate, KGColor.location, KGColor.locationTint, Text("GPS-Position nur auf dem iPhone", bundle: .module),
                             Text("Er wird nie an uns gesendet.", bundle: .module))
                     promise(.noTracking, KGColor.ink2, KGColor.pressed, Text("Keine Werbung, kein Tracking", bundle: .module),
                             Text("Einfach Bus fahren.", bundle: .module))
@@ -374,14 +374,16 @@ private struct PolicyText: View {
 
                         Mit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie \
                         Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse \
-                        deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort \
-                        wird dabei nicht übertragen.
+                        deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Deine GPS-Position \
+                        wird nicht übertragen. Die App fragt aber Verspätungen für Haltestellen rund um den \
+                        Kartenausschnitt ab, der oft dort liegt, wo du bist. Zusammen mit der IP-Adresse kann EFA-BW \
+                        daraus deine ungefähre Gegend erkennen.
 
                         Wir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, \
                         keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.
 
-                        Dein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege \
-                        zu zeigen. Er verlässt das Gerät nie.
+                        Deine GPS-Position wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und \
+                        Wege zu zeigen. Sie verlässt das Gerät nie.
 
                         Favoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du \
                         kannst den Verlauf unter Einstellungen › Datenschutz löschen; beim Löschen der App wird alles entfernt.

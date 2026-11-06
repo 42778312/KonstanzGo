@@ -51,9 +51,9 @@ The files in `Source/` are read-only copies; the canvas stays the source of trut
 
 ## Rules read from the design
 
-- **Route cards (screens 10, 21) count from the first bus's departure to arrival**, not from leaving home:
-  14:21–14:35, 14:24–14:42 and 14:36–14:50 all start when the first bus leaves; the walk to the stop shows
-  only as an icon. "Fährt in 3 Min. ab Sternenplatz" tells when to leave.
+- **Route cards count from leaving home to arriving**, walks included, and say when to leave ("Los in 4 Min. ·
+  Bus 20:04 ab Stephansschule"). The original design (screens 10, 21) counted from the first bus, which made an
+  11-minute trip read "1 Min." beside a walking card that counted everything (plan task P1-17, 6 Nov 2026).
 
 ## Where the design disagrees with itself
 

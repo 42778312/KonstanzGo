@@ -111,9 +111,15 @@ public enum DepartureStatus: Sendable, Hashable, Codable {
         return false
     }
 
+    /// Minutes late; negative when the bus is running early.
     public var delayMinutes: Int {
         if case let .live(delay) = self { return delay }
         return 0
+    }
+
+    /// A report in whole minutes. Reports jitter, so a bus only counts as early from a full minute ahead.
+    public static func wholeMinutes(delaySeconds: Double) -> Int {
+        Int((delaySeconds / 60).rounded(delaySeconds < 0 ? .towardZero : .toNearestOrAwayFromZero))
     }
 }
 
@@ -127,7 +133,8 @@ public struct Departure: Sendable, Hashable, Identifiable {
     /// Timetable time.
     public var scheduled: Date
     public var status: DepartureStatus
-    /// The report's exact delay, for placing the bus on the map; lists show whole minutes (`status`).
+    /// The report's exact delay, negative when early, for placing the bus on the map; lists show whole minutes
+    /// (`status`).
     public var delaySeconds: Int?
 
     public var id: String { "\(tripID)@\(platform.id)@\(scheduled.timeIntervalSince1970)" }
@@ -143,6 +150,18 @@ public struct Departure: Sendable, Hashable, Identifiable {
         self.platform = platform
         self.scheduled = scheduled
         self.status = status
+    }
+}
+
+extension Departure {
+    /// What a stop's list shows from `date`, by when the buses really leave: a late bus stays until it has left,
+    /// and an early one goes when it has.
+    public static func upcoming(_ departures: [Departure], from date: Date, limit: Int) -> [Departure] {
+        let coming = departures.filter { $0.expected >= date }
+        let sorted = coming.enumerated().sorted { lhs, rhs in
+            (lhs.element.expected, lhs.offset) < (rhs.element.expected, rhs.offset)
+        }
+        return Array(sorted.prefix(limit).map(\.element))
     }
 }
 

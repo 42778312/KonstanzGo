@@ -41,7 +41,7 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.navigation</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Dein Standort bleibt auf diesem iPhone.</string>
+	<string>KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Deine GPS-Position wird nicht übertragen.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Damit du Haltestellen und Orte per Sprache suchen kannst. Was du sagst, bleibt auf diesem iPhone.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

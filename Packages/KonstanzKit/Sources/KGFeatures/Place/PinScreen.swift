@@ -131,9 +131,7 @@ struct PinScreen: View {
                     }
                     .padding(.top, KGSpace.medium)
                     KGButton(Text("Route hierher", bundle: .module), icon: .swap) {
-                        let start = services.here ?? Endpoint(name: String(localized: "Altstadt", bundle: .module),
-                                                              coordinate: MapRegion.center)
-                        services.router.open(.routes(PlanQuery(from: start, to: Endpoint(name: target.name,
+                        services.router.open(.routes(PlanQuery(from: services.routeStart, to: Endpoint(name: target.name,
                                                                                          coordinate: point))))
                     }
                     .padding(.top, KGSpace.large)

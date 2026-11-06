@@ -461,6 +461,16 @@
         }
       }
     },
+    "Altstadt (ohne Standort)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Old town (no location)"
+          }
+        }
+      }
+    },
     "Am Ziel gibt es im Umkreis von 1,5 km keine Haltestelle.": {
       "localizations": {
         "en": {
@@ -777,6 +787,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bus %@"
+          }
+        }
+      }
+    },
+    "Bus %@ ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bus %1$@ from %2$@"
           }
         }
       }
@@ -1934,6 +1954,26 @@
         }
       }
     },
+    "Jetzt los · %lld× Umsteigen · ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave now · %1$lld× change · from %2$@"
+          }
+        }
+      }
+    },
+    "Jetzt los · Bus %@ ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave now · Bus %1$@ from %2$@"
+          }
+        }
+      }
+    },
     "Jetzt suchen": {
       "localizations": {
         "en": {
@@ -2094,12 +2134,12 @@
         }
       }
     },
-    "KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nMit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Dein Standort wird dabei nicht übertragen.\n\nWir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDein Standort wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Er verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Einstellungen › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
+    "KonstanzGo arbeitet offline. Fahrpläne, Karte und Suche sind in der App enthalten.\n\nMit Internet holt die App zusätzlich das Wetter vom Deutschen Wetterdienst (DWD), sowie Meldungen und Verspätungen von EFA-BW der NVBW. Dabei sehen diese Dienste die IP-Adresse deines iPhones; der DWD speichert sie nach eigenen Angaben höchstens 7 Tage. Deine GPS-Position wird nicht übertragen. Die App fragt aber Verspätungen für Haltestellen rund um den Kartenausschnitt ab, der oft dort liegt, wo du bist. Zusammen mit der IP-Adresse kann EFA-BW daraus deine ungefähre Gegend erkennen.\n\nWir selbst erheben und speichern keine personenbezogenen Daten. Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und kein Benutzerkonto.\n\nDeine GPS-Position wird nur auf deinem iPhone verwendet, um Haltestellen in deiner Nähe und Wege zu zeigen. Sie verlässt das Gerät nie.\n\nFavoriten, Suchverlauf, Alarme und Fahrten werden nur auf deinem iPhone gespeichert. Du kannst den Verlauf unter Einstellungen › Datenschutz löschen; beim Löschen der App wird alles entfernt.\n\nAbfahrtsalarme sind Mitteilungen, die dein iPhone selbst plant.\n\nKontakt: %@": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "KonstanzGo works offline. Timetables, map and search are part of the app.\n\nWith internet the app also gets the weather from the Deutscher Wetterdienst (DWD), and notices and delays from NVBW's EFA-BW. These services see your iPhone's IP address; DWD says it stores it for at most 7 days. Your location is not sent.\n\nWe ourselves don't collect or store any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour location is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under Settings › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
+            "value": "KonstanzGo works offline. Timetables, map and search are part of the app.\n\nWith internet the app also gets the weather from the Deutscher Wetterdienst (DWD), and notices and delays from NVBW's EFA-BW. These services see your iPhone's IP address; DWD says it stores it for at most 7 days. Your GPS position is not sent. But the app asks for delays at stops around the map view, which is often where you are. With the IP address, EFA-BW could work out your rough area.\n\nWe ourselves don't collect or store any personal data. There are no ads, no analytics or tracking services and no account.\n\nYour GPS position is only used on your iPhone to show stops near you and the way there. It never leaves the device.\n\nFavourites, search history, alarms and trips are stored only on your iPhone. You can delete the history under Settings › Privacy; deleting the app removes everything.\n\nDeparture alarms are notifications your iPhone schedules itself.\n\nContact: %@"
           }
         }
       }
@@ -2290,6 +2330,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Off you go on foot"
+          }
+        }
+      }
+    },
+    "Los in %lld Min. · %lld× Umsteigen · ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave in %1$lld min · %2$lld× change · from %3$@"
+          }
+        }
+      }
+    },
+    "Los in %lld Min. · Bus %@ ab %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave in %1$lld min · Bus %2$@ from %3$@"
           }
         }
       }
@@ -3174,7 +3234,7 @@
         }
       }
     },
-    "Standort nur auf dem iPhone": {
+    "GPS-Position nur auf dem iPhone": {
       "localizations": {
         "en": {
           "stringUnit": {

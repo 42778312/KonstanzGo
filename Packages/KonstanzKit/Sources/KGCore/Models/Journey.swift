@@ -139,4 +139,11 @@ public struct Journey: Sendable, Hashable, Identifiable {
     public var walkingMinutes: Int { walks.reduce(0) { $0 + Leg.walk($1).minutes } }
     public var walkingMetres: Int { walks.reduce(0) { $0 + $1.metres } }
     public var firstRide: RideLeg? { rides.first }
+
+    /// Leaving home and arriving, with how late the first bus is known to be. Riders wait for that bus, so they
+    /// can leave later; after a change, the arrival depends on later buses, so it stays the timetable's.
+    public func doorToDoor(firstBusDelayMinutes delay: Int = 0) -> (start: Date, end: Date) {
+        let shift = TimeInterval(delay * 60)
+        return (start.addingTimeInterval(shift), end.addingTimeInterval(transfers == 0 ? shift : 0))
+    }
 }

@@ -174,7 +174,9 @@ struct StationPanel: View {
                                                 platform: departure.platform.code,
                                                 minutes: KGMinutesValue(departure: departure.expected, now: .now),
                                                 isLive: departure.status.isLive)
-                            + ", " + KGStrings.clock(departure.expected))
+                            + ", " + KGStrings.clock(departure.expected)
+                            + (departure.status.delayMinutes < 0
+                                ? ", " + String(localized: "\(-departure.status.delayMinutes) Min. früher", bundle: .module) : ""))
     }
 
     /// "Richtung Bahnhof · Steig B". The timetable stores the direction in English ("Towards Bahnhof",
@@ -195,21 +197,26 @@ struct StationPanel: View {
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
+    private var listStart: Date { max(from, min(.now, from.addingTimeInterval(3600))) }
+
+    /// From a little before the list's start: a late bus still counts when its timetable minute has passed.
     private func load() -> [Departure] {
-        let start = max(from, min(.now, from.addingTimeInterval(3600)))
-        let all = (try? services.transit.departures(at: station.id, from: start, limit: 60)) ?? []
-        return Array(all.filter { line == nil || $0.line.id == line }.prefix(30))
+        let all = (try? services.transit.departures(at: station.id, from: listStart.addingTimeInterval(-Self.lateWindow),
+                                                    limit: 80)) ?? []
+        return all.filter { line == nil || $0.line.id == line }
     }
+
+    private static let lateWindow: TimeInterval = 30 * 60
 
     /// The timetable at once; then, for departures around now, what's really happening, every 30 s.
     private func followDepartures() async {
         // The real times at once, from what's already known; fresher ones replace them a moment later.
-        departures = services.live.instant(load())
+        departures = Departure.upcoming(services.live.instant(load()), from: listStart, limit: 30)
         guard abs(from.timeIntervalSinceNow) < 3600 else { return }
         while !Task.isCancelled {
             let shown = await services.live.live(load(), atStation: station.id)
             guard !Task.isCancelled else { return }
-            withAnimation(KGMotion.pop) { departures = shown }
+            withAnimation(KGMotion.pop) { departures = Departure.upcoming(shown, from: listStart, limit: 30) }
             try? await Task.sleep(for: .seconds(30))
         }
     }
@@ -237,12 +244,15 @@ private struct DepartureTime: View {
             Text(verbatim: KGStrings.clock(departure.expected)).kgFont(.minutes)
                 .strikethrough(departure.isOff)
                 .foregroundStyle(departure.isOff ? KGColor.ink3
-                    : departure.status.delayMinutes > 0 ? KGColor.warn
+                    : departure.status.delayMinutes != 0 ? KGColor.warn
                     : departure.status.isLive ? KGColor.live : KGColor.ink)
                 .contentTransition(.numericText())
             if departure.status.delayMinutes > 0 {
                 Text(verbatim: KGStrings.clock(departure.scheduled)).kgFont(.caption.weighted(KGFont.regular))
                     .strikethrough().foregroundStyle(KGColor.ink3)
+            } else if departure.status.delayMinutes < 0 {
+                Text("\(-departure.status.delayMinutes) Min. früher", bundle: .module)
+                    .kgFont(.caption.weighted(KGFont.semiBold)).foregroundStyle(KGColor.warn)
             }
         }
     }

@@ -85,6 +85,11 @@ public final class AppServices {
         return Endpoint(name: String(localized: "Mein Standort", bundle: .module), coordinate: point)
     }
 
+    /// Where a route starts by default: the user, or the old town, named so nobody takes it for their position.
+    public var routeStart: Endpoint {
+        here ?? Endpoint(name: String(localized: "Altstadt (ohne Standort)", bundle: .module), coordinate: MapRegion.center)
+    }
+
     /// Where distances and "nearby" are measured from: the user, or the old town.
     public var anchor: Coordinate {
         here?.coordinate ?? MapRegion.center

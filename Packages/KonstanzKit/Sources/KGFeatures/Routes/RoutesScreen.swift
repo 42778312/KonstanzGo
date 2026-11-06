@@ -192,7 +192,10 @@ struct RoutesScreen: View {
 
     private func card(_ journey: Journey) -> some View {
         JourneyCard(journey: journey, tag: tags[journey.id]?.first, when: query.when,
-                    isFirst: journey.id == journeys.first?.id, isSelected: journey.id == selected, now: now) {
+                    isFirst: journey.id == journeys.first?.id, isSelected: journey.id == selected, now: now,
+                    delay: journey.firstRide.map {
+                        services.live.status(ofTrip: $0.tripID, at: now).delayMinutes
+                    } ?? 0) {
             withAnimation(.easeOut(duration: 0.2)) { selected = journey.id }
         }
     }

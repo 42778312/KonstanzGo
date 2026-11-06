@@ -123,6 +123,8 @@ struct DepartureCard: View {
                 switch ride.status {
                 case .cancelled: KGTag(Text("Fällt aus", bundle: .module), tone: .line)
                 case let .live(minutes) where minutes > 0: KGTag(Text("+\(minutes) Min.", bundle: .module), tone: .line)
+                case let .live(minutes) where minutes < 0:
+                    KGTag(Text("\(-minutes) Min. früher", bundle: .module), tone: .line)
                 case .live: KGTag(Text("Pünktlich", bundle: .module), tone: .live)
                 case .scheduled, .stopClosed: KGTag(Text("Laut Fahrplan", bundle: .module), tone: .neutral)
                 }

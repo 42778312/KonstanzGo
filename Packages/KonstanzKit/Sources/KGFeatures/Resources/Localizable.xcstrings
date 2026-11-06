@@ -251,6 +251,16 @@
         }
       }
     },
+    "Abfahrten zeigen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show departures"
+          }
+        }
+      }
+    },
     "Abfahrtsalarm": {
       "localizations": {
         "en": {
@@ -1854,6 +1864,36 @@
         }
       }
     },
+    "In 1 Std.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In 1 hr"
+          }
+        }
+      }
+    },
+    "In 15 Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In 15 min"
+          }
+        }
+      }
+    },
+    "In 30 Min.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In 30 min"
+          }
+        }
+      }
+    },
     "In deiner Nähe": {
       "localizations": {
         "en": {
@@ -2410,6 +2450,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tomorrow"
+          }
+        }
+      }
+    },
+    "Morgen früh": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tomorrow morning"
           }
         }
       }

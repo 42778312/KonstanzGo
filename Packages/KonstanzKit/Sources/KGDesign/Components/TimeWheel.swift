@@ -88,18 +88,19 @@ public struct KGWheel<Value: Hashable>: View {
     }
 }
 
-/// Day, hour and 5-minute wheels side by side over one grey selection band (B31, screen 19). The day column
-/// shows "Heute" for today and "Do 29. Okt." for the others.
+/// Day, hour and minute wheels side by side over one selection band (B31, screen 19), the time as "17 : 05". The
+/// day column shows "Heute" for today and "Do 29. Okt." for the others.
 public struct KGTimeWheel: View {
     @Binding var date: Date
     let today: Date
     let days: Int
+    let daysBack: Int
     let calendar: Calendar
     @Environment(\.locale) private var locale
 
-    /// `days` days starting `today` minus two (the design shows two days back for context; past times are
-    /// the screen's job to refuse).
-    public init(date: Binding<Date>, today: Date, days: Int = 14, calendar: Calendar = .kgKonstanz) {
+    /// `days` days from `today`, and `daysBack` before it for screens where looking back makes sense.
+    public init(date: Binding<Date>, today: Date, days: Int = 14, daysBack: Int = 2, calendar: Calendar = .kgKonstanz) {
+        self.daysBack = daysBack
         _date = date
         self.today = today
         self.days = days
@@ -109,22 +110,22 @@ public struct KGTimeWheel: View {
     public var body: some View {
         let row = KGWheel<Int>.rowHeight
         HStack(spacing: 0) {
-            KGWheel(selection: dayBinding, values: Array(-2..<days),
+            KGWheel(selection: dayBinding, values: Array(-daysBack..<days),
                     accessibilityTitle: Text("Tag", bundle: .kgDesign)) {
                 dayLabel($0)
             }
             .frame(maxWidth: .infinity)
-            .layoutPriority(2)
             KGWheel(selection: hourBinding, values: Array(0..<24),
                     accessibilityTitle: Text("Stunde", bundle: .kgDesign)) {
                 String(format: "%02d", $0)
             }
-            .frame(maxWidth: .infinity)
-            KGWheel(selection: minuteBinding, values: Array(stride(from: 0, to: 60, by: 5)),
+            .frame(width: Self.timeWidth)
+            Text(verbatim: ":").kgFont(.bodyStrong.sized(20)).foregroundStyle(KGColor.ink).accessibilityHidden(true)
+            KGWheel(selection: minuteBinding, values: Array(0..<60),
                     accessibilityTitle: Text("Minute", bundle: .kgDesign)) {
                 String(format: "%02d", $0)
             }
-            .frame(maxWidth: .infinity)
+            .frame(width: Self.timeWidth)
         }
         .padding(.horizontal, KGSpace.small)
         .background {
@@ -134,9 +135,11 @@ public struct KGTimeWheel: View {
         }
     }
 
+    private static var timeWidth: CGFloat { 64 }
+
     private var startOfToday: Date { calendar.startOfDay(for: today) }
 
-    /// The chosen moment as wheel positions: days from today, hour, minute rounded down to 5.
+    /// The chosen moment as wheel positions: days from today, hour, minute.
     private struct Parts {
         var day: Int
         var hour: Int
@@ -146,7 +149,7 @@ public struct KGTimeWheel: View {
     private var parts: Parts {
         let day = calendar.dateComponents([.day], from: startOfToday, to: calendar.startOfDay(for: date)).day ?? 0
         let time = calendar.dateComponents([.hour, .minute], from: date)
-        return Parts(day: day, hour: time.hour ?? 0, minute: ((time.minute ?? 0) / 5) * 5)
+        return Parts(day: day, hour: time.hour ?? 0, minute: time.minute ?? 0)
     }
 
     private func set(day: Int? = nil, hour: Int? = nil, minute: Int? = nil) {

@@ -248,7 +248,8 @@ private struct DepartureTime: View {
     }
 }
 
-/// Choosing the time a stop's departures start from: day and time wheels, "Jetzt", "Übernehmen".
+/// Choosing the time a stop's departures start from: what's chosen in large type, shortcuts for the usual choices,
+/// day and time wheels for the rest.
 private struct TimeSheet: View {
     @Binding var date: Date
     @State private var draft: Date
@@ -260,27 +261,73 @@ private struct TimeSheet: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: KGSpace.large) {
-            HStack {
-                Text("Abfahrten ab", bundle: .module).kgFont(.title).foregroundStyle(KGColor.ink)
+        VStack(alignment: .leading, spacing: KGSpace.medium) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Abfahrten ab", bundle: .module).kgFont(.callout.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                    Text(verbatim: chosen).kgFont(.titleL.sized(30)).monospacedDigit().foregroundStyle(KGColor.ink)
+                        .contentTransition(.numericText())
+                        .accessibilityIdentifier("chosenTime")
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isHeader)
                 Spacer()
                 KGRoundIconButton(.close, label: Text("Schließen", bundle: .module), surface: .plain) { dismiss() }
             }
-            KGTimeWheel(date: $draft, today: .now)
+            shortcuts
+            KGTimeWheel(date: $draft.animation(KGMotion.pop), today: .now, daysBack: 0)
             HStack(spacing: KGSpace.compact) {
                 KGButton(Text("Jetzt", bundle: .module), kind: .secondary) {
                     date = .now
                     dismiss()
                 }
-                KGButton(Text("Übernehmen", bundle: .module)) {
+                .frame(maxWidth: 120)
+                KGButton(Text("Abfahrten zeigen", bundle: .module)) {
                     date = draft
                     dismiss()
                 }
+                .accessibilityIdentifier("applyTime")
             }
         }
-        .padding(KGSpace.large)
-        .presentationDetents([.height(380)])
+        .padding(.horizontal, KGSpace.large)
+        .padding(.top, KGSpace.large)
+        .padding(.bottom, KGSpace.compact)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .presentationDetents([.height(420)])
+        .presentationDragIndicator(.visible)
         .kgGlassSheet()
         .presentationCornerRadius(KGRadius.card)
+    }
+
+    /// "Heute, 17:30".
+    private var chosen: String {
+        let calendar = Calendar.konstanz
+        let day = calendar.isDateInToday(draft) ? String(localized: "Heute", bundle: .module)
+            : calendar.isDateInTomorrow(draft) ? String(localized: "Morgen", bundle: .module) : KGStrings.shortDay(draft)
+        return "\(day), \(KGStrings.clock(draft))"
+    }
+
+    private var shortcuts: some View {
+        let calendar = Calendar.konstanz
+        let soon = calendar.dateInterval(of: .minute, for: .now)?.start ?? .now
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now).flatMap {
+            calendar.date(bySettingHour: 7, minute: 0, second: 0, of: $0)
+        } ?? soon
+        return ScrollView(.horizontal) {
+            HStack(spacing: KGSpace.small) {
+                shortcut(Text("In 15 Min.", bundle: .module), soon.addingTimeInterval(15 * 60))
+                shortcut(Text("In 30 Min.", bundle: .module), soon.addingTimeInterval(30 * 60))
+                shortcut(Text("In 1 Std.", bundle: .module), soon.addingTimeInterval(60 * 60))
+                shortcut(Text("Morgen früh", bundle: .module), tomorrow)
+            }
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    private func shortcut(_ title: Text, _ time: Date) -> some View {
+        KGChip(title, isOn: abs(draft.timeIntervalSince(time)) < 60) {
+            withAnimation(KGMotion.slide) { draft = time }
+        }
+        .sensoryFeedback(KGHaptic.selection, trigger: draft)
     }
 }

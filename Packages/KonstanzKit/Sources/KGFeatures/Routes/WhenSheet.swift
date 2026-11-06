@@ -43,7 +43,7 @@ struct WhenSheet: View {
                                                          (.depart, Text("Abfahrt", bundle: .module)),
                                                          (.arrive, Text("Ankunft", bundle: .module))], size: .large)
                 .padding(.top, KGSpace.mediumLarge)
-            KGTimeWheel(date: $date, today: .now)
+            KGTimeWheel(date: $date, today: .now, daysBack: 0)
                 .padding(.top, KGSpace.medium)
                 .opacity(mode == .now ? 0.35 : 1)
                 .disabled(mode == .now)

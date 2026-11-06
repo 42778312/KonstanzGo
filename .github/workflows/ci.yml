@@ -1,12 +1,47 @@
-# Build + all tests on every push and pull request (plan P10).
+# Package tests, lint and the data check on every push; the full app and UI tests on main or by hand
+# (Actions tab > CI > Run workflow), because macOS minutes on a private repository are limited.
 name: CI
 
 on:
   push:
+    branches: [main, "review/**"]
   pull_request:
+  workflow_dispatch:
+
+# A newer push replaces a run still going on the same branch.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  package:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use the newest Xcode on the runner
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: Tools
+        run: brew install swiftlint
+
+      - name: Lint
+        run: swiftlint lint --quiet
+
+      - name: Data check
+        # The feed watch reports a short validity; a push shouldn't fail because of it.
+        run: python3 DataPipeline/check.py --allow-short-validity
+
+      - name: Core tests (macOS)
+        run: swift test --package-path Packages/KonstanzKit
+
+  app:
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    needs: package
     runs-on: macos-26
     timeout-minutes: 40
     steps:
@@ -20,9 +55,6 @@ jobs:
 
       - name: Tools
         run: brew install xcodegen swiftlint
-
-      - name: Core tests (macOS)
-        run: swift test --package-path Packages/KonstanzKit
 
       - name: Generate project
         run: xcodegen

@@ -1,8 +1,10 @@
 """
 Checks the data in App/Resources/Data/ before it ships: every file is there, the timetable is not
-empty, and it is valid for at least 30 more days. Exits with an error otherwise.
+empty, line 9's variants are right, and it is valid for at least 30 more days. Exits with an error otherwise.
 
-    DataPipeline/.venv/bin/python DataPipeline/check.py
+    DataPipeline/.venv/bin/python DataPipeline/check.py [--allow-short-validity]
+
+--allow-short-validity only reports the 30-day rule: for CI, and for an emergency build near the end date.
 """
 import datetime
 import json
@@ -36,7 +38,21 @@ if unknown:
 end = datetime.datetime.strptime(meta["feed_end"], "%Y%m%d").date()
 days_left = (end - datetime.date.today()).days
 if days_left < MIN_DAYS_LEFT:
-    problems.append(f"timetable ends {end} ({days_left} days left, need {MIN_DAYS_LEFT})")
+    message = f"timetable ends {end} ({days_left} days left, need {MIN_DAYS_LEFT})"
+    if "--allow-short-validity" in sys.argv[1:]:
+        print(f"allowed: {message}")
+    else:
+        problems.append(message)
+
+# The printed timetable: 9A runs via Friedrichstraße and Paradies, 9B via Sonnenbühlstraße and Laube.
+for line, via in {"9A": ("Friedrichstraße", "Ellenrieder Gymnasium"), "9B": ("Sonnenbühlstraße", "Bürgerbüro")}.items():
+    wrong = db.execute(
+        """SELECT count(*) FROM trip t JOIN route r ON r.id = t.route_id WHERE r.short_name = ? AND
+           (SELECT count(DISTINCT s.short_name) FROM stop_time x JOIN platform p ON p.id = x.platform_id
+            JOIN station s ON s.id = p.station_id WHERE x.trip_id = t.id AND s.short_name IN (?, ?)) < 2""",
+        (line, *via)).fetchone()[0]
+    if wrong:
+        problems.append(f"{wrong} trips of line {line} miss its stops")
 
 print(f"feed {meta['feed_version']}, valid {meta['feed_start']}–{meta['feed_end']} ({days_left} days left)")
 print(", ".join(f"{n} {t}" for t, n in counts.items()))

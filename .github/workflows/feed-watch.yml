@@ -1,0 +1,33 @@
+# Once a day on a cheap Linux runner: has NVBW published a new timetable, and how long is ours valid?
+# Opens one GitHub issue per finding, so GitHub emails the owner.
+name: Feed watch
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the feed
+        id: check
+        run: python3 DataPipeline/check_feed.py | tee findings.txt
+
+      - name: Open an issue per finding
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          grep '^ALERT: ' findings.txt | sed 's/^ALERT: //' | while read -r title; do
+            if ! gh issue list --state open --search "\"$title\" in:title" --json title --jq '.[].title' | grep -qxF "$title"; then
+              gh issue create --title "$title" --body "From the daily feed watch. See DataPipeline/README.md, section Updating the timetable."
+            fi
+          done

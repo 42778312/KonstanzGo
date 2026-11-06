@@ -21,7 +21,9 @@ Fixes so far are on `review/brief`; see `CHANGES.md`.
 | R-07 | **Built with EFA-BW:** live times on the stop sheet, and reported delays on the map's buses. The trip card and the route list still show timetable times. See R-22 |
 | R-08 | **Built with EFA-BW:** X on the map, Seeri's message, notices list, alternatives, planner avoids closed stops, auto-clear at the end time. Real detour streets aren't available: see R-23. See R-22 |
 | R-09 | **Improved, not closed:** opening the data takes 18 ms instead of 307 ms on a Mac. Not measured on an iPhone |
-| R-15, R-18 | **Fixed:** contact in the `User-Agent`; buses with a live report get a green dot |
+| R-15, R-18 | **Fixed:** contact in the `User-Agent`; buses with a live report get a green dot. Calculated positions still need an honest label: plan task P2-14 |
+
+From 6 Nov 2026, open items are tracked in the five-phase master plan; this file keeps the original findings. Corrected finding: `Departure` delays clamp early buses to zero (plan task P1-18), which this review did not list.
 
 ## Findings
 

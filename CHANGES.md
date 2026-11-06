@@ -42,6 +42,22 @@ Complete run: 265 of 265 app, snapshot and UI tests, 233 package tests, App Stor
 | Sheets use a blur material | About 40% fewer dropped frames while dragging |
 | Trip card shows the real delay; route cards show a known delay | They only showed timetable times |
 
+## Look, buses and line 9, 6 Nov 2026
+
+Built on request and committed under plan task P1-01. Checked in the simulator and by building each commit; the full test suite runs next, in P1-05.
+
+| What changed | Why | Checked by |
+|---|---|---|
+| Navy glass everywhere: `KGGlassBackdrop`, `kgGlassCard`, `kgGlassMenu` | One look for every sheet, card, list and menu, matching the search field | Simulator, the owner's iPhone |
+| "Mehr" is now "Einstellungen" / "Settings" | The owner's request | Simulator |
+| 3D sprites at 36 headings, turning and indicators, 8 updates a second | Buses should look and move like buses | Simulator, the owner's iPhone. iPhone smoothness and battery not measured |
+| Exact delay seconds, `DelayGlide`, 30 s stop reads around the view | Buses on the map disagreed with the list. Over 15,304 stops today: mean gap 14 s → 8 s, max 30 s → 20 s, early 43% → 0% | `busesLeaveStopsWhenTheListSays`, `DelayGlideTests`, live comparison |
+| Time picker: wheels fixed, readout, shortcuts, 1-minute steps, no past days | The day wheel squeezed the time wheels to nothing | Simulator |
+| Line 9 split into 9A, 9B and 9, following the printed timetable (valid from 7 Apr 2026). The live feed still says "9", so `Line.feedNumber` matches it | They are different routes | Letters compared with the printed timetable on four days, simulator with live data |
+| Back swipe in settings (`kgSwipeBack`) | iOS turns it off with the navigation bar hidden | Simulator, from the edge and mid-page |
+
+`timetable.db` was patched with the importer's 9A/9B output instead of a full rebuild. Plan task P1-07 confirms a full rebuild gives the same data.
+
 ## Not changed yet
 
 - **R-01:** NVBW's newest file still ends on 12 Dec 2026. Rebuild as soon as a newer one appears (`DataPipeline/README.md`).

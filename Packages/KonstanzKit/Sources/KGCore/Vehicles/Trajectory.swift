@@ -36,8 +36,11 @@ public struct TimedStop: Sendable, Hashable {
 public struct Trajectory: Sendable {
     public static let rampSeconds = 12.0
     public static let dwellSeconds = 15.0
-    /// How far a passing time may move to even out speeds: the timetable's minute rounding.
-    static let roundingSeconds = 30.0
+    /// How far after its timetable minute a bus may leave a stop, to even out speeds. Never before it, so the map
+    /// agrees with the departure list.
+    static let roundingSeconds = 20.0
+    /// Stops sharing a timetable minute are spread across this much of it.
+    static let sharedMinuteSeconds = 45.0
     static let balancePasses = 8
     /// Metres behind and ahead that give the heading, so corners turn the arrow smoothly.
     static let headingSpan = 15.0
@@ -200,11 +203,12 @@ public struct Trajectory: Sendable {
     // swiftlint:disable cyclomatic_complexity
     /// Times a bus can drive. The timetable rounds to minutes, so neighbouring stops often share one: a run of
     /// stops at the same minute is spread by distance; passing times then shift by up to half a minute so
-    /// neighbouring stretches get similar speeds; then each stop without a wait gets a short one.
-    /// Only the animation uses these times; departure boards keep the timetable's.
+    /// neighbouring stretches get similar speeds; then each stop without a wait gets a short one, by arriving early.
+    /// Only the animation uses these times, and each stays within seconds after the departure boards' minute.
     static func smoothTimes(arrival at: inout [Double], departure leave: inout [Double], distance: [Double],
                             topSpeed: Double) {
         let count = at.count
+        let timetable = leave
         var first = 0
         while first < count {
             var last = first
@@ -212,7 +216,7 @@ public struct Trajectory: Sendable {
             if last > first {
                 if last + 1 < count {
                     // Stops first...last at one time: spread them from leave[first] towards at[last + 1].
-                    let from = leave[first], to = at[last + 1]
+                    let from = leave[first], to = min(at[last + 1], from + sharedMinuteSeconds)
                     let span = distance[last + 1] - distance[first] > 0 ? distance[last + 1] - distance[first] : 1
                     for index in (first + 1)...last {
                         let time = from + (to - from) * (distance[index] - distance[first]) / span
@@ -221,7 +225,7 @@ public struct Trajectory: Sendable {
                     }
                 } else if first > 0 {
                     // The trip ends with them: spread back from the stop before.
-                    let from = leave[first - 1], to = at[last]
+                    let to = at[last], from = max(leave[first - 1], to - sharedMinuteSeconds)
                     let span = distance[last] - distance[first - 1] > 0 ? distance[last] - distance[first - 1] : 1
                     for index in first..<last {
                         let time = from + (to - from) * (distance[index] - distance[first - 1]) / span
@@ -233,15 +237,15 @@ public struct Trajectory: Sendable {
             first = last + 1
         }
         guard count > 2 else { return }
-        let rounded = at
+        let spread = leave
         for _ in 0..<balancePasses {
             for index in 1..<(count - 1) where leave[index] - at[index] <= 1 {
                 let span = distance[index + 1] - distance[index - 1]
                 guard span > 0 else { continue }
                 let even = leave[index - 1] + (at[index + 1] - leave[index - 1])
                     * (distance[index] - distance[index - 1]) / span
-                let time = min(max(min(max(even, rounded[index] - roundingSeconds), rounded[index] + roundingSeconds),
-                                   leave[index - 1]), at[index + 1])
+                let latest = max(spread[index], timetable[index] + roundingSeconds)
+                let time = min(max(min(max(even, spread[index]), latest), leave[index - 1]), at[index + 1])
                 at[index] = time
                 leave[index] = time
             }

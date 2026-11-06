@@ -130,6 +130,19 @@ struct VehicleTrackerTests {
         #expect(buses.allSatisfy { (47.6...47.75).contains($0.coordinate.latitude) })
     }
 
+    /// The map agrees with the departure lists: no bus leaves before its time, or long after it.
+    @Test func busesLeaveStopsWhenTheListSays() throws {
+        let day = ServiceDay(yyyymmdd: 20261028)
+        for trip in try tracker.trips(on: day) {
+            guard let line = store.line(id: trip.route), line.isCity,
+                  let trajectory = try tracker.trajectory(trip, line: line, day: day) else { continue }
+            for (index, call) in trip.calls.enumerated() {
+                let late = trajectory.departure[index] - Double(call.departure) * 60
+                #expect(late >= 0 && late <= Trajectory.sharedMinuteSeconds, "trip \(trip.trip) stop \(index): \(late) s")
+            }
+        }
+    }
+
     @Test func aBusIsAtItsStopWhenItDeparts() throws {
         let departure = try #require(try store.departures(at: 99, from: at(20261028, 14, 0)).first { $0.line.name == "9" })
         let position = try #require(try tracker.position(ofTrip: departure.tripID, on: ServiceDay(yyyymmdd: 20261028),
@@ -283,5 +296,22 @@ struct VehicleRouteTests {
         #expect(buses.isEmpty, "straight cuts: \(cuts.sorted { $0.key < $1.key })")
         // Line 2 is a loop; its whole route used to vanish.
         #expect(cuts.keys.allSatisfy { !$0.hasPrefix("2 ") })
+    }
+}
+
+@Suite("Delay glide")
+struct DelayGlideTests {
+    @Test func aBusEasesIntoASmallDelayWithoutGoingBackwards() {
+        var glide = DelayGlide()
+        #expect(glide.advance([1: 30], after: 1) == [1: 0.85])
+        // Its timetable clock runs 1 s per second, the delay grows by less: it still creeps forward.
+        #expect(DelayGlide.growing < 1)
+    }
+
+    @Test func aBusCatchesUpAndABigChangeMovesItAtOnce() {
+        var glide = DelayGlide()
+        #expect(glide.advance([1: 120], after: 1) == [1: 120])
+        #expect(glide.advance([1: 100], after: 1) == [1: 118])
+        #expect(glide.advance([:], after: 0.125)[1] == nil)
     }
 }

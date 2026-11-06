@@ -227,7 +227,7 @@ public final class LiveModel {
         for departure in departures {
             switch departure.status {
             case let .live(minutes):
-                tripDelays[departure.tripID] = Double(minutes) * 60
+                tripDelays[departure.tripID] = departure.delaySeconds.map(Double.init) ?? Double(minutes) * 60
                 delaySeen[departure.tripID] = date
             case .cancelled:
                 cancelledTrips.insert(departure.tripID)

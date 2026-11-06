@@ -472,23 +472,31 @@ extension MapScreen {
 // MARK: - Moving buses and trains
 
 extension MapScreen {
-    /// The busiest stops and the nearest ones, read ahead: most buses pass them, so their reports move the
-    /// buses on the map, and a stop opened next already has its real times.
+    /// Reads a busy stop and the stops around where the user is looking, a few at a time and in turn, so the buses in
+    /// view follow their real delays and a stop opened next already has its real times.
     func followBuses() async {
         let transit = services.transit, live = services.live
+        var round = 0
         while !Task.isCancelled {
             if showsVehicles, services.router.path.isEmpty {
-                await live.warm(stations: Self.hubs + nearby(transit))
+                let around = inView(transit)
+                let turn = around.isEmpty ? [] : (0..<min(Self.stopsPerRound, around.count)).map {
+                    around[(round * Self.stopsPerRound + $0) % around.count]
+                }
+                await live.warm(stations: [Self.hubs[round % Self.hubs.count]] + turn)
+                round += 1
             }
-            try? await Task.sleep(for: .seconds(45))
+            try? await Task.sleep(for: .seconds(30))
         }
     }
 
-    /// The stops the user is most likely to open next.
-    private func nearby(_ transit: OfflineTransit) -> [Int] {
-        guard let here = location.coordinate else { return [] }
-        return transit.stations(near: here, within: 800, limit: 2).map(\.0.id)
+    /// The stops nearest the middle of the map, or the user before the map has moved.
+    private func inView(_ transit: OfflineTransit) -> [Int] {
+        guard let middle = map.centerCoordinate ?? location.coordinate else { return [] }
+        return transit.stations(near: middle, within: 1_500, limit: 12).map(\.0.id)
     }
+
+    private static let stopsPerRound = 3
 
     /// Konstanz Bahnhof and Sternenplatz.
     private static let hubs = [15, 99]
@@ -504,7 +512,9 @@ extension MapScreen {
         while !Task.isCancelled {
             if showsVehicles, services.router.path.isEmpty {
                 let now = Date.now
-                let delays = services.live.tripDelays, cancelled = services.live.cancelledTrips
+                let delays = glide.advance(services.live.tripDelays, after: (ContinuousClock.now - lastDelays) / .seconds(1))
+                lastDelays = ContinuousClock.now
+                let cancelled = services.live.cancelledTrips
                 let found = await Task.detached(priority: .utility) {
                     (try? tracker.positions(at: now, delays: delays, cancelled: cancelled)) ?? []
                 }.value

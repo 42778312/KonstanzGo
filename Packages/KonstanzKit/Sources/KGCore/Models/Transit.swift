@@ -121,6 +121,8 @@ public struct Departure: Sendable, Hashable, Identifiable {
     /// Timetable time.
     public var scheduled: Date
     public var status: DepartureStatus
+    /// The report's exact delay, for placing the bus on the map; lists show whole minutes (`status`).
+    public var delaySeconds: Int?
 
     public var id: String { "\(tripID)@\(platform.id)@\(scheduled.timeIntervalSince1970)" }
 

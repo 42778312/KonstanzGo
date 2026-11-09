@@ -1,6 +1,66 @@
 {
   "sourceLanguage": "de",
   "strings": {
+    "Die Busse sind ungefähr dort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The buses are roughly there"
+          }
+        }
+      }
+    },
+    "Ich berechne, wo jeder Bus ist: aus Fahrplan und gemeldeten Verspätungen, nicht per GPS. Er kann etwas weiter vorn oder hinten sein als gezeigt. Verlass dich auf die Abfahrtszeiten.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I work out where each bus is from the timetable and reported delays, not GPS. It may be a little ahead of or behind where it shows. Trust the departure times."
+          }
+        }
+      }
+    },
+    "Grüner Punkt: Verspätung live gemeldet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Green dot: delay reported live"
+          }
+        }
+      }
+    },
+    "Ohne Punkt: nur nach Fahrplan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No dot: timetable only"
+          }
+        }
+      }
+    },
+    "Die Position auf der Karte ist immer berechnet, nicht gemessen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The position on the map is always calculated, never measured."
+          }
+        }
+      }
+    },
+    "Das hier ist deine Karte. Alle Busse der Stadt fahren darauf mit.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is your map. All the city's buses move on it."
+          }
+        }
+      }
+    },
     "Bei Regen weniger laufen": {
       "localizations": {
         "en": {
@@ -907,16 +967,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Appearance"
-          }
-        }
-      }
-    },
-    "Das hier ist deine Karte. Alle Busse fahren mit, ein grüner Punkt heißt: live.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This is your map. All the buses move on it, and a green dot means live."
           }
         }
       }

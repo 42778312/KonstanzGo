@@ -39,11 +39,12 @@ final class OnboardingTests: XCTestCase {
         let next = app.buttons["introNext"]
         XCTAssertTrue(next.waitForExistence(timeout: 8))
         XCTAssertTrue(app.staticTexts["Hallo, ich bin Seeri"].waitForExistence(timeout: 3))
-        for step in 1...6 {
+        for step in 1...7 {
             sleep(4)
             shot(app, "step-\(step)")
             if step == 1 { XCTAssertTrue(app.staticTexts["Hallo, ich bin Seeri"].exists, "moved on by itself") }
-            if step == 3 { XCTAssertTrue(app.staticTexts["Sternenplatz"].exists, "the stop's real list is missing") }
+            if step == 2 { XCTAssertTrue(app.staticTexts["Die Busse sind ungefähr dort"].exists, "the bus positions step is missing") }
+            if step == 4 { XCTAssertTrue(app.staticTexts["Sternenplatz"].exists, "the stop's real list is missing") }
             next.tap()
         }
         XCTAssertTrue(app.buttons["allowPermissions"].waitForExistence(timeout: 3))

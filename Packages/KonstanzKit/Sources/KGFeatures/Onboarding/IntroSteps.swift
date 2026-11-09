@@ -6,7 +6,7 @@ import SwiftUI
 /// list, the notice and the rescue are the app's own views on live data, shown but not touchable, with Seeri
 /// explaining underneath.
 struct IntroSteps: View {
-    enum Page: Int, CaseIterable { case map, search, stop, notices, rescue, offline }
+    enum Page: Int, CaseIterable { case map, buses, search, stop, notices, rescue, offline }
 
     let services: AppServices
     let onDone: () -> Void
@@ -121,6 +121,7 @@ struct IntroSteps: View {
     private var seeri: Seeri.Expression {
         switch page {
         case .map: .excited
+        case .buses: .curious
         case .search: .looking
         case .stop: .focused
         case .notices: .excited
@@ -132,6 +133,7 @@ struct IntroSteps: View {
     private var title: String {
         switch page {
         case .map: String(localized: "Hallo, ich bin Seeri", bundle: .module)
+        case .buses: String(localized: "Die Busse sind ungefähr dort", bundle: .module)
         case .search: String(localized: "Sag mir, wohin du willst", bundle: .module)
         case .stop: String(localized: "Echte Zeiten an jeder Haltestelle", bundle: .module)
         case .notices: String(localized: "Mein Blaulicht warnt dich", bundle: .module)
@@ -142,7 +144,12 @@ struct IntroSteps: View {
 
     private var speech: String {
         switch page {
-        case .map: String(localized: "Das hier ist deine Karte. Alle Busse fahren mit, ein grüner Punkt heißt: live.", bundle: .module)
+        case .map: String(localized: "Das hier ist deine Karte. Alle Busse der Stadt fahren darauf mit.", bundle: .module)
+        case .buses:
+            String(localized: """
+                Ich berechne, wo jeder Bus ist: aus Fahrplan und gemeldeten Verspätungen, nicht per GPS. \
+                Er kann etwas weiter vorn oder hinten sein als gezeigt. Verlass dich auf die Abfahrtszeiten.
+                """, bundle: .module)
         case .search: String(localized: "Tippen oder ins Mikro sprechen. Die Suche ist unten auf der Karte.", bundle: .module)
         case .stop: String(localized: "Tipp auf eine Haltestelle. Orange heißt: Der Bus kommt später als geplant.", bundle: .module)
         case .notices: String(localized: "Blinke ich, tipp mich an. Das X zeigt gesperrte Haltestellen, ich sage dir die Alternativen.", bundle: .module)
@@ -157,6 +164,7 @@ struct IntroSteps: View {
         Group {
             switch page {
             case .map: EmptyView()
+            case .buses: busesPanel
             case .search: searchPanel
             case .stop:
                 if let sternenplatz {
@@ -181,6 +189,29 @@ struct IntroSteps: View {
             }
         }
         .allowsHitTesting(false)
+    }
+
+    /// What the dot on a bus means; the position itself is always calculated.
+    private var busesPanel: some View {
+        VStack(alignment: .leading, spacing: KGSpace.small) {
+            legendRow(isLive: true, Text("Grüner Punkt: Verspätung live gemeldet", bundle: .module))
+            legendRow(isLive: false, Text("Ohne Punkt: nur nach Fahrplan", bundle: .module))
+            Text("Die Position auf der Karte ist immer berechnet, nicht gemessen.", bundle: .module)
+                .kgFont(.caption.weighted(KGFont.regular)).foregroundStyle(KGColor.ink2)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(KGSpace.medium)
+        .kgGlass(in: .kgRounded(KGRadius.card))
+    }
+
+    private func legendRow(isLive: Bool, _ text: Text) -> some View {
+        HStack(spacing: KGSpace.compact) {
+            KGLineBadge("9", size: .small)
+                .overlay(alignment: .topTrailing) { if isLive { KGLiveDot().offset(x: 3, y: -3) } }
+                .accessibilityHidden(true)
+            text.kgFont(.callout.weighted(KGFont.regular)).foregroundStyle(KGColor.ink)
+        }
     }
 
     private var searchPanel: some View {
@@ -257,6 +288,10 @@ struct IntroSteps: View {
         case .map:
             map.insets = MapInsets(top: 60, bottom: guideSpace)
             map.move(CameraMove(center: MapRegion.center, zoom: 13.6))
+        case .buses:
+            // Closer in, where most buses pass: the station.
+            map.insets = MapInsets(top: 60, bottom: guideSpace + 150)
+            map.move(CameraMove(center: stop("Bahnhof")?.coordinate ?? MapRegion.center, zoom: 14.8))
         case .search:
             map.insets = MapInsets(top: 60, bottom: guideSpace + 180)
             map.move(CameraMove(center: MapRegion.center, zoom: 13.6))

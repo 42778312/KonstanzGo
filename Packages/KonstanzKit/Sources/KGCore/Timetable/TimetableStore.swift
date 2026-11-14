@@ -1,5 +1,6 @@
 import Foundation
 import GRDB
+import KGLiveAPI
 
 /// Read-only access to the bundled timetable (`timetable.db`).
 ///
@@ -65,6 +66,29 @@ public final class TimetableStore: Sendable {
     public func stopArea(ofStation id: Int) -> String? {
         let areas = platforms(of: id).compactMap { $0.gtfsID?.split(separator: ":").prefix(3).joined(separator: ":") }
         return Dictionary(grouping: areas, by: { $0 }).max { ($0.value.count, $1.key) < ($1.value.count, $0.key) }?.key
+    }
+
+    /// The live server's names for the city trips running on a service day: trip key → trip id. The key is built
+    /// from the trip's first stop, the same way the server builds it (`KGLiveAPI.TripKey`).
+    public func liveTripKeys(on day: ServiceDay) throws -> [String: Int] {
+        try queue.read { db in
+            var keys: [String: Int] = [:]
+            let rows = try Row.fetchCursor(db, sql: """
+                SELECT t.id, r.short_name, p.gtfs_id, st.departure
+                FROM trip t
+                JOIN route r ON r.id = t.route_id AND r.is_city = 1
+                JOIN service_date sd ON sd.service_id = t.service_id AND sd.date = ?
+                JOIN stop_time st ON st.trip_id = t.id
+                    AND st.seq = (SELECT MIN(seq) FROM stop_time WHERE trip_id = t.id)
+                JOIN platform p ON p.id = st.platform_id
+                """, arguments: [day.yyyymmdd])
+            while let row = try rows.next() {
+                let key = TripKey.make(serviceDate: day.yyyymmdd, line: row[1], firstPlatform: row[2] ?? "",
+                                       firstDeparture: row[3])
+                keys[key] = row[0]
+            }
+            return keys
+        }
     }
 
     /// Stations within `metres` of a point, nearest first.

@@ -1,4 +1,5 @@
 import Foundation
+import KGLiveAPI
 import Network
 import Observation
 
@@ -24,6 +25,11 @@ public final class LiveModel {
     public private(set) var cancelledTrips: Set<Int> = []
     /// Off by remote settings: nothing is asked, and the app runs on the timetable.
     public var isEnabled = true
+    /// With the KonstanzGo server: its source isn't answering, or the app can't reach it. Everything shows
+    /// timetable times meanwhile; the map says so in one quiet line.
+    public private(set) var livePaused = false
+    /// Delays come from the KonstanzGo server instead of EFA-BW directly.
+    public var usesServer: Bool { server != nil }
 
     public typealias Fetch = @Sendable (URL) async throws -> Data
 
@@ -33,6 +39,13 @@ public final class LiveModel {
     }
 
     private let store: TimetableStore
+    private let server: LiveServerClient?
+    private var lastSnapshot = Date.distantPast
+    private var lastGoodSnapshot: Date?
+    private var snapshotRunning = false
+    private var isConstrained = false
+    /// Trip keys of the service days running now, built once per day.
+    private var tripKeys: (days: [Int], keys: [String: Int])?
     private let file: URL
     private let fetch: Fetch
     private let onChange: @Sendable ([ServiceNotice]) -> Void
@@ -58,6 +71,11 @@ public final class LiveModel {
     /// Failed stop reads wait this long, doubling up to `liveBackoffLimit`, across all stops.
     static let liveBackoffStart: TimeInterval = 30
     static let liveBackoffLimit: TimeInterval = 15 * 60
+    /// The shared snapshot: every 15 s while the map is open, every 60 s in Low Data Mode.
+    static let snapshotInterval: TimeInterval = 15
+    static let constrainedSnapshotInterval: TimeInterval = 60
+    /// Without a fresh snapshot for this long, live is paused and the buses go back to the timetable.
+    static let snapshotLife: TimeInterval = 180
 
     private struct SavedDelays: Codable {
         var at: Date
@@ -68,8 +86,10 @@ public final class LiveModel {
     public init(store: TimetableStore,
                 file: URL = URL.applicationSupportDirectory.appending(path: "live-notices.json"),
                 fetch: @escaping Fetch = LiveModel.download,
+                server: LiveServerClient? = nil,
                 onChange: @escaping @Sendable ([ServiceNotice]) -> Void = { _ in }) {
         self.store = store
+        self.server = server
         self.file = file
         delayFile = file.deletingLastPathComponent().appending(path: file.deletingPathExtension().lastPathComponent + "-delays.json")
         self.fetch = fetch
@@ -127,8 +147,11 @@ public final class LiveModel {
         let monitor = NWPathMonitor()
         self.monitor = monitor
         monitor.pathUpdateHandler = { [weak self] path in
-            let online = path.status == .satisfied
-            Task { @MainActor in self?.networkChanged(online: online) }
+            let online = path.status == .satisfied, constrained = path.isConstrained
+            Task { @MainActor in
+                self?.isConstrained = constrained
+                self?.networkChanged(online: online)
+            }
         }
         monitor.start(queue: DispatchQueue(label: "de.konstanzgo.live.network"))
     }
@@ -167,7 +190,12 @@ public final class LiveModel {
     }
 
     /// Reads these stops ahead of time, together, so opening one of them finds its buses already known.
+    /// With the server, one shared snapshot covers every bus in town instead.
     public func warm(stations: [Int], at date: Date = .now) async {
+        if server != nil {
+            await refreshSnapshot(at: date)
+            return
+        }
         let store = store
         let reads = Set(stations).map { station in
             Task {
@@ -212,6 +240,9 @@ public final class LiveModel {
     /// they stay plain timetable times, never an old delay.
     public func live(_ departures: [Departure], atStation id: Int, at date: Date = .now) async -> [Departure] {
         guard let events = await events(atStation: id, at: date) else { return departures }
+        // No reports (the source is down or switched off): what's known now, and nothing new to remember. Merging
+        // nothing would keep the statuses the list came in with and record them again as fresh reports.
+        guard !events.isEmpty else { return instant(departures, at: date) }
         let merged = EFADepartures.merge(departures, with: events)
         remember(merged, at: date)
         return merged
@@ -228,8 +259,20 @@ public final class LiveModel {
         if let running = reading[id] { return await running.value }
         guard isOnline, isEnabled, date >= liveRetryAt, let area = store.stopArea(ofStation: id),
               let url = EFADepartures.url(stopArea: area) else { return nil }
-        let fetch = fetch
+        let fetch = fetch, server = server
         let task = Task<[LiveEvent]?, Never> {
+            if let server {
+                do {
+                    let answer = try await server.departures(stopGID: area, limit: 40)
+                    liveFailures = 0
+                    // The server answers from the timetable when its source is down: no reports then.
+                    return answer.upstream == .ok ? answer.events : []
+                } catch {
+                    let busy: TimeInterval? = if case let .status(_, retry) = error as? LiveServerClient.Failure { retry } else { nil }
+                    liveReadFailed(at: date, askedToWait: busy)
+                    return nil
+                }
+            }
             do {
                 let data = try await fetch(url)
                 let events = await Task.detached(priority: .utility) { try? EFADepartures.parse(data) }.value
@@ -245,6 +288,67 @@ public final class LiveModel {
         reading[id] = nil
         if let events { boards[id] = (date, events) }
         return events
+    }
+
+    // MARK: The KonstanzGo server
+
+    /// Reads the shared snapshot, when due, and puts its delays on the trips. Without fresh data for 3 min, live
+    /// is paused and every bus goes back to its timetable time.
+    public func refreshSnapshot(at date: Date = .now, force: Bool = false) async {
+        guard let server, isEnabled, !snapshotRunning else { return }
+        let interval = isConstrained ? Self.constrainedSnapshotInterval : Self.snapshotInterval
+        guard force || date.timeIntervalSince(lastSnapshot) >= interval, date >= liveRetryAt || force else { return }
+        snapshotRunning = true
+        defer { snapshotRunning = false }
+        lastSnapshot = date
+        do {
+            let snapshot = try await server.snapshot()
+            let keys = keysForRunningDays(at: date)
+            let live = await Task.detached(priority: .utility) { LiveDelays(snapshot, keys: keys) }.value
+            apply(live, at: date)
+            liveFailures = 0
+        } catch {
+            let busy: TimeInterval? = if case let .status(_, retry) = error as? LiveServerClient.Failure { retry } else { nil }
+            liveReadFailed(at: date, askedToWait: busy)
+            if let good = lastGoodSnapshot, date.timeIntervalSince(good) < Self.snapshotLife { return }
+            livePaused = true
+        }
+    }
+
+    private func apply(_ live: LiveDelays, at date: Date) {
+        livePaused = !live.isLive(at: date)
+        guard live.upstream != .off else {
+            // Switched off on the server: forget every delay, the stops' answers too, so all shows the timetable.
+            tripDelays = [:]
+            cancelledTrips = []
+            delaySeen = [:]
+            boards = [:]
+            return
+        }
+        if live.upstream == .ok { lastGoodSnapshot = date }
+        for (trip, delay) in live.delays where (delaySeen[trip] ?? .distantPast) <= (live.seen[trip] ?? date) {
+            tripDelays[trip] = delay
+            delaySeen[trip] = live.seen[trip] ?? date
+        }
+        for trip in live.cancelled {
+            cancelledTrips.insert(trip)
+            delaySeen[trip] = live.seen[trip] ?? date
+        }
+        pruneDelays(at: date)
+        saveDelays(at: date)
+    }
+
+    /// Today's and yesterday's trip keys (night buses run on yesterday's service day).
+    private func keysForRunningDays(at date: Date) -> [String: Int] {
+        let today = ServiceDay(date)
+        let days = [today.previous.yyyymmdd, today.yyyymmdd]
+        if let cached = tripKeys, cached.days == days { return cached.keys }
+        var keys: [String: Int] = [:]
+        for day in [today.previous, today] {
+            keys.merge((try? store.liveTripKeys(on: day)) ?? [:]) { first, _ in first }
+        }
+        tripKeys = (days, keys)
+        return keys
     }
 
     private func liveReadFailed(at date: Date, askedToWait: TimeInterval?) {

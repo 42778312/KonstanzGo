@@ -106,7 +106,9 @@ public final class AppServices {
                              onChange: { transit.update(notices: $0) })
         }
         #endif
-        return LiveModel(store: transit.store, onChange: { transit.update(notices: $0) })
+        // The KonstanzGo live server, when this build switches it on (KG_LIVE_ENABLED, or the debug switch).
+        let server = LiveServerConfig.current().map { LiveServerClient(base: $0.url) }
+        return LiveModel(store: transit.store, server: server, onChange: { transit.update(notices: $0) })
     }
 
     /// Opens a saved or searched thing on the map tab: stop → 09, place → 15, point → 16.

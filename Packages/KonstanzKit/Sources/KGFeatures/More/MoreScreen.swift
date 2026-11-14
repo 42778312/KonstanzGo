@@ -25,6 +25,10 @@ struct MoreScreen: View {
     @AppStorage("alarm.minutes") private var alarmMinutes = 2
     @AppStorage(GetOffAlerts.enabledKey) private var getOffAlerts = true
     @AppStorage(AppServices.rainAdviceKey) private var rainAdvice = true
+    #if DEBUG
+    /// Test builds: delays from the KonstanzGo live server instead of EFA-BW, from the next start.
+    @AppStorage(LiveServerConfig.switchKey) private var liveServer = false
+    #endif
     @State private var choosingMinutes = false
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
@@ -57,6 +61,13 @@ struct MoreScreen: View {
                             .accessibilityIdentifier("rainAdvice")
                     }
                     .riseIn(after: 0.1)
+                    #if DEBUG
+                    KGSettingsGroup {
+                        KGSettingsRow(Text(verbatim: "Live-Server (Test, ab Neustart)"), icon: .bus, tile: KGColor.live,
+                                      isOn: $liveServer)
+                            .accessibilityIdentifier("liveServer")
+                    }
+                    #endif
                     KGSettingsGroup {
                         KGSettingsRow(Text("Sprache", bundle: .module), icon: .globe, tile: KGColor.tileIndigo,
                                       value: Text(verbatim: Locale.current.localizedString(
@@ -380,7 +391,7 @@ struct PrivacyScreen: View {
             .padding(.horizontal, KGSpace.screen)
             .padding(.bottom, KGSpace.large)
         }
-        .sheet(isPresented: $showsPolicy) { PolicyText() }
+        .sheet(isPresented: $showsPolicy) { PolicyText(usesLiveServer: services.live.usesServer) }
         .sensoryFeedback(KGHaptic.warning, trigger: cleared)
     }
 
@@ -401,6 +412,8 @@ struct PrivacyScreen: View {
 
 /// The privacy policy, bundled so it reads offline.
 private struct PolicyText: View {
+    /// This build reads delays from the KonstanzGo live server (SERVER_PLAN.md S10).
+    var usesLiveServer = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -432,6 +445,14 @@ private struct PolicyText: View {
                         Kontakt: \(AppInfo.supportEmail)
                         """, bundle: .module)
                         .kgFont(.body).foregroundStyle(KGColor.ink)
+                    if usesLiveServer {
+                        Text("""
+                            Diese Version holt Verspätungen vom KonstanzGo-Server statt direkt von EFA-BW. Die Anfragen \
+                            enthalten keine Position und keine Kennung; der Server speichert keine IP-Adressen. Er ist \
+                            über Cloudflare erreichbar, das beim Verbindungsaufbau die IP-Adresse deines iPhones sieht.
+                            """, bundle: .module)
+                            .kgFont(.body).foregroundStyle(KGColor.ink)
+                    }
                 }
                 .padding(KGSpace.large)
             }

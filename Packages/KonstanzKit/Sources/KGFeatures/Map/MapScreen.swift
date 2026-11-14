@@ -67,7 +67,7 @@ public struct MapScreen: View {
                 .frame(height: 70)
                 .ignoresSafeArea(edges: .top)
                 .allowsHitTesting(false)
-            StatusCorner(info: transit.timetableInfo, weather: services.weather)
+            StatusCorner(info: transit.timetableInfo, weather: services.weather, live: services.live)
                 .padding(.horizontal, KGSpace.screen)
                 .padding(.top, KGSpace.small)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -527,7 +527,9 @@ extension MapScreen {
                 await live.warm(stations: [Self.hubs[round % Self.hubs.count]] + turn)
                 round += 1
             }
-            try? await Task.sleep(for: .seconds(services.config.stopReadSeconds))
+            // The server's snapshot is one small shared file: every 15 s. Reading stops ourselves: as configured.
+            let pause = live.usesServer ? 15 : services.config.stopReadSeconds
+            try? await Task.sleep(for: .seconds(pause))
         }
     }
 
@@ -556,6 +558,8 @@ extension MapScreen {
                 let delays = glide.advance(services.live.tripDelays, after: (ContinuousClock.now - lastDelays) / .seconds(1))
                 lastDelays = ContinuousClock.now
                 let cancelled = services.live.cancelledTrips
+                // The green dot follows what's reported now, not a delay still easing away after reports stopped.
+                let reported = Set(services.live.tripDelays.keys)
                 let found = await Task.detached(priority: .utility) {
                     (try? tracker.positions(at: now, delays: delays, cancelled: cancelled)) ?? []
                 }.value
@@ -573,7 +577,7 @@ extension MapScreen {
                     MapVehicle(id: vehicle.tripID, line: vehicle.line.name, coordinate: vehicle.coordinate,
                                heading: headings[vehicle.tripID] ?? vehicle.heading,
                                look: .vehicle(isTrain: vehicle.line.mode == .train, isYellow: vehicle.line.isYellowBus,
-                                              isLive: !vehicle.isEstimated),
+                                              isLive: !vehicle.isEstimated && reported.contains(vehicle.tripID)),
                                turn: lit ? vehicle.signal : .none)
                 }
             } else if !showsVehicles, !map.vehicles.isEmpty {
@@ -612,11 +616,13 @@ struct MapOverlays: View {
 }
 
 /// The map's top corner: the weather, or orange "Fahrplan endet bald" in the last 14 days of the timetable
-/// and "Fahrplan abgelaufen" after it (S4.2). Nothing before the first reading (a first start without internet). Asks for fresh weather while
+/// and "Fahrplan abgelaufen" after it (S4.2), or a quiet "Live-Daten gerade nicht verfügbar" when the live server's
+/// source is down. Nothing before the first reading (a first start without internet). Asks for fresh weather while
 /// the map is open.
 private struct StatusCorner: View {
     let info: TimetableInfo?
     let weather: WeatherModel
+    let live: LiveModel
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -624,6 +630,10 @@ private struct StatusCorner: View {
                 KGStatusPill(Text("Fahrplan abgelaufen", bundle: .module), isWarning: true)
             } else if info?.validity() == .endingSoon {
                 KGStatusPill(Text("Fahrplan endet bald", bundle: .module), isWarning: true)
+            } else if live.usesServer, live.livePaused, live.isOnline {
+                KGStatusPill(Text("Live-Daten gerade nicht verfügbar", bundle: .module), tone: .quiet)
+                    .accessibilityIdentifier("livePaused")
+                    .transition(.opacity)
             } else if let reading = weather.reading, reading.isFresh(at: .now) {
                 WeatherChip(reading: reading)
                     .transition(.opacity)

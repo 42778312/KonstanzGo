@@ -88,12 +88,25 @@ targets:
         NSMicrophoneUsageDescription: "Damit du Haltestellen und Orte per Sprache suchen kannst. Was du sagst, bleibt auf diesem iPhone."
         NSSpeechRecognitionUsageDescription: "KonstanzGo erkennt deine Sprachsuche direkt auf diesem iPhone, ohne Internet."
         NSLocationWhenInUseUsageDescription: "KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Deine GPS-Position wird nicht übertragen."
+        # The KonstanzGo live server (SERVER_PLAN.md S10): off unless KG_LIVE_ENABLED is YES.
+        KGLiveServerURL: $(KG_LIVE_URL)
+        KGLiveServerEnabled: $(KG_LIVE_ENABLED)
+        # Lets test builds reach a live server on this Mac (http://localhost); every other address needs HTTPS.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.konstanzgo.app
         PRODUCT_NAME: KonstanzGo
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        # Live delays from the KonstanzGo server. Off in release until SERVER_PLAN.md S11; test builds can switch it on
+        # in Einstellungen. KG_LIVE_URL gets the real address once the server has a domain.
+        KG_LIVE_ENABLED: NO
+        KG_LIVE_URL: ""
+      configs:
+        Debug:
+          KG_LIVE_URL: "http://localhost:8080"
     preBuildScripts:
       - name: SwiftLint
         basedOnDependencyAnalysis: false

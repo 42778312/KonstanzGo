@@ -41,7 +41,8 @@ Decided on 28.10.2026:
 - [x] 0.2.1 **Lowest iOS version: iOS 18.** Reaches as many iPhones as possible. iOS 26+ gets real Liquid Glass; iOS 18–25 gets a blur material in the same shapes. See "Supporting iOS 18 and 26" below.
 - [x] 0.2.2 **Bundle ID: `de.konstanzgo.app`.** Widgets `de.konstanzgo.app.widgets`, App Group `group.de.konstanzgo.app`. Team: your Apple Developer account.
 - [ ] 0.2.3 **Name check (still open):** is "KonstanzGo" free on the App Store and as a trademark? Reserve the name in App Store Connect early.
-- [x] 0.2.4 **Internet: fully offline.** All data ships inside the app and updates come with app updates. The offline screen shows what is stored and its date, with no download buttons. App Store privacy label: "Data Not Collected". No internet code in the app at all.
+- [x] 0.2.4 **Internet: timetable offline, live as an optional layer** (changed 14 Nov 2026, SERVER_PLAN.md S10.6). Timetable, map and search ship inside the app and work with no internet; nothing waits for the network. Online, the app adds weather (DWD), disruptions and delays. Delays come from EFA-BW directly today and from the KonstanzGo live server once it is switched on (`KG_LIVE_ENABLED`); then phones never ask EFA-BW for delays. No request carries a position, a user or device id; the server keeps no IP addresses, so the App Store label stays "Data Not Collected". The offline screen shows what is stored and its date, with no download buttons.
+  - *Was:* fully offline, no internet code at all. The app has read live data from EFA-BW since the live features were added; this entry now says so.
 - [x] 0.2.5 **Line colours: all yellow `#FFC043`** with dark text `#3A2A00`, as in the design.
 
 ### Supporting iOS 18 and 26

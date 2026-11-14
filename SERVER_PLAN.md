@@ -59,7 +59,19 @@ it runs as the image's `nonroot` user, and `live healthcheck` replaces curl for 
    instead of `ubuntu:noble` with a `live` user.
 
 Still open: S0.4 runs 2 and 3; S6's 2-hour run; CI green on GitHub (`.github/workflows/server.yml`); S9 and S11 (you);
-S10, the app side.
+S10.7 (removing the direct EFA-BW calls) once the flag is on by default.
+
+**S10, the app side (14 Nov 2026).** `LiveModel` got a second source: with the flag on, the map polls the shared
+snapshot every 15 s (60 s in Low Data Mode, only while the map is visible and the app is in front), and stop sheets,
+the Now card and journeys read `/v1/stops/{gid}/departures` instead of EFA-BW. Everything else (merging, the five
+states, `DelayGlide`, which already eases delays and never moves a bus backwards) was there and is unchanged. Trip
+keys are built by `TimetableStore.liveTripKeys(on:)` and checked against a key the server produced. New on screen: a
+quiet grey "Live-Daten gerade nicht verfügbar" pill when the server's source is down or off; the map's live dot now
+follows current reports, not a delay still easing away. Flag: `KG_LIVE_ENABLED` (NO), `KG_LIVE_URL` (Debug:
+`http://localhost:8080`), and in test builds Einstellungen › "Live-Server (Test, ab Neustart)" or `-live.server YES`.
+Disruption notices (`XML_ADDINFO_REQUEST`) still come from EFA-BW directly: S10.7/S12.
+Checked in the simulator against the Docker server: live dots and "+N" from the server; kill switch → grey pill, no
+dots, timetable minutes; server back → live again after the app's back-off.
 
 ---
 
@@ -186,12 +198,12 @@ S10, the app side.
 
 ## Part S10 — App integration (behind a feature flag)
 
-- [ ] **S10.1** `KGCore`: `LiveClient` (URLSession, `If-None-Match`, 5 s timeout, decodes `KGLiveAPI`) and `LiveDelays` (immutable lookup by `TripKey`, with `upstream` and age).
-- [ ] **S10.2** `KGFeatures`: `LiveModel` (`@MainActor @Observable`): fetch on becoming active, then every 15 s while the map, a stop sheet, a trip or a journey is visible; stop when `scenePhase` leaves `.active`; 60 s when the network is constrained.
-- [ ] **S10.3** `VehicleTracker`: position at `seconds − smoothedDelay`; the delay eases from old to new over 4 s; a bus never jumps back more than 30 m on screen.
-- [ ] **S10.4** Departures, connections and `TripProgress` use `planned + delay`. The five UI states from the design doc: Live, Late (+N), Scheduled ("Laut Fahrplan"), Cancelled ("Fällt aus", only if S0.4 found the field), Live paused.
-- [ ] **S10.5** Feature flag: build setting `KG_LIVE_ENABLED` plus a `UserDefaults` switch in the debug menu. Off by default in release until S11.
-- [ ] **S10.6** Update `PLAN.md` decision 0.2.4 ("fully offline") to the new rule: timetable offline, live delays as an optional layer. Update the privacy text (screen 25) and the App Store privacy notes.
+- [x] **S10.1** `KGCore`: `LiveClient` (URLSession, `If-None-Match`, 5 s timeout, decodes `KGLiveAPI`) and `LiveDelays` (immutable lookup by `TripKey`, with `upstream` and age).
+- [x] **S10.2** `KGFeatures`: `LiveModel` (`@MainActor @Observable`): fetch on becoming active, then every 15 s while the map, a stop sheet, a trip or a journey is visible; stop when `scenePhase` leaves `.active`; 60 s when the network is constrained.
+- [x] **S10.3** `VehicleTracker`: position at `seconds − smoothedDelay`; the delay eases from old to new over 4 s; a bus never jumps back more than 30 m on screen.
+- [x] **S10.4** Departures, connections and `TripProgress` use `planned + delay`. The five UI states from the design doc: Live, Late (+N), Scheduled ("Laut Fahrplan"), Cancelled ("Fällt aus", only if S0.4 found the field), Live paused.
+- [x] **S10.5** Feature flag: build setting `KG_LIVE_ENABLED` plus a `UserDefaults` switch in the debug menu. Off by default in release until S11.
+- [x] **S10.6** Update `PLAN.md` decision 0.2.4 ("fully offline") to the new rule: timetable offline, live delays as an optional layer. Update the privacy text (screen 25) and the App Store privacy notes.
 - [ ] **S10.7** Remove the app's direct EFA-BW calls (`EFADepartures` in `KGCore/Live/LiveDepartures.swift`, `XML_ADDINFO_REQUEST` in `KGCore/Live/ServiceNotice.swift`) once the flag is on by default, so ground rule 1 holds for shipped apps. Disruption notices move to S12 until the server serves them.
   Done when (whole part): in the Simulator with the flag on, a delayed bus sits behind its scheduled place and its stop shows green "+N"; with airplane mode on, the app shows the timetable and no error; snapshot tests for all five states pass on iOS 18 and iOS 27.
 

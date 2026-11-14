@@ -16,13 +16,18 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift", exact: "7.11.1"),
+        // The live server's API, shared with Server/: a change breaks the build on both sides.
+        .package(path: "../KGLiveAPI"),
         // The offline map. iOS only, so `swift test` keeps running on the Mac.
         .package(url: "https://github.com/maplibre/maplibre-gl-native-distribution", exact: "6.31.0"),
     ],
     targets: [
         .target(
             name: "KGCore",
-            dependencies: [.product(name: "GRDB", package: "GRDB.swift")]
+            dependencies: [
+                .product(name: "GRDB", package: "GRDB.swift"),
+                .product(name: "KGLiveAPI", package: "KGLiveAPI"),
+            ]
         ),
         .target(name: "KGDesign", resources: [.process("Resources")]),
         .target(

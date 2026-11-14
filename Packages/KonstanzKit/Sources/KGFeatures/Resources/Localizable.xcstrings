@@ -1172,6 +1172,16 @@
         }
       }
     },
+    "Diese Version holt Verspätungen vom KonstanzGo-Server statt direkt von EFA-BW. Die Anfragen enthalten keine Position und keine Kennung; der Server speichert keine IP-Adressen. Er ist über Cloudflare erreichbar, das beim Verbindungsaufbau die IP-Adresse deines iPhones sieht.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This version gets delays from the KonstanzGo server instead of directly from EFA-BW. The requests contain no position and no identifier; the server stores no IP addresses. It is reached through Cloudflare, which sees your iPhone's IP address when connecting."
+          }
+        }
+      }
+    },
     "Du bist da": {
       "localizations": {
         "en": {
@@ -2570,6 +2580,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Live"
+          }
+        }
+      }
+    },
+    "Live-Daten gerade nicht verfügbar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live data unavailable right now"
           }
         }
       }

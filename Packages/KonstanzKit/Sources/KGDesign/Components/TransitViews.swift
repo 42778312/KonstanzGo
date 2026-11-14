@@ -210,22 +210,29 @@ public struct KGWalkChip: View {
 }
 
 /// The status pill over the map (B10): green check in a circle + "Offline bereit", white capsule, 34 high,
-/// 14 SemiBold, floating shadow. `warning` turns the circle orange ("Fahrplan endet bald").
+/// 14 SemiBold, floating shadow. `warning` turns the circle orange ("Fahrplan endet bald"); `quiet` is grey with a
+/// no-signal mark, for something missing that isn't a problem ("Live-Daten gerade nicht verfügbar").
 public struct KGStatusPill: View {
+    public enum Tone: Sendable { case ok, warning, quiet }
+
     let title: Text
-    let isWarning: Bool
+    let tone: Tone
 
     public init(_ title: Text, isWarning: Bool = false) {
+        self.init(title, tone: isWarning ? .warning : .ok)
+    }
+
+    public init(_ title: Text, tone: Tone) {
         self.title = title
-        self.isWarning = isWarning
+        self.tone = tone
     }
 
     public var body: some View {
         HStack(spacing: KGSpace.xs) {
-            KGIconView(isWarning ? .timer : .check, size: 11)
+            KGIconView(icon, size: 11)
                 .foregroundStyle(KGColor.white)
                 .frame(width: 20, height: 20)
-                .background(isWarning ? KGColor.warn : KGColor.live, in: .circle)
+                .background(circle, in: .circle)
             title.kgFont(.footnote).foregroundStyle(KGColor.ink)
         }
         .padding(.leading, KGSpace.small)
@@ -234,6 +241,22 @@ public struct KGStatusPill: View {
         .kgGlass(in: Capsule())
         .kgShadow(.floating, in: Capsule())
         .accessibilityElement(children: .combine)
+    }
+
+    private var icon: KGIcon {
+        switch tone {
+        case .ok: .check
+        case .warning: .timer
+        case .quiet: .noSignal
+        }
+    }
+
+    private var circle: Color {
+        switch tone {
+        case .ok: KGColor.live
+        case .warning: KGColor.warn
+        case .quiet: KGColor.ink3
+        }
     }
 }
 

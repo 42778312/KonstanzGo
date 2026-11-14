@@ -2,7 +2,9 @@ import Foundation
 import Testing
 @testable import KGCore
 
-@Suite("User store")
+// Serialized: `worksAgainAfterSuspension` posts GRDB's process-wide suspend notification, which interrupts every
+// open UserStore (`sqlite3_interrupt`). Run in parallel, another test's write fails with "SQLite error 9: interrupted".
+@Suite("User store", .serialized)
 struct UserStoreTests {
     let store: UserStore
     let sternenplatz = SavedTarget.station(id: 99, name: "Sternenplatz", coordinate: .init(latitude: 47.6676, longitude: 9.1794))

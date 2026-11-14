@@ -38,8 +38,17 @@
 	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>KGLiveServerEnabled</key>
+	<string>$(KG_LIVE_ENABLED)</string>
+	<key>KGLiveServerURL</key>
+	<string>$(KG_LIVE_URL)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.navigation</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>KonstanzGo zeigt dir Haltestellen in deiner Nähe und den Fußweg dorthin. Deine GPS-Position wird nicht übertragen.</string>
 	<key>NSMicrophoneUsageDescription</key>

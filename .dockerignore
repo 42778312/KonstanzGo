@@ -1,0 +1,11 @@
+# Only the server, the shared API package and the timetable go into the live server's build.
+*
+!Server/Package.swift
+!Server/Package.resolved
+!Server/Sources/
+!Server/Tests/
+!Packages/KGLiveAPI/
+!App/Resources/Data/timetable.db
+**/.build/
+**/.swiftpm/
+**/.DS_Store

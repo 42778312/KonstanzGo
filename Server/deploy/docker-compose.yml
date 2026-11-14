@@ -1,0 +1,45 @@
+# KonstanzGo Live. Local:  docker compose -f Server/deploy/docker-compose.yml up --build
+# On the server:           docker compose --profile tunnel up -d   (see README.md)
+# One instance only: two would double the traffic to EFA-BW.
+name: konstanzgo-live
+
+services:
+  live:
+    image: ghcr.io/42778312/konstanzgo-live:${LIVE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: Server/Dockerfile
+      args:
+        LIVE_VERSION: ${LIVE_TAG:-local}
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      LIVE_VERSION: ${LIVE_TAG:-local}
+    read_only: true
+    tmpfs:
+      - /tmp
+    mem_limit: 512m
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    stop_grace_period: 10s
+    ports:
+      # Local only: the internet reaches the server through the Cloudflare tunnel, never this port.
+      - "127.0.0.1:${HOST_PORT:-8080}:8080"
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+  cloudflared:
+    image: cloudflare/cloudflared:2025.11.1
+    profiles: [tunnel]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      # Set CLOUDFLARE_TUNNEL_TOKEN in .env; cloudflared refuses to start without it.
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      live: { condition: service_healthy }
+    read_only: true
+    mem_limit: 128m
